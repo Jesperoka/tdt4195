@@ -6,7 +6,9 @@
 **As for the theory questions:**<br><br>
 
 Draw a single triangle passing through the following vertices:
-$$v_0 = \begin{bmatrix}0.6\\-0.8\\-1.2\end{bmatrix}, v_0 = \begin{bmatrix}0\\0.4\\0\end{bmatrix}, v_0 = \begin{bmatrix}-0.8\\-0.2\\1.2\end{bmatrix}$$
+
+$$v_0 = \begin{bmatrix}0.6 \\\ -0.8 \\\ -1.2\end{bmatrix}, v_0 = \begin{bmatrix}0 \\\ 0.4 \\\ 0\end{bmatrix}, v_0 = \begin{bmatrix}-0.8 \\\ -0.2 \\\ 1.2\end{bmatrix}$$
+
 This shape does not entirely look like a triangle.
 Explain in your own words:
 
@@ -115,6 +117,6 @@ Explain the following in your own words:
 
 <h2 align="center">Final Rendering After Assingment</h2>
 <p align="center">
-<img src="https://github.com/jesperoka/tdt4195/gloom-rs/report/images/a1_final_result.gif?raw=True" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_1/gloom-rs/report/images/a1_final_result.gif?raw=true" width=350>
 </p>
 <p align="center">Using fragment and vertex shaders to change colors<br> as a function of time and normalized device coordinates,<br> and position reversal as a function of time.</p>

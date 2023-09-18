@@ -53,27 +53,32 @@ const fn offset<T>(n: u32) -> *const c_void {
 
 
 // == // Generate your VAO here
-unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
+unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>) -> u32 {
     // Named constants for clarity 
     const NUM_TO_MAKE: i32 = 1;
-    const INDEX_ATTR: u32 = 0;
-    const SIZE_ATTR: i32 = 3;
+    const INDEX_ATTR_0: u32 = 0;
+    const INDEX_ATTR_1: u32 = 1;
+    const SIZE_ATTR_0: i32 = 3;
+    const SIZE_ATTR_1: i32 = 4;
     const TYPE_ATTR: u32 = gl::FLOAT;
     const NORMALIZED_ATTR: u8 = gl::FALSE;
-    const STRIDE_ATTR: i32 = SIZE_ATTR * size_of::<f32>(); 
-    const OFFSET_ATTR: *const c_void = offset::<u32>(INDEX_ATTR);
+    const STRIDE_ATTR_0: i32 = SIZE_ATTR_0 * size_of::<f32>(); 
+    const STRIDE_ATTR_1: i32 = SIZE_ATTR_1 * size_of::<f32>(); 
+    const OFFSET_ATTR_0: *const c_void = offset::<f32>(0);
+    const OFFSET_ATTR_1: *const c_void = offset::<f32>(0);
 
     let mut vao_id = 0;
-    let mut vbo_id = 0;
+    let mut vbo_id_0 = 0;
+    let mut vbo_id_1 = 0;
     let mut ibo_id = 0;
 
     // Generate and bind the Vertex Array Object
     gl::GenVertexArrays(NUM_TO_MAKE, &mut vao_id);
     gl::BindVertexArray(vao_id);
 
-    // Generate and bind the Vertex Buffer Object
-    gl::GenBuffers(NUM_TO_MAKE, &mut vbo_id);
-    gl::BindBuffer(gl::ARRAY_BUFFER, vbo_id);
+    // Generate and bind the first Vertex Buffer Object
+    gl::GenBuffers(NUM_TO_MAKE, &mut vbo_id_0);
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbo_id_0);
     gl::BufferData(
         gl::ARRAY_BUFFER,
         byte_size_of_array(&vertices),
@@ -81,9 +86,23 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
         gl::STATIC_DRAW,
     );
 
-    // Configure Vertex Attribute Poiner, vertices are structured as [x, y, z, ...]
-    gl::VertexAttribPointer(INDEX_ATTR, SIZE_ATTR, TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTR, OFFSET_ATTR);  
-    gl::EnableVertexAttribArray(INDEX_ATTR);
+    // Configure the first Vertex Attribute Poiner, vertices are structured as [x, y, z]
+    gl::VertexAttribPointer(INDEX_ATTR_0, SIZE_ATTR_0, TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTR_0, OFFSET_ATTR_0);  
+    gl::EnableVertexAttribArray(INDEX_ATTR_0);
+
+    // Generate and bind the second Vertex Buffer Object
+    gl::GenBuffers(NUM_TO_MAKE, &mut vbo_id_1);
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbo_id_1);
+    gl::BufferData(
+        gl::ARRAY_BUFFER,
+        byte_size_of_array(&colors),
+        pointer_to_array(&colors),
+        gl::STATIC_DRAW,
+    );
+
+    // Configure the second Vertex Attribute Poiner, colors are structured as [r, g, b, a]
+    gl::VertexAttribPointer(INDEX_ATTR_1, SIZE_ATTR_1, TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTR_1, OFFSET_ATTR_1);  
+    gl::EnableVertexAttribArray(INDEX_ATTR_1);
 
     // Generate and bind the Index Buffer Object
     gl::GenBuffers(NUM_TO_MAKE, &mut ibo_id);
@@ -162,7 +181,7 @@ fn main() {
         let eps: f32 = 0.02;
         let vertices = &vec![
             // Triangle 1 (top-right)
-            0.0+eps, 0.0+eps/2.0, 0.0,
+            0.0+eps, 0.0+eps/2.0, 0.0, 
             0.5+eps, 0.0+eps/2.0, 0.0,
             0.25+eps, 0.433+eps/2.0, 0.0, 
             // Triangle 2 (top-middle)
@@ -191,7 +210,31 @@ fn main() {
             12, 13, 14     // Triangle 5
         ];
 
-        let my_vao = unsafe { create_vao(vertices, indices) };
+        let colors = &vec![
+            // Triangle 1 (top-right)
+            0.9, 0.1, 0.1, 1.0,  // Red
+            0.9, 0.5, 0.1, 1.0,  // Orange
+            0.9, 0.9, 0.1, 1.0,  // Yellow
+                                 // Triangle 2 (top-middle)
+            0.5, 0.9, 0.1, 1.0,  // Lime
+            0.1, 0.9, 0.1, 1.0,  // Green
+            0.1, 0.9, 0.5, 1.0,  // Teal
+                                 // Triangle 3 (top-left)
+            0.1, 0.9, 0.9, 1.0,  // Cyan
+            0.1, 0.5, 0.9, 1.0,  // Sky Blue
+            0.1, 0.1, 0.9, 1.0,  // Blue
+                                 // Triangle 4 (bottom-left)
+            0.5, 0.1, 0.9, 1.0,  // Purple
+            0.9, 0.1, 0.9, 1.0,  // Magenta
+            0.9, 0.1, 0.5, 1.0,  // Pink
+                                 // Triangle 5 (bottom-middle)
+            0.6, 0.3, 0.2, 1.0,  // Brown
+            0.8, 0.7, 0.6, 1.0,  // Beige
+            0.5, 0.5, 0.5, 1.0   // Grey
+                ];
+
+
+        let my_vao = unsafe { create_vao(vertices, indices, colors) };
 
         // == // Set up your shaders here
 
@@ -281,7 +324,7 @@ fn main() {
                 // == // Issue the necessary gl:: commands to draw your scene here
                 simple_shader.activate();
                 gl::Uniform1f(time_location, elapsed);
-                gl::DrawElements(gl::TRIANGLES, vertices.len() as i32, gl::UNSIGNED_INT, ptr::null());
+                gl::DrawElements(gl::TRIANGLES, indices.len() as i32, gl::UNSIGNED_INT, ptr::null());
 
             }
 

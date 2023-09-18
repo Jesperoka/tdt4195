@@ -1,13 +1,14 @@
 #version 420 core
 
-in vec3 position;
+layout(location = 0) in vec3 xyz;
+layout(location = 1) in vec4 rgbaIn;
+
+out vec4 rgba;
+
 uniform float time;
 
 void main()
 {
-    if (mod(floor(time), 2) == 0) {
-        gl_Position = vec4(position, 1.0f);
-    } else { 
-        gl_Position = vec4(-position, 1.0f);
-    }
+    gl_Position = vec4(xyz, 1.0f);
+    rgba = rgbaIn;
 }

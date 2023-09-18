@@ -1,122 +1,106 @@
-<h1 align="center">Assignment 1</h1>
+<h1 align="center">Assignment 2</h1>
 
-*This assignment was done after the deadline, so I'm not making a full report.*
+<h2 align="left">Task 1: Per-Vertex Colors </h2>
+<h3 align="left">Task 1b</h3>
 
+**Question**:
 
-**As for the theory questions:**<br><br>
+        Render a scene containing at least 3 different triangles, where
+        each vertex of each triangle has a different color. Put a screenshot of the result in
+        your report. All triangles should be visible on the screenshot. Briefly explain what
+        OpenGL does in between the vertices for each fragment with the vertex attributes.
 
-Draw a single triangle passing through the following vertices:
+**Answer:**
 
-$$v_0 = \begin{bmatrix}0.6 \\\ -0.8 \\\ -1.2\end{bmatrix}, v_0 = \begin{bmatrix}0 \\\ 0.4 \\\ 0\end{bmatrix}, v_0 = \begin{bmatrix}-0.8 \\\ -0.2 \\\ 1.2\end{bmatrix}$$
-
-This shape does not entirely look like a triangle.
-Explain in your own words:
-
-    T2a)
-
-
-        Q:
-
-        i)          What is the name of this phenomenon?
-
-        ii)         When does it occur?
-
-        iii)        What is its purpose?
-
-
-
-        A:
-
-        i)      Clipping. 
-
-        ii)     When normalized device coordinates (NDCs) are outside clip box ([-1, 1] in this case).
-
-        iii)    Performance.
-
-While drawing one or more triangles, try to swap the order in which
-two of the vertices of a single triangle are drawn by modifying the index buffer. A
-significant change in the appearance of the triangle should occur.
-
-    T2b)
-
-        Q:
-
-        i) What happens?
-
-        ii) Why does it happen?
-
-        iii) What is the condition under which this effect occurs? Determine a rule.
-
-
-
-        A:
-
-        i)      Back-face Culling. 
-
-        ii)     Faces that are facing away from the camera are discarded.
-
-        iii)    By default OpenGL uses counter-clockwise vertex ordering.
-                The ordering defines the notion of front and back used in the culling.
-
-Explain the following in your own words:
-
-    T2c)
-        Q:
-        i) Why does the depth buffer need to be reset each frame?
-
-        ii) In which situation can the Fragment Shader be executed multiple times for the
-        same pixel? (Assume we do not use multisampling.)
-        
-        iii) What are the two most commonly used types of Shaders?
-        What are the responsibilities of each of them?
-        
-        iv) Why is it common to use an index buffer to specify which vertices should be
-        connected into triangles, as opposed to relying on the order in which the vertices
-        are specified in the vertex buffer(s)?
-
-        v) While the last input of gl::VertexAttribPointer() is a pointer, we usually pass
-        in a null pointer. Describe a situation in which you would pass a non-zero value
-        into this function.
-
-
-
-        A:
-
-        i)      The depth buffer is used for depth testing to determine which pixels are behind other pixels and can be discarded.
-                Because of this we need to clear it in order to not discard new pixels based on the previous frame.
-
-        ii)     Overlapping geometry, transparent or semi-transparent objects, or more advanced shader processing such as         
-                reflections, refractions, ray-tracing, bloom, motion blur, depth of field. 
-                These are some situations where the fragment shader might be used multiple times for the same pixel.
-
-        iii)    Fragment shader and vertex shader are the two most common types of shaders. 
-        
-                The primary responsibility of the fragment shader is to compute the final color of a pixel. 
-                This involves taking interpolated vertex attributes (like texture coordinates or normals) 
-                and using them to sample textures, apply lighting models, and combine various factors to produce a color.
-
-                One of the primary responsibilities of the vertex shader is to transform vertex positions from 
-                object space (local coordinates) to clip space. This often involves multiplying the 
-                vertex position by a series of transformation matrices, such as the model, view, and projection matrices.
-
-        iv)     Without an index buffer, vertices that are shared between multiple triangles would need to be duplicated in the
-                vertex buffer. For complex models, this can lead to a significant amount of redundant data. 
-                By using an index buffer, each unique vertex is stored only once in the vertex buffer, 
-                and the indices determine how they are connected into triangles.
-
-                Index buffers provide flexibility in specifying the order in which triangles are drawn. 
-                This can be useful for techniques that require specific draw orders, such as transparency rendering.
-
-        v)      If we have a single vertex buffer object that contains, either semantically or actually, 
-                different types of elements that will have different attributes, when we would need to pass in the
-                correct offset for any of the subsequent calls to gl::VertextAttribPointer().
-
-                This interleaved approach, where multiple attributes are stored in a single VBO, is common because it can offer better performance due to improved memory locality and cache coherence. In such cases, using non-zero offsets with gl::VertexAttribPointer() is essential to correctly map the various attributes.
-
-                
-
-<h2 align="center">Final Rendering After Assingment</h2>
+<h3 align="center">Task 1b Rendering</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_1/gloom-rs/report/images/a1_final_result.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a1_t1.png?raw=true" width=350>
 </p>
-<p align="center">Using fragment and vertex shaders to change colors<br> as a function of time and normalized device coordinates,<br> and position reversal as a function of time.</p>
+<p align="center">Triangles with colors interpolated between vertices.</p>
+
+        For a triangle with vertices A, B, and C, if you specify a color for each vertex, OpenGL will interpolate these colors (linearly) for each 
+        fragment (pixel) inside the triangle. The closer a fragment is to a vertex, the more it will resemble the color of that vertex. 
+        This results in a gradient effect across the triangle. The interpolated attribute does not have to be color.
+
+
+<h2 align="left">Task 2: Alpha Blending and Depth </h2>
+<h3 align="left">Task 2a</h3>
+
+**Question**:
+
+        For this task, we want to show you what happens to a blended
+        color when multiple triangles overlap from the camera's perspective 
+        (where the triangles are positioned at different distances from the camera).
+
+        To this end, draw at least 3 triangles that satisfy the following conditions:
+
+                • There exists a section on the xy-plane on which all triangles overlap.
+                • For any single triangle, the three vertices of that triangle have the same zcoordinate.
+                • No two triangles share the same z-coordinate.
+                • All triangles have a transparent color (alpha < 1).
+                • All triangles have a different color.
+                • Each triangle's vertices have the same color.
+
+        I do not recommend drawing the exact same triangle 3 times at different depths;
+        it will make the next question more difficult to solve.
+
+        Make sure your triangles are being drawn ordered back-to-front. That is, the triangle
+        furthest away from the screen is drawn first, the second-furthest one next, and so on.
+        You can change the draw order of triangles by modifying the index buffer. 
+        
+        Remember how the coordinate space of the Clipbox works here: Positive Z is deeper, negative is closer.
+        Put a screenshot in your report.
+
+**Answer:**
+
+<h3 align="center">Task 2a Rendering</h3>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a1_t1.png?raw=true" width=350>
+</p>
+<p align="center">temp.</p>
+
+<h3 align="left">Task 2b</h3>
+
+**Questions**:
+
+        i) 
+        Swap the colors of different triangles by modifying the VBO containing the color
+        Vertex Attribute. Observe the effect of these changes on the blended color of
+        the area in which all triangles overlap. What effects on the blended color did you
+        observe, and how did exchanging triangle colors cause these changes to occur?
+
+        ii) 
+        Swap the depth (z-coordinate) at which different triangles are drawn by modifying
+        the VBO containing the triangle vertices. Again observe the effect of these
+        changes on the blended color of the overlapping area. Which changes in the
+        blended color did you observe, and how did the exchanging of z-coordinates
+        cause these changes to occur? Why was the depth buffer the cause this effect?
+
+**Answers:**
+
+
+<h2 align="left">Task 3: The Affine Transformation Matrix </h2>
+<h3 align="left">Task 3b</h3>
+
+**Question**:
+
+        Individually modify each of the values marked with letters in the
+        matrix in equation 2 below, one at a time. In each case use the identity matrix as a
+        starting point.
+
+        Observe the effect of modifying the value on the resulting rendered image. Deduce
+        which of the four distinct transformation types discussed in the lectures and the
+        book modifying the value corresponds to. Also write down the direction (axis) the
+        transformation applies to.
+
+$$\begin{bmatrix}a & b & 0 & c \\\ d  & e & 0 & f \\\ 0 & 0 & 1 & 0 \\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+
+        Hint: You can use a “uniform” variable to pass a floating point value slowly oscillating
+        between -1 and 1 from the main loop in main.rs into the Vertex Shader. Use the elapsed
+        variable in the main loop, and compute the sine of it (elapsed.sin()) before sending
+        it into the shader with a uniform variable. See the Hitchhikers guide on how to do
+        this.
+
+        It makes the effects of modifying individual values in the transformation matrix much
+        easier to recognise. The guide includes a description on how to work with uniform
+        variables.

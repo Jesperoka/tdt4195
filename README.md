@@ -3,7 +3,7 @@
 <h2 align="center">Task 1: Per-Vertex Colors </h2>
 <h3 align="left">Task 1b</h3>
 
-**Question**:
+**Question:**
 
         Render a scene containing at least 3 different triangles, where
         each vertex of each triangle has a different color. Put a screenshot of the result in
@@ -26,7 +26,7 @@
 <h2 align="center">Task 2: Alpha Blending and Depth </h2>
 <h3 align="left">Task 2a</h3>
 
-**Question**:
+**Question:**
 
         For this task, we want to show you what happens to a blended
         color when multiple triangles overlap from the camera's perspective 
@@ -61,7 +61,7 @@
 
 <h3 align="left">Task 2b</h3>
 
-**Questions**:
+**Questions:**
 
         i) 
         Swap the colors of different triangles by modifying the VBO containing the color
@@ -98,7 +98,9 @@
         per the task description is the closest triangle. This can be seen from the
         formula for the blending:
 
+<!-- <p align="center"> -->
 $$\mathbf{c}_{\text{new}} = \alpha_{\text{souce}} \cdot \mathbf{c}_{\text{source}} + (1-\alpha_{\text{souce}}) \cdot \mathbf{c}_{\text{destination}}$$
+<!-- </p> -->
 
         where, somewhat confusingly, source refers to the pixel being drawn on top 
         of the already existing destination.
@@ -121,7 +123,7 @@ $$\mathbf{c}_{\text{new}} = \alpha_{\text{souce}} \cdot \mathbf{c}_{\text{source
 <h2 align="center">Task 3: The Affine Transformation Matrix </h2>
 <h3 align="left">Task 3b</h3>
 
-**Question**:
+**Question:**
 
         Individually modify each of the values marked with letters in the
         matrix in equation 2 below, one at a time. In each case use the identity matrix as a
@@ -143,3 +145,35 @@ $$\begin{bmatrix}a & b & 0 & c \\\ d  & e & 0 & f \\\ 0 & 0 & 1 & 0 \\\ 0 & 0 & 
         It makes the effects of modifying individual values in the transformation matrix much
         easier to recognise. The guide includes a description on how to work with uniform
         variables.
+
+**Answer:**
+
+        All the transformations in this task (shown in the GIF below if viewing HTML or GitHub Markdown versions of this report)
+        are homographies (projective transforms) and specifically they are all affine transformations.
+        Further specifying the transformations are scaling, shear, translation and reflection, and even further
+        specifying they only act along one axis.
+
+<h3 align="center">Task 3b Rendering</h3>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t3b.gif?raw=true" width=350>
+</p>
+<p align="center">GIF of each transform. Viewable at https://github.com/Jesperoka/tdt4195/tree/assignment_2 <br>
+The elements a-f of the homography matrix are varied one-by-one in alphabetical order.</p>
+
+        In order of application the transformations are:
+                a: scaling along only x-axis
+                b: xz shear along only x-axis
+                c: translation along only x-axis
+                d: yz shear along only y-axis
+                e: scaling along only y-axis
+                f: translation along only y-axis
+
+<h3 align="left">Task 3c</h3>
+
+**Question:**:
+
+        Why can you be certain that none of the transformations observed were rotations?
+
+**Answer:**
+
+        Because

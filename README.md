@@ -134,7 +134,7 @@ $$\mathbf{c}_{\text{new}} = \alpha_{\text{souce}} \cdot \mathbf{c}_{\text{source
         book modifying the value corresponds to. Also write down the direction (axis) the
         transformation applies to.
 
-$$\begin{bmatrix}a & b & 0 & c \\\ d  & e & 0 & f \\\ 0 & 0 & 1 & 0 \\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
+$$A =\begin{bmatrix}a & b & 0 & c \\\ d  & e & 0 & f \\\ 0 & 0 & 1 & 0 \\\ 0 & 0 & 0 & 1 \end{bmatrix}$$
 
         Hint: You can use a “uniform” variable to pass a floating point value slowly oscillating
         between -1 and 1 from the main loop in main.rs into the Vertex Shader. Use the elapsed
@@ -176,4 +176,9 @@ The elements a-f of the homography matrix are varied one-by-one in alphabetical 
 
 **Answer:**
 
-        Because
+        Because there is no general 3D rotation matrix that only differ from the identity matrix in exactly one element.
+        This can be shown from orthogonality and the fact that reflections are not included in SO(3).
+        The identity matrix itself is the only rotation matrix seen in this experiment.
+
+        Note that one could also have concluded that there are no rotations because rotations preserve the origin,
+        lengths, angles and chirality/handedness.

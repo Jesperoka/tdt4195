@@ -14,12 +14,13 @@
 
 <h3 align="center">Task 1b Rendering</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a1_t1.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t1.png?raw=true" width=350>
 </p>
 <p align="center">Triangles with colors interpolated between vertices.</p>
 
-        For a triangle with vertices A, B, and C, if you specify a color for each vertex, OpenGL will interpolate these colors (linearly) for each 
-        fragment (pixel) inside the triangle. The closer a fragment is to a vertex, the more it will resemble the color of that vertex. 
+        For a triangle with vertices A, B, and C, if you specify a color for each vertex, 
+        OpenGL will interpolate these colors (linearly) for each fragment (pixel) inside the triangle.
+        The closer a fragment is to a vertex, the more it will resemble the color of that vertex. 
         This results in a gradient effect across the triangle. The interpolated attribute does not have to be color.
 
 
@@ -55,7 +56,7 @@
 
 <h3 align="center">Task 2a Rendering</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a1_t1.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t1.png?raw=true" width=350>
 </p>
 <p align="center">temp.</p>
 

@@ -1,6 +1,6 @@
 <h1 align="center">Assignment 2</h1>
 
-<h2 align="left">Task 1: Per-Vertex Colors </h2>
+<h2 align="center">Task 1: Per-Vertex Colors </h2>
 <h3 align="left">Task 1b</h3>
 
 **Question**:
@@ -23,8 +23,7 @@
         The closer a fragment is to a vertex, the more it will resemble the color of that vertex. 
         This results in a gradient effect across the triangle. The interpolated attribute does not have to be color.
 
-
-<h2 align="left">Task 2: Alpha Blending and Depth </h2>
+<h2 align="center">Task 2: Alpha Blending and Depth </h2>
 <h3 align="left">Task 2a</h3>
 
 **Question**:
@@ -56,9 +55,9 @@
 
 <h3 align="center">Task 2a Rendering</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t1.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t2a.png?raw=true" width=350>
 </p>
-<p align="center">temp.</p>
+<p align="center">Semi-transparent triangles overlapping.</p>
 
 <h3 align="left">Task 2b</h3>
 
@@ -79,8 +78,47 @@
 
 **Answers:**
 
+        i)
+        The VBO for color can be modified by changing the color values suppled to create_vao(),
+        so I've swapped the colors of the furthest and nearest triangles.
 
-<h2 align="left">Task 3: The Affine Transformation Matrix </h2>
+<h3 align="center">Task 2b i) Rendering</h3>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t2bi.png?raw=true" width=350>
+</p>
+<p align="center">Semi-transparent triangles overlapping now with colors swapped.</p>
+
+        The result is that colors drawn closer to viewpoint are more dominant, 
+        so changing the color of the nearest triangle from green to be blue causes the
+        overlapping regions to become dominated by blue instead of by green. This can
+        be seen in the figure above.
+
+        Since the alpha values of my triangles are greater than 0.5, the pixel will
+        be weighted most heavily with the color of the triangle drawn last, which as
+        per the task description is the closest triangle. This can be seen from the
+        formula for the blending:
+
+$$\mathbf{c}_{\text{new}} = \alpha_{\text{souce}} \cdot \mathbf{c}_{\text{source}} + (1-\alpha_{\text{souce}}) \cdot \mathbf{c}_{\text{destination}}$$
+
+        where, somewhat confusingly, source refers to the pixel being drawn on top 
+        of the already existing destination.
+
+        ii)
+        Swapping the depth of the triangles makes it so the closest triangle is drawn
+        first, then the middle triangle, and finally the furthest triangle. With depth-testing
+        and blending on this means the formula from before no longer has any destination colors
+        from the triangles to influence the final pixel color, and as such the triangles appear
+        to not be transparent to eachother. As shown in the figure below however, the triangles
+        are indeed still transparent as shown by moving the rendering window above my code
+        editor.
+
+<h3 align="center">Task 2b ii) Rendering</h3>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t2bii.png?raw=true" width=350>
+</p>
+<p align="center">Semi-transparent triangles overlapping now with z values swapped.</p>
+
+<h2 align="center">Task 3: The Affine Transformation Matrix </h2>
 <h3 align="left">Task 3b</h3>
 
 **Question**:

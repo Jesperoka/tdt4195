@@ -178,61 +178,41 @@ fn main() {
         }
 
         // == // Set up your VAO around here
-        let eps: f32 = 0.02;
         let vertices = &vec![
-            // Triangle 1 (top-right)
-            0.0+eps, 0.0+eps/2.0, 0.0, 
-            0.5+eps, 0.0+eps/2.0, 0.0,
-            0.25+eps, 0.433+eps/2.0, 0.0, 
-            // Triangle 2 (top-middle)
-            0.0, 0.0+eps, 0.0,
-            0.25, 0.433+eps, 0.0,
-            -0.25, 0.433+eps, 0.0,
-            // Triangle 3 (top-left)
-            0.0-eps, 0.0+eps/2.0, 0.0,
-            -0.25-eps, 0.433+eps/2.0, 0.0,
-            -0.5-eps, 0.0+eps/2.0, 0.0,
-            // Triangle 4 (bottom-left)
-            0.0-eps, 0.0-eps/2.0, 0.0,
-            -0.5-eps, 0.0-eps/2.0, 0.0,
-            -0.25-eps, -0.433-eps/2.0, 0.0,
-            // Triangle 5 (bottom-middle)
-            0.0, 0.0-eps, 0.0,
-            -0.25, -0.433-eps, 0.0,
-            0.25, -0.433-eps, 0.0
-                ];
+            // Triangle 1 (furthest)
+            -0.5, -0.5, 0.3, 
+            0.5, -0.5, 0.3,
+            0.0, 0.5, 0.3, 
+            // Triangle 2 (middle)
+            -0.4, -0.6, 0.2,
+            0.6, -0.6, 0.2,
+            0.0, 0.6, 0.2,
+            // Triangle 3 (closest)
+            -0.3, -0.7, 0.1,
+            0.7, -0.7, 0.1,
+            0.0, 0.7, 0.1
+        ];
 
         let indices = &vec![
             0, 1, 2,       // Triangle 1
             3, 4, 5,       // Triangle 2
-            6, 7, 8,       // Triangle 3
-            9, 10, 11,     // Triangle 4
-            12, 13, 14     // Triangle 5
+            6, 7, 8        // Triangle 3
         ];
 
         let colors = &vec![
-            // Triangle 1 (top-right)
-            0.9, 0.1, 0.1, 1.0,  // Red
-            0.9, 0.5, 0.1, 1.0,  // Orange
-            0.9, 0.9, 0.1, 1.0,  // Yellow
-                                 // Triangle 2 (top-middle)
-            0.5, 0.9, 0.1, 1.0,  // Lime
-            0.1, 0.9, 0.1, 1.0,  // Green
-            0.1, 0.9, 0.5, 1.0,  // Teal
-                                 // Triangle 3 (top-left)
-            0.1, 0.9, 0.9, 1.0,  // Cyan
-            0.1, 0.5, 0.9, 1.0,  // Sky Blue
-            0.1, 0.1, 0.9, 1.0,  // Blue
-                                 // Triangle 4 (bottom-left)
-            0.5, 0.1, 0.9, 1.0,  // Purple
-            0.9, 0.1, 0.9, 1.0,  // Magenta
-            0.9, 0.1, 0.5, 1.0,  // Pink
-                                 // Triangle 5 (bottom-middle)
-            0.6, 0.3, 0.2, 1.0,  // Brown
-            0.8, 0.7, 0.6, 1.0,  // Beige
-            0.5, 0.5, 0.5, 1.0   // Grey
-                ];
-
+            // Triangle 1 (furthest)
+            0.6, 0.8, 0.9, 0.7,  // Pastel Blue
+            0.6, 0.8, 0.9, 0.7,  // Pastel Blue
+            0.6, 0.8, 0.9, 0.7,  // Pastel Blue
+            // Triangle 2 (middle)
+            0.9, 0.6, 0.7, 0.7,  // Pastel Pink
+            0.9, 0.6, 0.7, 0.7,  // Pastel Pink
+            0.9, 0.6, 0.7, 0.7,  // Pastel Pink
+            // Triangle 3 (closest)
+            0.7, 0.9, 0.6, 0.7,  // Pastel Green
+            0.7, 0.9, 0.6, 0.7,  // Pastel Green
+            0.7, 0.9, 0.6, 0.7,  // Pastel Green
+        ];
 
         let my_vao = unsafe { create_vao(vertices, indices, colors) };
 

@@ -170,15 +170,38 @@ The elements a-f of the homography matrix are varied one-by-one in alphabetical 
 
 <h3 align="left">Task 3c</h3>
 
-**Question:**:
+**Question:**
 
         Why can you be certain that none of the transformations observed were rotations?
 
 **Answer:**
 
-        Because there is no general 3D rotation matrix that only differ from the identity matrix in exactly one element.
+        Because there is no general 3D rotation matrix that only differs from the identity matrix in exactly one element.
         This can be shown from orthogonality and the fact that reflections are not included in SO(3).
         The identity matrix itself is the only rotation matrix seen in this experiment.
 
         Note that one could also have concluded that there are no rotations because rotations preserve the origin,
         lengths, angles and chirality/handedness.
+
+
+<h2 align="center">Task 4: Combinations of Transformations  </h2>
+<h3 align="left">Task 4b</h3>
+
+In the description of this task there is mention of how using 
+```rs
+glm::perspective()
+```
+causes the z-axis to be flipped due to convention. To avoid this I have opted to use
+```rs
+glm::reversed_perspective_rh_zo()
+```
+to get a right-handed coordinate system and thus not having to reorder the drawing of objects in the scene.
+This is shown in the figure below.
+<h3 align="center">Task 3b Rendering</h3>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_no_rev.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_rev.gif?raw=true" width=350>
+</p>
+<p align="center">Comparison og draw order for left- and right-handed coordinate systems.</p>
+
+<h3 align="left">Task 4c</h3>

@@ -237,6 +237,9 @@ fn main() {
         let time_location = unsafe { 
             simple_shader.get_uniform_location("time")
         };
+        let homography_location = unsafe {
+            simple_shader.get_uniform_location("homography")
+        };
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
@@ -294,6 +297,21 @@ fn main() {
 
             // == // Please compute camera transforms here (exercise 2 & 3)
 
+            let fovy: f32 = 1.22;
+            let near: f32 = 1.0;
+            let far: f32 = 100.0;
+
+            let translation: glm::Mat4 = glm::Mat4::from([
+                                                         [1.0, 0.0, 0.0, 0.0],
+                                                         [0.0, 1.0, 0.0, 0.0],
+                                                         [0.0, 0.0, 1.0, -2.5],
+                                                         [0.0, 0.0, 0.0, 1.0],
+            ]).transpose(); // really hate that I have to transpose here...
+               
+            // let perspective: glm::Mat4 = glm::perspective(window_aspect_ratio, fovy, near, far);
+            let perspective: glm::Mat4 = glm::reversed_perspective_rh_zo(window_aspect_ratio, fovy, near, far);
+            let homography: glm::Mat4 = perspective * translation;
+
 
             unsafe {
                 // Clear the color and depth buffers
@@ -303,7 +321,9 @@ fn main() {
 
                 // == // Issue the necessary gl:: commands to draw your scene here
                 simple_shader.activate();
+
                 gl::Uniform1f(time_location, elapsed);
+                gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, homography.as_ptr());
                 gl::DrawElements(gl::TRIANGLES, indices.len() as i32, gl::UNSIGNED_INT, ptr::null());
 
             }

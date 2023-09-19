@@ -98,9 +98,9 @@
         per the task description is the closest triangle. This can be seen from the
         formula for the blending:
 
-<!-- <p align="center"> -->
-$$\mathbf{c}_{\text{new}} = \alpha_{\text{souce}} \cdot \mathbf{c}_{\text{source}} + (1-\alpha_{\text{souce}}) \cdot \mathbf{c}_{\text{destination}}$$
-<!-- </p> -->
+<p align="center">
+$\mathbf{c}_{\text{new}} = \alpha_{\text{souce}} \cdot \mathbf{c}_{\text{source}} + (1-\alpha_{\text{souce}}) \cdot \mathbf{c}_{\text{destination}}$
+</p>
 
         where, somewhat confusingly, source refers to the pixel being drawn on top 
         of the already existing destination.

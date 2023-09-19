@@ -190,18 +190,74 @@ The elements a-f of the homography matrix are varied one-by-one in alphabetical 
 In the description of this task there is mention of how using 
 ```rs
 glm::perspective()
+// which is a wrapper for 
+glm::perspective_rh_no()
 ```
-causes the z-axis to be flipped due to convention. To avoid this I have opted to use
+causes the z-axis to be flipped because the clip-space is a left-handed coordinate system. To avoid this I have opted to use
 ```rs
-glm::reversed_perspective_rh_zo()
+glm::perspective_lh_no()
 ```
-to get a right-handed coordinate system and thus not having to reorder the drawing of objects in the scene.
+which conveniently does the z-axis negation for me, thus I don't have to reorder the drawing of objects in the scene.<br>
 This is shown in the figure below.
-<h3 align="center">Task 3b Rendering</h3>
+<h3 align="center">Task 4b Rendering</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_no_rev.gif?raw=true" width=350>
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_rev.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_rh.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_lh.gif?raw=true" width=350>
 </p>
 <p align="center">Comparison og draw order for left- and right-handed coordinate systems.</p>
 
-<h3 align="left">Task 4c</h3>
+<h2 align="center">Task 4c and 5a: Optional Bonus Challenges  </h2>
+
+<h3 align="left">Task 4c and 5a</h3>
+
+**Question:**
+
+        The camera you implemented in the previous task works well in many
+        situations, however, it works a bit counterintuitively when the camera moves strictly
+        along major axes without taking into account which direction it’s facing.
+
+        Change the camera control scheme such that the “forward”, “backward”, “left”, “right”,
+        “up”, and “down” motions move relative to the direction the camera is facing, rather
+        than having all of them move you in the direction of each major axis regardless of
+        camera orientation.
+
+        Tip: You may want to limit range of motion of the vertical rotation of the camera (pitch)
+        to between “straight down” and “straight up” to avoid weird camera movement.
+
+        Also, there’s a really neat trick here if you properly understand your transformation
+        matrices that allows you to turn movement relative to the camera into movement
+        relative to the world, which solves this question in very few lines of code.
+
+**Answer:**
+
+        By keeping track of the rotation matrix during the rendering loop one can convert the
+        movement commands from the keypresses to be relative to the camera pose by premultiplying
+        the resulting translation vector by the rotation matrix, giving the transformed translation vector
+        which can then be added to the total translation matrix. The movement that results can be seen in the
+        figure below.
+
+<h3 align="center">Task 4c and 5a Rendering 1</h3>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t5b.gif?raw=true" width=350>
+</p>
+<p align="center">Movement in the 3D scene. GIF viewable at https://github.com/Jesperoka/tdt4195/tree/assignment_2</p>
+
+        I also added rotation control via mouse press-and-drag in the direction you want to turn,
+        to help with the movement jumping around if you move your cursor out of the screen.
+        
+        Additionally, I switched from event handling with DeviceEvent::MouseMotion struct 
+        to using the WindowEvent::CursorMoved event and just keeping track of the previous cursor position
+        to get the deltas, since it didn't work for me, probably because of WSL2.
+
+        To see the objects while behind them as well I turned of back-culling, but I didn't bother trying
+        any techniques to make blending work properly from both the front and back.
+
+        Finally, instead of completing more bonus challenges, I had fun with shader art 
+        (inspired by: https://www.shadertoy.com/view/mtyGWy) and scene geometry. The final result is seen
+        in the figure below.
+
+<h3 align="center">Task 4c and 5a Rendering 2</h3>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t5b_2.gif?raw=true" width=350>
+</p>
+<p align="center">Another 3D scene with some fun shader art. GIF viewable at https://github.com/Jesperoka/tdt4195/tree/assignment_2</p>

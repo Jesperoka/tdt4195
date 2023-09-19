@@ -14,6 +14,7 @@ use std::sync::{Mutex, Arc, RwLock};
 
 mod shader;
 mod util;
+mod scene_geometry;
 
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
 use glutin::event_loop::ControlFlow;
@@ -119,6 +120,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
 
 
 fn main() {
+    print!("Setting window size to 800x800, fullscreening window crashes with this setup");
     // Set up the necessary objects to deal with windows and event handling
     let el = glutin::event_loop::EventLoop::new();
     let wb = glutin::window::WindowBuilder::new()
@@ -129,7 +131,7 @@ fn main() {
         .with_vsync(true);
     let windowed_context = cb.build_windowed(wb, &el).unwrap();
     // Uncomment these if you want to use the mouse for controls, but want it to be confined to the screen and/or invisible.
-    // windowed_context.window().set_cursor_grab(true).expect("failed to grab cursor");
+    // windowed_context.window().set_cursor_grab(CursorGrabMode::Locked).expect("failed to grab cursor");
     // windowed_context.window().set_cursor_visible(false);
 
     // Set up a shared vector for keeping track of currently pressed keys
@@ -164,7 +166,7 @@ fn main() {
         unsafe {
             gl::Enable(gl::DEPTH_TEST);
             gl::DepthFunc(gl::LESS);
-            gl::Enable(gl::CULL_FACE);
+            //gl::Enable(gl::CULL_FACE);
             gl::Disable(gl::MULTISAMPLE);
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
@@ -178,53 +180,14 @@ fn main() {
         }
 
         // == // Set up your VAO around here
-        let vertices = &vec![
-            // Triangle 1 (furthest)
-            -0.5, -0.5, 0.3, 
-            0.5, -0.5, 0.3,
-            0.0, 0.5, 0.3, 
-            // Triangle 2 (middle)
-            -0.4, -0.6, 0.2,
-            0.6, -0.6, 0.2,
-            0.0, 0.6, 0.2,
-            // Triangle 3 (closest)
-            -0.3, -0.7, 0.1,
-            0.7, -0.7, 0.1,
-            0.0, 0.7, 0.1
-        ];
-
-        let indices = &vec![
-            0, 1, 2,       // Triangle 1
-            3, 4, 5,       // Triangle 2
-            6, 7, 8        // Triangle 3
-        ];
-
-        let colors = &vec![
-            // Triangle 1 (furthest)
-            0.6, 0.8, 0.9, 0.7,  // Pastel Blue
-            0.6, 0.8, 0.9, 0.7,  // Pastel Blue
-            0.6, 0.8, 0.9, 0.7,  // Pastel Blue
-            // Triangle 2 (middle)
-            0.9, 0.6, 0.7, 0.7,  // Pastel Pink
-            0.9, 0.6, 0.7, 0.7,  // Pastel Pink
-            0.9, 0.6, 0.7, 0.7,  // Pastel Pink
-            // Triangle 3 (closest)
-            0.7, 0.9, 0.6, 0.7,  // Pastel Green
-            0.7, 0.9, 0.6, 0.7,  // Pastel Green
-            0.7, 0.9, 0.6, 0.7,  // Pastel Green
-        ];
-
-        let my_vao = unsafe { create_vao(vertices, indices, colors) };
+        let _my_vao = unsafe { 
+            create_vao(
+                &scene_geometry::VERTICES.to_vec(), 
+                &scene_geometry::INDICES.to_vec(),
+                &scene_geometry::COLORS.to_vec() 
+        )};
 
         // == // Set up your shaders here
-
-        // Basic usage of shader helper:
-        // The example code below creates a 'shader' object.
-        // It which contains the field `.program_id` and the method `.activate()`.
-        // The `.` in the path is relative to `Cargo.toml`.
-        // This snippet is not enough to do the exercise, and will need to be modified (outside
-        // of just using the correct path), but it only needs to be called once
-        
         let simple_shader = unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.frag")
@@ -240,10 +203,21 @@ fn main() {
         let homography_location = unsafe {
             simple_shader.get_uniform_location("homography")
         };
+        let resolution_location = unsafe {
+            simple_shader.get_uniform_location("resolution")
+        };
 
-        // Used to demonstrate keyboard handling for exercise 2.
-        let mut _arbitrary_number = 0.0; // feel free to remove
+        // Initialize variables for camera control
+        let fovy: f32 = 1.22;
+        let near: f32 = 0.1;
+        let far: f32 = 1000.0;
+        let mut perspective: glm::Mat4 = glm::perspective_lh_no(window_aspect_ratio, fovy, near, far);
 
+        let mut major_axis_translation: glm::Mat4 = glm::Mat4::identity();
+        let mut angle_axis_rotation: glm::Mat4 = glm::Mat4::identity();
+
+        let mut width = INITIAL_SCREEN_W;
+        let mut height = INITIAL_SCREEN_H;
 
         // The main rendering loop
         let first_frame_time = std::time::Instant::now();
@@ -260,72 +234,84 @@ fn main() {
                 if new_size.2 {
                     context.resize(glutin::dpi::PhysicalSize::new(new_size.0, new_size.1));
                     window_aspect_ratio = new_size.0 as f32 / new_size.1 as f32;
+
+                    perspective = glm::perspective_lh_no(window_aspect_ratio, fovy, near, far);
+                    width = new_size.0;
+                    height = new_size.1;
+
                     (*new_size).2 = false;
                     println!("Window was resized to {}x{}", new_size.0, new_size.1);
                     unsafe { gl::Viewport(0, 0, new_size.0 as i32, new_size.1 as i32); }
                 }
             }
 
-            // Handle keyboard input
-            if let Ok(keys) = pressed_keys.lock() {
-                for key in keys.iter() {
-                    match key {
-                        // The `VirtualKeyCode` enum is defined here:
-                        //    https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
-
-                        VirtualKeyCode::A => {
-                            _arbitrary_number += delta_time;
-                        }
-                        VirtualKeyCode::D => {
-                            _arbitrary_number -= delta_time;
-                        }
-
-
-                        // default handler:
-                        _ => { }
-                    }
-                }
-            }
             // Handle mouse movement. delta contains the x and y movement of the mouse since last frame in pixels
             if let Ok(mut delta) = mouse_delta.lock() {
 
-                // == // Optionally access the accumulated mouse movement between
-                // == // frames here with `delta.0` and `delta.1`
+                // 1. Get some approximated angle from 2D mouse movement vector assumed to be arc in 3D
+                // 2. Define corresponding 3D axis to rotate about. The axis is perpendicular to the mouse movement direction
+                // 3. Use angle-axis representation to generate rotation matrix and update
+                
+                let angle = 0.001*glm::length(&glm::vec2(delta.0, delta.1));
+                let rotation_axis = glm::normalize(&glm::vec3(-delta.1, -delta.0, 0.0));
+                angle_axis_rotation = glm::rotation(angle, &rotation_axis)*angle_axis_rotation;
 
                 *delta = (0.0, 0.0); // reset when done
             }
 
-            // == // Please compute camera transforms here (exercise 2 & 3)
+            // Handle keyboard input
+            const SPEED: f32 = 1.0;
+            if let Ok(keys) = pressed_keys.lock() {
+                
+                let mut dx: f32 = 0.0f32;
+                let mut dy: f32 = 0.0f32;
+                let mut dz: f32 = 0.0f32;
 
-            let fovy: f32 = 1.22;
-            let near: f32 = 1.0;
-            let far: f32 = 100.0;
+                for key in keys.iter() {
+                    let (_dx, _dy, _dz) = match key {
+                        // The `VirtualKeyCode` enum is defined here:
+                        //    https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
+
+                        VirtualKeyCode::W => (0.0f32, 0.0f32, -delta_time*SPEED),
+                        VirtualKeyCode::A => (delta_time*SPEED, 0.0f32, 0.0f32),
+                        VirtualKeyCode::S => (0.0f32, 0.0f32, delta_time*SPEED),
+                        VirtualKeyCode::D => (-delta_time*SPEED, 0.0f32, 0.0f32),
+                        VirtualKeyCode::Space => (0.0f32, -delta_time*SPEED, 0.0f32),
+                        VirtualKeyCode::LShift => (0.0f32, delta_time*SPEED, 0.0f32),
+                        // default handler:
+                        _ => (0.0f32, 0.0f32, 0.0f32),
+                    };
+                    dx += _dx; dy += _dy; dz += _dz;
+                }
+                let translation_vector = glm::inverse(&angle_axis_rotation) * glm::vec4(dx, dy, dz, 1.0);
+
+                major_axis_translation[(0, 3)] += translation_vector.x;
+                major_axis_translation[(1, 3)] += translation_vector.y;
+                major_axis_translation[(2, 3)] += translation_vector.z;
+            }
 
             let translation: glm::Mat4 = glm::Mat4::from([
                                                          [1.0, 0.0, 0.0, 0.0],
                                                          [0.0, 1.0, 0.0, 0.0],
-                                                         [0.0, 0.0, 1.0, -2.5],
-                                                         [0.0, 0.0, 0.0, 1.0],
-            ]).transpose(); // really hate that I have to transpose here...
-               
-            // let perspective: glm::Mat4 = glm::perspective(window_aspect_ratio, fovy, near, far);
-            let perspective: glm::Mat4 = glm::reversed_perspective_rh_zo(window_aspect_ratio, fovy, near, far);
-            let homography: glm::Mat4 = perspective * translation;
+                                                         [0.0, 0.0, 1.0, 2.5],
+                                                         [0.0, 0.0, 0.0, 1.0]]).transpose();
 
+            // == // Please compute camera transforms here (exercise 2 & 3)
+            let homography: glm::Mat4 = perspective * angle_axis_rotation * major_axis_translation * translation;
 
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-
                 // == // Issue the necessary gl:: commands to draw your scene here
                 simple_shader.activate();
 
                 gl::Uniform1f(time_location, elapsed);
                 gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, homography.as_ptr());
-                gl::DrawElements(gl::TRIANGLES, indices.len() as i32, gl::UNSIGNED_INT, ptr::null());
-
+                gl::Uniform2f(resolution_location, width as f32, height as f32);
+                
+                gl::DrawElements(gl::TRIANGLES, scene_geometry::INDICES.len() as i32, gl::UNSIGNED_INT, ptr::null());
             }
 
             // Display the new color buffer on the display
@@ -350,6 +336,13 @@ fn main() {
             }
         }
     });
+
+    // FOR CUSTOM MOUSE EVENT HANDLING SINCE DeviceEvent DOESNT WORK WITH WSL2 FOR ME
+    // ------------------------------------------------------------------------------
+    let mut prev_cursor_pos: Option<glutin::dpi::PhysicalPosition<f64>> = None;
+    let mut mouse_button_down = false;
+    let mut reset_cursor_pos = false;
+    // ------------------------------------------------------------------------------
 
     // Start the event loop -- This is where window events are initially handled
     el.run(move |event, _, control_flow| {
@@ -399,12 +392,53 @@ fn main() {
                     _      => { }
                 }
             }
-            Event::DeviceEvent { event: DeviceEvent::MouseMotion { delta }, .. } => {
-                // Accumulate mouse movement
-                if let Ok(mut position) = arc_mouse_delta.lock() {
-                    *position = (position.0 + delta.0 as f32, position.1 + delta.1 as f32);
+
+            // FOR CUSTOM MOUSE EVENT HANDLING SINCE DeviceEvent DOESNT WORK WITH WSL2 FOR ME
+            // ------------------------------------------------------------------------------
+            Event::WindowEvent { event: WindowEvent::CursorMoved { position, .. }, .. } => {
+                
+                if reset_cursor_pos {
+                    prev_cursor_pos = Some(position); 
+                    reset_cursor_pos = false;
+                }
+
+                if mouse_button_down {
+                    if let Some(prev_position) = prev_cursor_pos {
+                        let delta_x = position.x - prev_position.x;
+                        let delta_y = position.y - prev_position.y;
+
+                        // Only accumulate mouse movement when mouse button is down
+                        if let Ok(mut delta) = arc_mouse_delta.lock() {
+                            *delta = (delta.0 + delta_x as f32, delta.1 + delta_y as f32);
+                        }
+                    }
+                    prev_cursor_pos = Some(position);
                 }
             }
+            Event::WindowEvent { event: WindowEvent::MouseInput { state, button, .. }, .. } => {
+
+                if button == glutin::event::MouseButton::Left {
+
+                    match state {
+                        Pressed => {
+                            mouse_button_down = true;
+                            reset_cursor_pos = true;
+                        },
+                        Released => {
+                            mouse_button_down = false;
+                        }
+                    };
+                }
+            }
+            // ------------------------------------------------------------------------------
+            
+            // Event::DeviceEvent { event: DeviceEvent::MouseMotion { delta }, .. } => {
+            //     // Accumulate mouse movement
+            //     if let Ok(mut position) = arc_mouse_delta.lock() {
+            //         *position = (position.0 + delta.0 as f32, position.1 + delta.1 as f32);
+            //         print!("position.0 {}, position.1 {}", position.0, position.1)
+            //     }
+            // }
             _ => { }
         }
     });

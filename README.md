@@ -1,5 +1,8 @@
 <h1 align="center">Assignment 2</h1>
 
+*Note: Allow some time for the GIFs to load if viewing HTML or GitHub Markdown versions of report.<br> 
+PDF version does not support GIFs, so the other options are recommended.*
+
 <h2 align="center">Task 1: Per-Vertex Colors </h2>
 <h3 align="left">Task 1b</h3>
 

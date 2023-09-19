@@ -201,8 +201,8 @@ which conveniently does the z-axis negation for me, thus I don't have to reorder
 This is shown in the figure below.
 <h3 align="center">Task 4b Rendering</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_rh.gif?raw=true" width=350>
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_lh.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_rh.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t4b_lh.png?raw=true" width=350>
 </p>
 <p align="center">Comparison og draw order for left- and right-handed coordinate systems.</p>
 
@@ -238,7 +238,7 @@ This is shown in the figure below.
 
 <h3 align="center">Task 4c and 5a Rendering 1</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t5b.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t5a.gif?raw=true" width=350>
 </p>
 <p align="center">Movement in the 3D scene. GIF viewable at https://github.com/Jesperoka/tdt4195/tree/assignment_2</p>
 
@@ -258,6 +258,6 @@ This is shown in the figure below.
 
 <h3 align="center">Task 4c and 5a Rendering 2</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t5b_2.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_2/imgs/a2_t5a_2.gif?raw=true" width=350>
 </p>
 <p align="center">Another 3D scene with some fun shader art. GIF viewable at https://github.com/Jesperoka/tdt4195/tree/assignment_2</p>

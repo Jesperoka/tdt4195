@@ -1,58 +1,88 @@
+use crate::mesh::{Mesh, Terrain, Helicopter};
+use crate::create_vao;
 
-pub const VERTICES: &[f32; 39] = &[
-    // Pyramid
-    0.0, 0.25, 0.0,         // Apex
-    -0.25, -0.25, -0.25,   // Base - Bottom Left
-    0.25, -0.25, -0.25,    // Base - Bottom Right
-    0.25, -0.25, 0.25,     // Base - Top Right
-    -0.25, -0.25, 0.25,    // Base - Top Left
+pub const NUM_VAOs: usize = 5;
 
-    // Cube (Positioned to the right of the pyramid)
-    0.75, 0.0, 0.25,       // Front Top Left
-    1.0, 0.0, 0.25,        // Front Top Right
-    1.0, -0.25, 0.25,      // Front Bottom Right
-    0.75, -0.25, 0.25,     // Front Bottom Left
-    0.75, 0.0, 0.0,        // Back Top Left
-    1.0, 0.0, 0.0,         // Back Top Right
-    1.0, -0.25, 0.0,       // Back Bottom Right
-    0.75, -0.25, 0.0       // Back Bottom Left
-];
+pub struct Scene {
+    pub vao_ids: [u32; NUM_VAOs],
+    pub triangle_counts: [i32; NUM_VAOs],
+}
 
-pub const INDICES: &[u32; 54] = &[
-    // Pyramid
-    0, 1, 2,  // Front
-    0, 2, 3,  // Right
-    0, 3, 4,  // Back
-    0, 4, 1,  // Left
-    1, 4, 3,  // Base Left triangle
-    1, 3, 2,  // Base Right triangle
+// Instantiate all VAOs in the scene
+pub fn init_scene_geometry(terrain_model_path: &str, helicopter_model_path: &str) -> Scene {
 
-    // Cube
-    5, 6, 7, 5, 7, 8,    // Front face
-    9, 10, 11, 9, 11, 12, // Back face
-    5, 9, 12, 5, 12, 8,  // Left face
-    6, 10, 11, 6, 11, 7, // Right face
-    5, 9, 10, 5, 10, 6,  // Top face
-    8, 12, 11, 8, 11, 7  // Bottom face
-];
+    let terrain_mesh: Mesh = Terrain::load(terrain_model_path);
+    let helicopter_meshes: Helicopter = Helicopter::load(helicopter_model_path);
 
-pub const COLORS: &[f32; 52] = &[
-    // Pyramid (Pastel Orange)
-    1.0, 0.7, 0.278, 0.7,
-    1.0, 0.7, 0.278, 0.7,
-    1.0, 0.7, 0.278, 0.7,
-    1.0, 0.7, 0.278, 0.7,
-    1.0, 0.7, 0.278, 0.7,
+    return Scene{
+        vao_ids: create_vaos(&terrain_mesh, &helicopter_meshes),
+        triangle_counts: count_indices(&terrain_mesh, &helicopter_meshes)
+    };
+}
 
-    // Cube (Pastel Blue)
-    0.678, 0.847, 0.902, 0.7,
-    0.678, 0.847, 0.902, 0.7,
-    0.678, 0.847, 0.902, 0.7,
-    0.678, 0.847, 0.902, 0.7,
-    0.678, 0.847, 0.902, 0.7,
-    0.678, 0.847, 0.902, 0.7,
-    0.678, 0.847, 0.902, 0.7,
-    0.678, 0.847, 0.902, 0.7,
 
-];
+fn create_vaos(terrain_mesh: &Mesh, helicopter_meshes: &Helicopter) -> [u32; NUM_VAOs] {
 
+    let terrain_vao_id = unsafe { 
+        create_vao(
+            &terrain_mesh.vertices,
+            &terrain_mesh.normals,
+            &terrain_mesh.colors, 
+            &terrain_mesh.indices,
+            )};
+
+    let helicopter_body_vao_id = unsafe { 
+        create_vao(
+            &helicopter_meshes.body.vertices,
+            &helicopter_meshes.body.normals,
+            &helicopter_meshes.body.colors, 
+            &helicopter_meshes.body.indices,
+            )};
+    
+    let helicopter_door_vao_id = unsafe { 
+        create_vao(
+            &helicopter_meshes.door.vertices,
+            &helicopter_meshes.door.normals,
+            &helicopter_meshes.door.colors, 
+            &helicopter_meshes.door.indices,
+            )};
+    
+    let helicopter_main_rotor_vao_id = unsafe { 
+        create_vao(
+            &helicopter_meshes.main_rotor.vertices,
+            &helicopter_meshes.main_rotor.normals,
+            &helicopter_meshes.main_rotor.colors, 
+            &helicopter_meshes.main_rotor.indices,
+            )};
+
+    let helicopter_tail_rotor_vao_id = unsafe { 
+        create_vao(
+            &helicopter_meshes.tail_rotor.vertices,
+            &helicopter_meshes.tail_rotor.normals,
+            &helicopter_meshes.tail_rotor.colors, 
+            &helicopter_meshes.tail_rotor.indices,
+            )};
+
+    return [terrain_vao_id, 
+            helicopter_body_vao_id, 
+            helicopter_door_vao_id, 
+            helicopter_main_rotor_vao_id, 
+            helicopter_tail_rotor_vao_id];
+}
+
+fn count_indices(terrain: &Mesh, heli: &Helicopter) -> [i32; NUM_VAOs] {
+    return [
+        terrain.indices.len() as i32, 
+        heli.body.indices.len() as i32,
+        heli.door.indices.len() as i32,
+        heli.main_rotor.indices.len() as i32,
+        heli.tail_rotor.indices.len() as i32,
+    ];
+}
+
+// fn count_total_helicopter_indices(heli: &Helicopter) -> usize {
+//     return heli.body.indices.len()
+//         + heli.door.indices.len()
+//         + heli.main_rotor.indices.len()
+//         + heli.tail_rotor.indices.len();
+// }

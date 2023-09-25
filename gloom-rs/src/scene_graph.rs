@@ -1,86 +1,87 @@
 extern crate nalgebra_glm as glm;
 
-use std::mem::ManuallyDrop;
-use std::pin::Pin;
+use std::rc::Rc;
+use std::cell::RefCell;
 
-// Used to create an unholy abomination upon which you should not cast your gaze. This ended up
-// being a necessity due to wanting to keep the code written by students as "straight forward" as
-// possible. It is very very double plus ungood Rust, and intentionally leaks memory like a sieve.
-// But it works, and you're more than welcome to pretend it doesn't exist! In case you're curious
-// about how it works: It allocates memory on the heap (Box), promises to prevent it from being
-// moved or deallocated until dropped (Pin) and finally prevents the compiler from dropping it
-// automatically at all (ManuallyDrop).
-// ...
-// If that sounds like a janky solution, it's because it is!
-// Prettier, Rustier and better solutions were tried numerous times, but were all found wanting of
-// having what I arbitrarily decided to be the required level of "simplicity of use".
-pub type Node = ManuallyDrop<Pin<Box<SceneNode>>>;
+pub type Node = Rc<RefCell<SceneNode>>;
 
 pub struct SceneNode {
-    pub position        : glm::Vec3,   // Where I should be in relation to my parent
-    pub rotation        : glm::Vec3,   // How I should be rotated, around the X, the Y and the Z axes
-    pub scale           : glm::Vec3,   // How I should be scaled
-    pub reference_point : glm::Vec3,   // The point I shall rotate and scale about
-
-    pub vao_id      : u32,             // What I should draw
-    pub index_count : i32,             // How much of it there is to draw
-
-    pub children: Vec<*mut SceneNode>, // Those I command
+    pub position: glm::Vec3,
+    pub rotation: glm::Vec3,
+    pub scale: glm::Vec3,
+    pub reference_point: glm::Vec3,
+    pub vao_id: u32,
+    pub index_count: i32,
+    pub children: Vec<Node>,
 }
 
-impl SceneNode {
+pub struct SceneNodeBuilder {
+    node: Node,
+}
 
-    pub fn new() -> Node {
-        ManuallyDrop::new(Pin::new(Box::new(SceneNode {
-            position        : glm::zero(),
-            rotation        : glm::zero(),
-            scale           : glm::vec3(1.0, 1.0, 1.0),
-            reference_point : glm::zero(),
-            vao_id          : 0,
-            index_count     : -1,
-            children        : vec![],
-        })))
-    }
-
-    pub fn from_vao(vao_id: u32, index_count: i32) -> Node {
-        ManuallyDrop::new(Pin::new(Box::new(SceneNode {
-            position        : glm::zero(),
-            rotation        : glm::zero(),
-            scale           : glm::vec3(1.0, 1.0, 1.0),
-            reference_point : glm::zero(),
-            vao_id,
-            index_count,
-            children: vec![],
-        })))
-    }
-
-    pub fn add_child(&mut self, child: &SceneNode) {
-        self.children.push(child as *const SceneNode as *mut SceneNode)
-    }
-
-    #[allow(dead_code)]
-    pub fn get_child(& mut self, index: usize) -> & mut SceneNode {
-        unsafe {
-            &mut (*self.children[index])
+impl SceneNodeBuilder {
+    pub fn new() -> Self {
+        SceneNodeBuilder {
+            node: Rc::new(RefCell::new(SceneNode {
+                position: glm::zero(),
+                rotation: glm::zero(),
+                scale: glm::vec3(1.0, 1.0, 1.0),
+                reference_point: glm::zero(),
+                vao_id: 0,
+                index_count: -1,
+                children: vec![],
+            })),
         }
     }
 
-    #[allow(dead_code)]
-    pub fn get_n_children(&self) -> usize {
-        self.children.len()
+    pub fn from_vao(vao_id: u32, index_count: i32) -> Self {
+        SceneNodeBuilder {
+            node: Rc::new(RefCell::new(SceneNode {
+                position: glm::zero(),
+                rotation: glm::zero(),
+                scale: glm::vec3(1.0, 1.0, 1.0),
+                reference_point: glm::zero(),
+                vao_id,
+                index_count,
+                children: vec![],
+            })),
+        }
     }
 
+    pub fn init(self, position: glm::Vec3, rotation: glm::Vec3, scale: glm::Vec3, reference_point: glm::Vec3) -> Self {
+        {
+        let mut node = (*self.node).borrow_mut();
+        node.position = position;
+        node.rotation = rotation;
+        node.scale = scale;
+        node.reference_point = reference_point;
+        }
+        return self; 
+    }
+
+    pub fn add_child(self, child: SceneNodeBuilder) -> Self {
+        (*self.node).borrow_mut().children.push(child.node);
+        return self;
+    }
+
+    pub fn build(self) -> Node {
+        return self.node;
+    }
+
+}
+
+impl SceneNode {
     #[allow(dead_code)]
     pub fn print(&self) {
         println!(
-"SceneNode {{
-    VAO:       {}
-    Indices:   {}
-    Children:  {}
-    Position:  [{:.2}, {:.2}, {:.2}]
-    Rotation:  [{:.2}, {:.2}, {:.2}]
-    Reference: [{:.2}, {:.2}, {:.2}]
-}}",
+            "SceneNode {{
+                VAO:       {}
+                Indices:   {}
+                Children:  {}
+                Position:  [{:.2}, {:.2}, {:.2}]
+                Rotation:  [{:.2}, {:.2}, {:.2}]
+                Reference: [{:.2}, {:.2}, {:.2}]
+            }}",
             self.vao_id,
             self.index_count,
             self.children.len(),
@@ -93,26 +94,29 @@ impl SceneNode {
             self.reference_point.x,
             self.reference_point.y,
             self.reference_point.z,
-        );
+            );
     }
 
-}
+    pub fn print_tree(&self, depth: usize) {
+        // Print the current node with indentation
+        let indentation = "  ".repeat(depth);
+        println!("{}Node at depth {}: ", indentation, depth);
+        self.print();
 
-
-// You can also use square brackets to access the children of a SceneNode
-use std::ops::{Index, IndexMut};
-impl Index<usize> for SceneNode {
-    type Output = SceneNode;
-    fn index(&self, index: usize) -> &SceneNode {
-        unsafe {
-            & *(self.children[index] as *const SceneNode)
+        // Recursively print children
+        for child in &self.children {
+            child.borrow().print_tree(depth + 1);
         }
     }
+
 }
-impl IndexMut<usize> for SceneNode {
-    fn index_mut(&mut self, index: usize) -> &mut SceneNode {
-        unsafe {
-            &mut (*self.children[index])
-        }
-    }
-}
+
+// fn draw_scene(node: &Node, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4) {
+//     let node_borrowed = node.borrow();
+//     // Your logic for rendering goes here...
+
+//     for child in &node_borrowed.children {
+//         draw_scene(child, view_projection_matrix, transformation_so_far);
+//     }
+// }
+

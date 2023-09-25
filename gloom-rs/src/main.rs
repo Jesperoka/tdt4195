@@ -15,6 +15,8 @@ use std::sync::{Mutex, Arc, RwLock};
 mod shader;
 mod util;
 mod scene_geometry;
+mod mesh;
+mod scene_graph;
 
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
 use glutin::event_loop::ControlFlow;
@@ -23,97 +25,66 @@ use glutin::event_loop::ControlFlow;
 const INITIAL_SCREEN_W: u32 = 800;
 const INITIAL_SCREEN_H: u32 = 800; // 600
 
-// == // Helper functions to make interacting with OpenGL a little bit prettier. You *WILL* need these! // == //
-
 // Get the size of an arbitrary array of numbers measured in bytes
-// Example usage:  byte_size_of_array(my_array)
 fn byte_size_of_array<T>(val: &[T]) -> isize {
     std::mem::size_of_val(&val[..]) as isize
 }
-
 // Get the OpenGL-compatible pointer to an arbitrary array of numbers
-// Example usage:  pointer_to_array(my_array)
 const fn pointer_to_array<T>(val: &[T]) -> *const c_void {
     &val[0] as *const T as *const c_void
 }
-
 // Get the size of the given type in bytes
-// Example usage:  size_of::<u64>()
 const fn size_of<T>() -> i32 {
     mem::size_of::<T>() as i32
 }
-
 // Get an offset in bytes for n units of type T, represented as a relative pointer
-// Example usage:  offset::<u64>(4)
 const fn offset<T>(n: u32) -> *const c_void {
     (n * mem::size_of::<T>() as u32) as *const T as *const c_void
 }
 
-// Get a null pointer (equivalent to an offset of 0)
-// ptr::null()
-
-
 // == // Generate your VAO here
-unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>) -> u32 {
-    // Named constants for clarity 
+unsafe fn create_vao(vertices: &Vec<f32>, normals: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     const NUM_TO_MAKE: i32 = 1;
-    const INDEX_ATTR_0: u32 = 0;
-    const INDEX_ATTR_1: u32 = 1;
-    const SIZE_ATTR_0: i32 = 3;
-    const SIZE_ATTR_1: i32 = 4;
+    const INDEX_ATTRS: [u32; 3] = [0, 1, 2];
+    const SIZE_ATTRS: [i32; 3] = [3, 3, 4];
     const TYPE_ATTR: u32 = gl::FLOAT;
     const NORMALIZED_ATTR: u8 = gl::FALSE;
-    const STRIDE_ATTR_0: i32 = SIZE_ATTR_0 * size_of::<f32>(); 
-    const STRIDE_ATTR_1: i32 = SIZE_ATTR_1 * size_of::<f32>(); 
-    const OFFSET_ATTR_0: *const c_void = offset::<f32>(0);
-    const OFFSET_ATTR_1: *const c_void = offset::<f32>(0);
+    const STRIDE_ATTRS: [i32; 3] = [SIZE_ATTRS[0]*size_of::<f32>(), SIZE_ATTRS[1]*size_of::<f32>(), SIZE_ATTRS[2]*size_of::<f32>()];
+    const OFFSET_ATTRS: [*const c_void; 3] = [offset::<f32>(0), offset::<f32>(0), offset::<f32>(0)];
 
-    let mut vao_id = 0;
-    let mut vbo_id_0 = 0;
-    let mut vbo_id_1 = 0;
-    let mut ibo_id = 0;
+    // Instantiate IDs
+    let (mut vao_id, mut vbo_id_0, mut vbo_id_1, mut vbo_id_2, mut ibo_id) = (0,0,0,0,0);
+
+    // Function: generate and bind a Vertex Buffer Object
+    let gen_and_bind_vbo = |vbo_id: &mut u32, attributes: &Vec<f32>| {
+        gl::GenBuffers(NUM_TO_MAKE, vbo_id);
+        gl::BindBuffer(gl::ARRAY_BUFFER, *vbo_id);
+        gl::BufferData(gl::ARRAY_BUFFER, byte_size_of_array(&attributes), pointer_to_array(&attributes), gl::STATIC_DRAW);
+    };
 
     // Generate and bind the Vertex Array Object
     gl::GenVertexArrays(NUM_TO_MAKE, &mut vao_id);
     gl::BindVertexArray(vao_id);
 
-    // Generate and bind the first Vertex Buffer Object
-    gl::GenBuffers(NUM_TO_MAKE, &mut vbo_id_0);
-    gl::BindBuffer(gl::ARRAY_BUFFER, vbo_id_0);
-    gl::BufferData(
-        gl::ARRAY_BUFFER,
-        byte_size_of_array(&vertices),
-        pointer_to_array(&vertices),
-        gl::STATIC_DRAW,
-    );
-
     // Configure the first Vertex Attribute Poiner, vertices are structured as [x, y, z]
-    gl::VertexAttribPointer(INDEX_ATTR_0, SIZE_ATTR_0, TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTR_0, OFFSET_ATTR_0);  
-    gl::EnableVertexAttribArray(INDEX_ATTR_0);
+    gen_and_bind_vbo(&mut vbo_id_0, vertices);
+    gl::VertexAttribPointer(INDEX_ATTRS[0], SIZE_ATTRS[0], TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTRS[0], OFFSET_ATTRS[0]);  
+    gl::EnableVertexAttribArray(INDEX_ATTRS[0]);
 
-    // Generate and bind the second Vertex Buffer Object
-    gl::GenBuffers(NUM_TO_MAKE, &mut vbo_id_1);
-    gl::BindBuffer(gl::ARRAY_BUFFER, vbo_id_1);
-    gl::BufferData(
-        gl::ARRAY_BUFFER,
-        byte_size_of_array(&colors),
-        pointer_to_array(&colors),
-        gl::STATIC_DRAW,
-    );
+    // Configure the second Vertex Attribute Poiner, normals are structured as [x, y, z]
+    gen_and_bind_vbo(&mut vbo_id_1, normals);
+    gl::VertexAttribPointer(INDEX_ATTRS[1], SIZE_ATTRS[1], TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTRS[1], OFFSET_ATTRS[1]);  
+    gl::EnableVertexAttribArray(INDEX_ATTRS[1]);
 
-    // Configure the second Vertex Attribute Poiner, colors are structured as [r, g, b, a]
-    gl::VertexAttribPointer(INDEX_ATTR_1, SIZE_ATTR_1, TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTR_1, OFFSET_ATTR_1);  
-    gl::EnableVertexAttribArray(INDEX_ATTR_1);
+    // Configure the third Vertex Attribute Poiner, colors are structured as [r, g, b, a]
+    gen_and_bind_vbo(&mut vbo_id_2, colors);
+    gl::VertexAttribPointer(INDEX_ATTRS[2], SIZE_ATTRS[2], TYPE_ATTR, NORMALIZED_ATTR, STRIDE_ATTRS[2], OFFSET_ATTRS[2]);  
+    gl::EnableVertexAttribArray(INDEX_ATTRS[2]);
 
     // Generate and bind the Index Buffer Object
     gl::GenBuffers(NUM_TO_MAKE, &mut ibo_id);
     gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo_id);
-    gl::BufferData(
-        gl::ELEMENT_ARRAY_BUFFER,
-        byte_size_of_array(&indices),
-        pointer_to_array(&indices),
-        gl::STATIC_DRAW,
-    );
+    gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, byte_size_of_array(&indices), pointer_to_array(&indices), gl::STATIC_DRAW);
 
     return vao_id;
 }
@@ -121,6 +92,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>, colors: &Vec<f32>)
 
 fn main() {
     print!("Setting window size to 800x800, fullscreening window crashes with this setup");
+
     // Set up the necessary objects to deal with windows and event handling
     let el = glutin::event_loop::EventLoop::new();
     let wb = glutin::window::WindowBuilder::new()
@@ -129,31 +101,16 @@ fn main() {
         .with_inner_size(glutin::dpi::LogicalSize::new(INITIAL_SCREEN_W, INITIAL_SCREEN_H));
     let cb = glutin::ContextBuilder::new()
         .with_vsync(true);
-    let windowed_context = cb.build_windowed(wb, &el).unwrap();
-    // Uncomment these if you want to use the mouse for controls, but want it to be confined to the screen and/or invisible.
-    // windowed_context.window().set_cursor_grab(CursorGrabMode::Locked).expect("failed to grab cursor");
-    // windowed_context.window().set_cursor_visible(false);
 
-    // Set up a shared vector for keeping track of currently pressed keys
-    let arc_pressed_keys = Arc::new(Mutex::new(Vec::<VirtualKeyCode>::with_capacity(10)));
-    // Make a reference of this vector to send to the render thread
-    let pressed_keys = Arc::clone(&arc_pressed_keys);
+    let windowed_context    = cb.build_windowed(wb, &el).unwrap();
+    let arc_pressed_keys    = Arc::new(Mutex::new(Vec::<VirtualKeyCode>::with_capacity(10)));
+    let pressed_keys        = Arc::clone(&arc_pressed_keys);
+    let arc_mouse_delta     = Arc::new(Mutex::new((0f32, 0f32)));
+    let mouse_delta         = Arc::clone(&arc_mouse_delta);
+    let arc_window_size     = Arc::new(Mutex::new((INITIAL_SCREEN_W, INITIAL_SCREEN_H, false)));
+    let window_size         = Arc::clone(&arc_window_size);
 
-    // Set up shared tuple for tracking mouse movement between frames
-    let arc_mouse_delta = Arc::new(Mutex::new((0f32, 0f32)));
-    // Make a reference of this tuple to send to the render thread
-    let mouse_delta = Arc::clone(&arc_mouse_delta);
-
-    // Set up shared tuple for tracking changes to the window size
-    let arc_window_size = Arc::new(Mutex::new((INITIAL_SCREEN_W, INITIAL_SCREEN_H, false)));
-    // Make a reference of this tuple to send to the render thread
-    let window_size = Arc::clone(&arc_window_size);
-
-    // Spawn a separate thread for rendering, so event handling doesn't block rendering
     let render_thread = thread::spawn(move || {
-        // Acquire the OpenGL Context and load the function pointers.
-        // This has to be done inside of the rendering thread, because
-        // an active OpenGL context cannot safely traverse a thread boundary
         let context = unsafe {
             let c = windowed_context.make_current().unwrap();
             gl::load_with(|symbol| c.get_proc_address(symbol) as *const _);
@@ -180,13 +137,44 @@ fn main() {
         }
 
         // == // Set up your VAO around here
-        let _my_vao = unsafe { 
-            create_vao(
-                &scene_geometry::VERTICES.to_vec(), 
-                &scene_geometry::INDICES.to_vec(),
-                &scene_geometry::COLORS.to_vec() 
-        )};
 
+        const TERRAIN_MODEL_PATH: &str = "./resources/lunarsurface.obj";
+        const HELICOPTER_MODEL_PATH: &str = "./resources/helicopter.obj";
+
+        let scene = scene_geometry::init_scene_geometry(TERRAIN_MODEL_PATH, HELICOPTER_MODEL_PATH); 
+
+        // NOTE: scene_graph.rs is modified because I wanted to try Rust stuff 
+        let scene_graph_root = scene_graph::SceneNodeBuilder::new()
+            .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[0], scene.triangle_counts[0])
+                       .init(glm::zero(), 
+                             glm::zero(), 
+                             glm::vec3(1.0, 1.0, 1.0), 
+                             glm::vec3(0.0, 0.0, 2.0))
+                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
+                                  .init(glm::zero(), 
+                                        glm::zero(), 
+                                        glm::vec3(1.0, 1.0, 1.0), 
+                                        glm::vec3(0.0, 0.0, 0.0)))
+                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
+                                  .init(glm::zero(), 
+                                        glm::zero(), 
+                                        glm::vec3(1.0, 1.0, 1.0), 
+                                        glm::vec3(0.0, 0.0, 0.0)))
+                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
+                                  .init(glm::zero(), 
+                                        glm::zero(), 
+                                        glm::vec3(1.0, 1.0, 1.0), 
+                                        glm::vec3(0.0, 0.0, 0.0)))
+                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
+                                  .init(glm::zero(), 
+                                        glm::zero(), 
+                                        glm::vec3(1.0, 1.0, 1.0), 
+                                        glm::vec3(0.35, 2.3, 10.4)))
+                      )
+            .build();
+
+        scene_graph_root.borrow().print_tree(0);
+        
         // == // Set up your shaders here
         let simple_shader = unsafe {
             shader::ShaderBuilder::new()
@@ -197,20 +185,18 @@ fn main() {
 
         unsafe { simple_shader.activate(); }
 
-        let time_location = unsafe { 
-            simple_shader.get_uniform_location("time")
-        };
-        let homography_location = unsafe {
-            simple_shader.get_uniform_location("homography")
-        };
-        let resolution_location = unsafe {
-            simple_shader.get_uniform_location("resolution")
+        let (time_location, homography_location, resolution_location) = unsafe {
+            (
+                simple_shader.get_uniform_location("time"),
+                simple_shader.get_uniform_location("homography"),
+                simple_shader.get_uniform_location("resolution")
+            )
         };
 
         // Initialize variables for camera control
         let fovy: f32 = 1.22;
         let near: f32 = 0.1;
-        let far: f32 = 1000.0;
+        let far: f32 = 10000.0;
         let mut perspective: glm::Mat4 = glm::perspective_lh_no(window_aspect_ratio, fovy, near, far);
 
         let mut major_axis_translation: glm::Mat4 = glm::Mat4::identity();
@@ -260,7 +246,7 @@ fn main() {
             }
 
             // Handle keyboard input
-            const SPEED: f32 = 1.0;
+            const SPEED: f32 = 100.0;
             if let Ok(keys) = pressed_keys.lock() {
                 
                 let mut dx: f32 = 0.0f32;
@@ -290,14 +276,14 @@ fn main() {
                 major_axis_translation[(2, 3)] += translation_vector.z;
             }
 
-            let translation: glm::Mat4 = glm::Mat4::from([
+            let initial_translation: glm::Mat4 = glm::Mat4::from([
                                                          [1.0, 0.0, 0.0, 0.0],
                                                          [0.0, 1.0, 0.0, 0.0],
-                                                         [0.0, 0.0, 1.0, 2.5],
+                                                         [0.0, 0.0, 1.0, 25.5],
                                                          [0.0, 0.0, 0.0, 1.0]]).transpose();
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-            let homography: glm::Mat4 = perspective * angle_axis_rotation * major_axis_translation * translation;
+            let homography: glm::Mat4 = perspective * angle_axis_rotation * major_axis_translation * initial_translation;
 
             unsafe {
                 // Clear the color and depth buffers
@@ -305,13 +291,15 @@ fn main() {
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
                 // == // Issue the necessary gl:: commands to draw your scene here
-                simple_shader.activate();
 
                 gl::Uniform1f(time_location, elapsed);
-                gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, homography.as_ptr());
                 gl::Uniform2f(resolution_location, width as f32, height as f32);
+                gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, homography.as_ptr());
                 
-                gl::DrawElements(gl::TRIANGLES, scene_geometry::INDICES.len() as i32, gl::UNSIGNED_INT, ptr::null());
+                for i in 0..scene_geometry::NUM_VAOs {
+                    gl::BindVertexArray(scene.vao_ids[i]); 
+                    gl::DrawElements(gl::TRIANGLES, scene.triangle_counts[i], gl::UNSIGNED_INT, ptr::null());
+                }
             }
 
             // Display the new color buffer on the display
@@ -432,13 +420,7 @@ fn main() {
             }
             // ------------------------------------------------------------------------------
             
-            // Event::DeviceEvent { event: DeviceEvent::MouseMotion { delta }, .. } => {
-            //     // Accumulate mouse movement
-            //     if let Ok(mut position) = arc_mouse_delta.lock() {
-            //         *position = (position.0 + delta.0 as f32, position.1 + delta.1 as f32);
-            //         print!("position.0 {}, position.1 {}", position.0, position.1)
-            //     }
-            // }
+            // Default case
             _ => { }
         }
     });

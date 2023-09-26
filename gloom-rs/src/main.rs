@@ -8,8 +8,7 @@
 #![allow(unused_variables)]
 */
 extern crate nalgebra_glm as glm;
-use std::{ mem, ptr, os::raw::c_void };
-use std::thread;
+use std::{thread, mem, ptr, os::raw::c_void};
 use std::sync::{Mutex, Arc, RwLock};
 
 mod shader;
@@ -149,10 +148,10 @@ fn main() {
                        .init(glm::zero(), 
                              glm::zero(), 
                              glm::vec3(1.0, 1.0, 1.0), 
-                             glm::vec3(0.0, 0.0, 2.0))
+                             glm::vec3(0.0, 0.0, 0.0))
                        .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
-                                  .init(glm::zero(), 
-                                        glm::zero(), 
+                                  .init(glm::vec3(0.0, 5.0, 0.0), 
+                                        glm::vec3(1.0, 0.0, 0.0), 
                                         glm::vec3(1.0, 1.0, 1.0), 
                                         glm::vec3(0.0, 0.0, 0.0)))
                        .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
@@ -162,12 +161,12 @@ fn main() {
                                         glm::vec3(0.0, 0.0, 0.0)))
                        .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
                                   .init(glm::zero(), 
-                                        glm::zero(), 
+                                        glm::vec3(0.0, 0.0, 0.0), 
                                         glm::vec3(1.0, 1.0, 1.0), 
-                                        glm::vec3(0.0, 0.0, 0.0)))
+                                        glm::zero()))
                        .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
                                   .init(glm::zero(), 
-                                        glm::zero(), 
+                                        glm::vec3(0.0, 0.0, 0.0), 
                                         glm::vec3(1.0, 1.0, 1.0), 
                                         glm::vec3(0.35, 2.3, 10.4)))
                       )
@@ -185,10 +184,11 @@ fn main() {
 
         unsafe { simple_shader.activate(); }
 
-        let (time_location, homography_location, resolution_location) = unsafe {
+        let (time_location, homography_location, transformation_location, resolution_location) = unsafe {
             (
                 simple_shader.get_uniform_location("time"),
                 simple_shader.get_uniform_location("homography"),
+                simple_shader.get_uniform_location("transformation"),
                 simple_shader.get_uniform_location("resolution")
             )
         };
@@ -246,7 +246,7 @@ fn main() {
             }
 
             // Handle keyboard input
-            const SPEED: f32 = 100.0;
+            const SPEED: f32 = 30.0;
             if let Ok(keys) = pressed_keys.lock() {
                 
                 let mut dx: f32 = 0.0f32;
@@ -292,14 +292,14 @@ fn main() {
 
                 // == // Issue the necessary gl:: commands to draw your scene here
 
-                gl::Uniform1f(time_location, elapsed);
-                gl::Uniform2f(resolution_location, width as f32, height as f32);
-                gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, homography.as_ptr());
+                let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4| {
+                    gl::Uniform1f(time_location, elapsed);
+                    gl::Uniform2f(resolution_location, width as f32, height as f32);
+                    gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, view_proj_mat.as_ptr());
+                    gl::UniformMatrix4fv(transformation_location, 1, gl::FALSE, transformation_so_far.as_ptr());
+                };
                 
-                for i in 0..scene_geometry::NUM_VAOs {
-                    gl::BindVertexArray(scene.vao_ids[i]); 
-                    gl::DrawElements(gl::TRIANGLES, scene.triangle_counts[i], gl::UNSIGNED_INT, ptr::null());
-                }
+                scene_graph::draw_scene(&scene_graph_root, &homography, &glm::identity(), &set_uniforms);
             }
 
             // Display the new color buffer on the display

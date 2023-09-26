@@ -9,10 +9,11 @@ out vec4 rgba;
 
 uniform float time; 
 uniform mat4 homography;
+uniform mat4 transformation;
 
 void main()
 {
-    vec4 xyzw = homography*vec4(xyz_in, 1.0f);
+    vec4 xyzw = homography*transformation*vec4(xyz_in, 1.0f);
     gl_Position = xyzw; 
     nxnynz = nxnynz_in;
     rgba = rgba_in;

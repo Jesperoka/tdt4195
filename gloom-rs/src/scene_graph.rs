@@ -1,6 +1,7 @@
 extern crate nalgebra_glm as glm;
 
-use std::{rc::Rc, cell::RefCell, ptr};
+use std::{rc::Rc, cell::RefCell, cell::RefMut, ptr};
+use crate::toolbox;
 
 pub type Node = Rc<RefCell<SceneNode>>;
 
@@ -12,6 +13,7 @@ pub struct SceneNode {
     pub vao_id: u32,
     pub index_count: i32,
     pub children: Vec<Node>,
+    pub name: String,
 }
 
 pub struct SceneNodeBuilder {
@@ -29,6 +31,7 @@ impl SceneNodeBuilder {
                 vao_id: 0,
                 index_count: -1,
                 children: vec![],
+                name: "".to_string(),
             })),
         }
     }
@@ -43,17 +46,19 @@ impl SceneNodeBuilder {
                 vao_id,
                 index_count,
                 children: vec![],
+                name: "".to_string(),
             })),
         }
     }
 
-    pub fn init(self, position: glm::Vec3, rotation: glm::Vec3, scale: glm::Vec3, reference_point: glm::Vec3) -> Self {
+    pub fn init(self, position: glm::Vec3, rotation: glm::Vec3, scale: glm::Vec3, reference_point: glm::Vec3, name: String) -> Self {
         {
         let mut node = (*self.node).borrow_mut();
         node.position = position;
         node.rotation = rotation;
         node.scale = scale;
         node.reference_point = reference_point;
+        node.name = name;
         }
         return self; 
     }
@@ -108,16 +113,16 @@ impl SceneNode {
 
         // Recursively print children
         for child in &self.children {
-            print!("child id  {}  ", child.borrow().vao_id);
             child.borrow().print_tree(depth + 1);
         }
     }
 }
 
-pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, transformation_so_far: &mut glm::Mat4, set_uniforms: &F) 
+pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, elapsed: f32, set_uniforms: &F) 
     where 
-        F: Fn(&glm::Mat4, &glm::Mat4),
+        F: Fn(&glm::Mat4, &glm::Mat4, f32),
     {
+    time_dependent_animation_step(node.borrow_mut(), elapsed);
     let node_borrow = node.borrow();
         
     // Transformations
@@ -129,6 +134,13 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
         let (rx, ry, rz) = (node_borrow.reference_point[0], node_borrow.reference_point[1], node_borrow.reference_point[2]); 
         let (gamma, beta, alpha) = (node_borrow.rotation[0], node_borrow.rotation[1], node_borrow.rotation[2]);
         
+        let ref_translation: glm::Mat4 = glm::mat4(
+            1.0, 0.0, 0.0, rx,
+            0.0, 1.0, 0.0, ry,
+            0.0, 0.0, 1.0, rz,
+            0.0, 0.0, 0.0, 1.0, 
+            );
+
         let inv_ref_translation: glm::Mat4 = glm::mat4(
             1.0, 0.0, 0.0, -rx,
             0.0, 1.0, 0.0, -ry,
@@ -140,32 +152,56 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
             f32::cos(alpha)*f32::cos(beta), 
             f32::cos(alpha)*f32::sin(beta)*f32::sin(gamma) - f32::sin(alpha)*f32::cos(gamma), 
             f32::cos(alpha)*f32::sin(beta)*f32::cos(gamma) + f32::sin(alpha)*f32::sin(gamma), 
-            tx+rx,
+            tx,
 
             f32::sin(alpha)*f32::cos(beta), 
             f32::sin(alpha)*f32::sin(beta)*f32::sin(gamma) + f32::cos(alpha)*f32::cos(gamma), 
             f32::sin(alpha)*f32::sin(beta)*f32::cos(gamma) - f32::cos(alpha)*f32::sin(gamma), 
-            ty+ry,
+            ty,
 
             -f32::sin(beta), 
             f32::cos(beta)*f32::sin(gamma), 
             f32::cos(beta)*f32::cos(gamma), 
-            tz+rz,
+            tz,
 
             0.0, 0.0, 0.0, 1.0
             );
 
-        transformation_so_far = roto_translation * inv_ref_translation * transformation_so_far;                
+        transformation_so_far = transformation_so_far * ref_translation * roto_translation * inv_ref_translation;                
 
         // Render
-        set_uniforms(view_projection_matrix, &transformation_so_far);
+        set_uniforms(view_projection_matrix, &transformation_so_far, elapsed);
         gl::BindVertexArray(node_borrow.vao_id); 
         gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
     }
 
     // Recursion
     for child in &node_borrow.children {
-        draw_scene(child, view_projection_matrix, &mut transformation_so_far, set_uniforms);
+        draw_scene(child, view_projection_matrix, &transformation_so_far, elapsed, set_uniforms);
     }
 }
 
+// Side effect: mutates passed node to perform time based animation step 
+fn time_dependent_animation_step(mut node_mutable_borrow: RefMut<SceneNode>, elapsed: f32) { 
+    const ROT_SPEED: f32 = 1000.0;
+    match &*node_mutable_borrow.name {
+        "Heli_Body" => {
+            let heading = toolbox::simple_heading_animation(elapsed);
+            node_mutable_borrow.position[0] = heading.x;
+            node_mutable_borrow.position[2] = heading.z;
+            node_mutable_borrow.rotation[0] = heading.pitch;
+            node_mutable_borrow.rotation[1] = heading.yaw;
+            node_mutable_borrow.rotation[2] = heading.roll; 
+        }
+        // "Heli_Door" => {
+
+        // }
+        "Heli_Main_Rotor" => {
+            node_mutable_borrow.rotation[1] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
+        }
+        "Heli_Tail_Rotor" => {
+            node_mutable_borrow.rotation[0] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
+        }
+        _ => {}
+    }
+}

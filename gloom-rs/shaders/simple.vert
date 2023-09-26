@@ -15,6 +15,6 @@ void main()
 {
     vec4 xyzw = homography*transformation*vec4(xyz_in, 1.0f);
     gl_Position = xyzw; 
-    nxnynz = nxnynz_in;
+    nxnynz = normalize(mat3(transformation)*nxnynz_in);
     rgba = rgba_in;
 }

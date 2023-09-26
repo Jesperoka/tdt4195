@@ -16,8 +16,9 @@ mod util;
 mod scene_geometry;
 mod mesh;
 mod scene_graph;
+mod toolbox;
 
-use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
+use glutin::event::{Event, WindowEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
 use glutin::event_loop::ControlFlow;
 
 // initial window size
@@ -143,33 +144,38 @@ fn main() {
         let scene = scene_geometry::init_scene_geometry(TERRAIN_MODEL_PATH, HELICOPTER_MODEL_PATH); 
 
         // NOTE: scene_graph.rs is modified because I wanted to try Rust stuff 
-        let scene_graph_root = scene_graph::SceneNodeBuilder::new()
+        let scene_graph_root = scene_graph::SceneNodeBuilder::new() // graph root
             .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[0], scene.triangle_counts[0])
                        .init(glm::zero(), 
                              glm::zero(), 
                              glm::vec3(1.0, 1.0, 1.0), 
-                             glm::vec3(0.0, 0.0, 0.0))
-                       .add_child(scene_graph::SceneNodeBuilder::new() 
+                             glm::vec3(0.0, 0.0, 0.0),
+                             "Terrain".to_string())
+                       .add_child(scene_graph::SceneNodeBuilder::new() // helicopter root
                                   .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
-                                             .init(glm::vec3(0.0, 0.0, 0.0), 
-                                                   glm::vec3(0.0, 0.0, 0.0), 
+                                             .init(glm::vec3(0.0, 5.0, 0.0), 
+                                                   glm::vec3(0.2, 0.0, 0.3), 
                                                    glm::vec3(1.0, 1.0, 1.0), 
-                                                   glm::vec3(0.0, 0.0, 0.0))
+                                                   glm::vec3(0.0, 0.0, 0.0),
+                                                   "Heli_Body".to_string())
                                              .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
                                                         .init(glm::zero(), 
-                                                              glm::zero(), 
+                                                              glm::vec3(0.0, 0.0, 0.5), 
                                                               glm::vec3(1.0, 1.0, 1.0), 
-                                                              glm::vec3(0.0, 0.0, 0.0)))
+                                                              glm::vec3(0.7, 0.5, 0.0),
+                                                              "Heli_Door".to_string()))
                                              .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
                                                         .init(glm::zero(), 
                                                               glm::vec3(0.0, 0.7, 0.0), 
                                                               glm::vec3(1.0, 1.0, 1.0), 
-                                                              glm::zero()))
+                                                              glm::zero(),
+                                                              "Heli_Main_Rotor".to_string()))
                                              .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
                                                         .init(glm::zero(), 
                                                               glm::vec3(0.7, 0.0, 0.0), 
                                                               glm::vec3(1.0, 1.0, 1.0), 
-                                                              glm::vec3(0.35, 2.3, 10.4)))
+                                                              glm::vec3(0.35, 2.3, 10.4),
+                                                              "Heli_Tail_Rotor".to_string()))
                                             ))).build();
 
         scene_graph_root.borrow().print_tree(0);
@@ -292,14 +298,14 @@ fn main() {
 
                 // == // Issue the necessary gl:: commands to draw your scene here
 
-                let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4| {
+                let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4, elapsed: f32| {
                     gl::Uniform1f(time_location, elapsed);
                     gl::Uniform2f(resolution_location, width as f32, height as f32);
                     gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, view_proj_mat.as_ptr());
                     gl::UniformMatrix4fv(transformation_location, 1, gl::FALSE, transformation_so_far.as_ptr());
                 };
                 
-                scene_graph::draw_scene(&scene_graph_root, &homography, &mut glm::identity(), &set_uniforms);
+                scene_graph::draw_scene(&scene_graph_root, &homography, &glm::identity(), elapsed, &set_uniforms);
             }
 
             // Display the new color buffer on the display

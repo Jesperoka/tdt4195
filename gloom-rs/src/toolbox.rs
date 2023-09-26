@@ -15,10 +15,10 @@ pub fn simple_heading_animation(time: f32) -> Heading {
     let path_size     = 15f64;
     let circuit_speed = 0.8f64;
 
-    let xpos      = path_size * (2.0 * (t+ 0.0) * circuit_speed).sin();
-    let xpos_next = path_size * (2.0 * (t+step) * circuit_speed).sin();
-    let zpos      = 3.0 * path_size * ((t+ 0.0) * circuit_speed).cos();
-    let zpos_next = 3.0 * path_size * ((t+step) * circuit_speed).cos();
+    let xpos      = path_size * (2.0 * (t + 0.0) * circuit_speed).sin();
+    let xpos_next = path_size * (2.0 * (t + step) * circuit_speed).sin();
+    let zpos      = 3.0 * path_size * ((t + 0.0) * circuit_speed).cos();
+    let zpos_next = 3.0 * path_size * ((t + step) * circuit_speed).cos();
 
     let delta_pos = glm::vec2(xpos_next - xpos, zpos_next - zpos);
 

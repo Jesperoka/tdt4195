@@ -114,12 +114,12 @@ impl SceneNode {
     }
 }
 
-pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, set_uniforms: &F) 
+pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, transformation_so_far: &mut glm::Mat4, set_uniforms: &F) 
     where 
         F: Fn(&glm::Mat4, &glm::Mat4),
     {
     let node_borrow = node.borrow();
-
+        
     // Transformations
     let mut transformation_so_far = *transformation_so_far; 
 
@@ -129,37 +129,33 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
         let (rx, ry, rz) = (node_borrow.reference_point[0], node_borrow.reference_point[1], node_borrow.reference_point[2]); 
         let (gamma, beta, alpha) = (node_borrow.rotation[0], node_borrow.rotation[1], node_borrow.rotation[2]);
         
-        let translation: glm::Mat4 = glm::mat4(
-            1.0, 0.0, 0.0, rx,
-            0.0, 1.0, 0.0, ry,
-            0.0, 0.0, 1.0, rz,
+        let inv_ref_translation: glm::Mat4 = glm::mat4(
+            1.0, 0.0, 0.0, -rx,
+            0.0, 1.0, 0.0, -ry,
+            0.0, 0.0, 1.0, -rz,
             0.0, 0.0, 0.0, 1.0, 
             );
 
-        let rotation: glm::Mat4 = glm::mat4(
+        let roto_translation: glm::Mat4 = glm::mat4(
             f32::cos(alpha)*f32::cos(beta), 
             f32::cos(alpha)*f32::sin(beta)*f32::sin(gamma) - f32::sin(alpha)*f32::cos(gamma), 
             f32::cos(alpha)*f32::sin(beta)*f32::cos(gamma) + f32::sin(alpha)*f32::sin(gamma), 
-            tx,
-
+            tx+rx,
 
             f32::sin(alpha)*f32::cos(beta), 
             f32::sin(alpha)*f32::sin(beta)*f32::sin(gamma) + f32::cos(alpha)*f32::cos(gamma), 
             f32::sin(alpha)*f32::sin(beta)*f32::cos(gamma) - f32::cos(alpha)*f32::sin(gamma), 
-            ty,
+            ty+ry,
 
             -f32::sin(beta), 
             f32::cos(beta)*f32::sin(gamma), 
             f32::cos(beta)*f32::cos(gamma), 
-            tz,
+            tz+rz,
 
             0.0, 0.0, 0.0, 1.0
             );
 
-        // print!("{}", translation);
-        // print!("{}", rotation);
-
-        transformation_so_far = rotation * transformation_so_far;                
+        transformation_so_far = roto_translation * inv_ref_translation * transformation_so_far;                
 
         // Render
         set_uniforms(view_projection_matrix, &transformation_so_far);
@@ -169,7 +165,7 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
 
     // Recursion
     for child in &node_borrow.children {
-        draw_scene(child, view_projection_matrix, &transformation_so_far, set_uniforms);
+        draw_scene(child, view_projection_matrix, &mut transformation_so_far, set_uniforms);
     }
 }
 

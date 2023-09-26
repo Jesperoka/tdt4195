@@ -149,28 +149,28 @@ fn main() {
                              glm::zero(), 
                              glm::vec3(1.0, 1.0, 1.0), 
                              glm::vec3(0.0, 0.0, 0.0))
-                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
-                                  .init(glm::vec3(0.0, 5.0, 0.0), 
-                                        glm::vec3(1.0, 0.0, 0.0), 
-                                        glm::vec3(1.0, 1.0, 1.0), 
-                                        glm::vec3(0.0, 0.0, 0.0)))
-                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
-                                  .init(glm::zero(), 
-                                        glm::zero(), 
-                                        glm::vec3(1.0, 1.0, 1.0), 
-                                        glm::vec3(0.0, 0.0, 0.0)))
-                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
-                                  .init(glm::zero(), 
-                                        glm::vec3(0.0, 0.0, 0.0), 
-                                        glm::vec3(1.0, 1.0, 1.0), 
-                                        glm::zero()))
-                       .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
-                                  .init(glm::zero(), 
-                                        glm::vec3(0.0, 0.0, 0.0), 
-                                        glm::vec3(1.0, 1.0, 1.0), 
-                                        glm::vec3(0.35, 2.3, 10.4)))
-                      )
-            .build();
+                       .add_child(scene_graph::SceneNodeBuilder::new() 
+                                  .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
+                                             .init(glm::vec3(0.0, 0.0, 0.0), 
+                                                   glm::vec3(0.0, 0.0, 0.0), 
+                                                   glm::vec3(1.0, 1.0, 1.0), 
+                                                   glm::vec3(0.0, 0.0, 0.0))
+                                             .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
+                                                        .init(glm::zero(), 
+                                                              glm::zero(), 
+                                                              glm::vec3(1.0, 1.0, 1.0), 
+                                                              glm::vec3(0.0, 0.0, 0.0)))
+                                             .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
+                                                        .init(glm::zero(), 
+                                                              glm::vec3(0.0, 0.7, 0.0), 
+                                                              glm::vec3(1.0, 1.0, 1.0), 
+                                                              glm::zero()))
+                                             .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
+                                                        .init(glm::zero(), 
+                                                              glm::vec3(0.7, 0.0, 0.0), 
+                                                              glm::vec3(1.0, 1.0, 1.0), 
+                                                              glm::vec3(0.35, 2.3, 10.4)))
+                                            ))).build();
 
         scene_graph_root.borrow().print_tree(0);
         
@@ -299,7 +299,7 @@ fn main() {
                     gl::UniformMatrix4fv(transformation_location, 1, gl::FALSE, transformation_so_far.as_ptr());
                 };
                 
-                scene_graph::draw_scene(&scene_graph_root, &homography, &glm::identity(), &set_uniforms);
+                scene_graph::draw_scene(&scene_graph_root, &homography, &mut glm::identity(), &set_uniforms);
             }
 
             // Display the new color buffer on the display

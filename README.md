@@ -10,16 +10,21 @@ PDF version does not support GIFs, so the other options are recommended.*
 
         Extend the vertex shader to take the new normals as an input,
         and pass them straight on to the fragment shader through an output variable.
+
         Extend the fragment shader to take in the normals that the vertex shader outputs.
+
         After you’ve done this, visualize the normals for a model by using the x, y and z
         coordinates of the normals as the r, g and b values for our fragments.
+        
         This will make some of the colors negative (i.e. black), but that’s fine for this example.
         When you do this, your scene should end up looking very colorful. Lots of green, with
-        hints of red, and blue. Usually no grays, though. (You should see for the most part the
+        hints of red, and blue. Usually no grays, though. You should see for the most part the
         color green. If you see a rainbow pattern then you’ve most likely got an erroneous
-        vertex attrib pointer or a wrong vector size in the shaders.)
+        vertex attrib pointer or a wrong vector size in the shaders.
+
         Position your camera to point into one of the craters in the scene, and attach a
         screenshot of this immense natural beauty in your report.
+
 **Answer:**
 
 <h3 align="center">Task 1c Rendering</h3>
@@ -35,16 +40,22 @@ PDF version does not support GIFs, so the other options are recommended.*
 
         Finally, we want you to implement some very simple lighting.
         In the fragment shader, create a variable holding the direction that the light is coming
-        from. We’re creating a light source that’s infinitely far away here, which on the moon
+        from. 
+
+        We’re creating a light source that’s infinitely far away here, which on the moon
         effectively will be the sun.
+
         vec3 lightDirection = normalize(vec3(0.8, -0.5, 0.6));
+
         Computing light accurately is immensely complicated and computationally intensive.
         So instead we’re going to use what’s known as a “lighting model”; an often crude
         approximation that looks plausible to the human eye.
+
         The lighting model we are going to be using assumes that every object reflects light
         equally much in all directions (obviously not the case, but it’s easy to compute). This is
         called the Lambertian model. You can read more about it at https://en.wikipedia.
         org/wiki/Lambert%27s_cosine_law, but it’s not required for this assignment.
+
         The equation we want you to use to compute the final color4
         in the fragment shader
         looks like this, when written with mathematical notation:

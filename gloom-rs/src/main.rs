@@ -144,40 +144,43 @@ fn main() {
         let scene = scene_geometry::init_scene_geometry(TERRAIN_MODEL_PATH, HELICOPTER_MODEL_PATH); 
 
         // NOTE: scene_graph.rs is modified because I wanted to try Rust stuff 
-        let scene_graph_root = scene_graph::SceneNodeBuilder::new() // graph root
-            .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[0], scene.triangle_counts[0])
-                       .init(glm::zero(), 
-                             glm::zero(), 
-                             glm::vec3(1.0, 1.0, 1.0), 
-                             glm::vec3(0.0, 0.0, 0.0),
-                             "Terrain".to_string())
-                       .add_child(scene_graph::SceneNodeBuilder::new() // helicopter root
-                                  .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
-                                             .init(glm::vec3(0.0, 5.0, 0.0), 
-                                                   glm::vec3(0.2, 0.0, 0.3), 
-                                                   glm::vec3(1.0, 1.0, 1.0), 
-                                                   glm::vec3(0.0, 0.0, 0.0),
-                                                   "Heli_Body".to_string())
-                                             .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
-                                                        .init(glm::zero(), 
-                                                              glm::vec3(0.0, 0.0, 0.5), 
-                                                              glm::vec3(1.0, 1.0, 1.0), 
-                                                              glm::vec3(0.7, 0.5, 0.0),
-                                                              "Heli_Door".to_string()))
-                                             .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
-                                                        .init(glm::zero(), 
-                                                              glm::vec3(0.0, 0.7, 0.0), 
-                                                              glm::vec3(1.0, 1.0, 1.0), 
-                                                              glm::zero(),
-                                                              "Heli_Main_Rotor".to_string()))
-                                             .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
-                                                        .init(glm::zero(), 
-                                                              glm::vec3(0.7, 0.0, 0.0), 
-                                                              glm::vec3(1.0, 1.0, 1.0), 
-                                                              glm::vec3(0.35, 2.3, 10.4),
-                                                              "Heli_Tail_Rotor".to_string()))
-                                            ))).build();
+        let mut scene_graph_builder = scene_graph::SceneNodeBuilder::new(); // graph root
+        for i in 0..5 {
+            scene_graph_builder = scene_graph_builder.add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[0], scene.triangle_counts[0])
+                                                                .init(glm::zero(), 
+                                                                      glm::zero(), 
+                                                                      glm::vec3(1.0, 1.0, 1.0), 
+                                                                      glm::vec3(0.0, 0.0, 0.0),
+                                                                      "Terrain".to_string())
+                                                                .add_child(scene_graph::SceneNodeBuilder::new().init_name("Heli_".to_string()+&i.to_string())
+                                                                           .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
+                                                                                      .init(glm::vec3(0.0, 5.0, 0.0), 
+                                                                                            glm::vec3(0.2, 0.0, 0.3), 
+                                                                                            glm::vec3(1.0, 1.0, 1.0), 
+                                                                                            glm::vec3(0.0, 0.0, 0.0),
+                                                                                            "Heli_Body".to_string())
+                                                                                      .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
+                                                                                                 .init(glm::zero(), 
+                                                                                                       glm::vec3(0.0, 0.0, 0.5), 
+                                                                                                       glm::vec3(1.0, 1.0, 1.0), 
+                                                                                                       glm::vec3(0.7, 0.5, 0.0),
+                                                                                                       "Heli_Door".to_string()))
+                                                                                      .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
+                                                                                                 .init(glm::zero(), 
+                                                                                                       glm::vec3(0.0, 0.7, 0.0), 
+                                                                                                       glm::vec3(1.0, 1.0, 1.0), 
+                                                                                                       glm::zero(),
+                                                                                                       "Heli_Main_Rotor".to_string()))
+                                                                                      .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
+                                                                                                 .init(glm::zero(), 
+                                                                                                       glm::vec3(0.7, 0.0, 0.0), 
+                                                                                                       glm::vec3(1.0, 1.0, 1.0), 
+                                                                                                       glm::vec3(0.35, 2.3, 10.4),
+                                                                                                       "Heli_Tail_Rotor".to_string()))
+                                                                                      )));
+        }
 
+        let scene_graph_root = scene_graph_builder.build(); 
         scene_graph_root.borrow().print_tree(0);
         
         // == // Set up your shaders here

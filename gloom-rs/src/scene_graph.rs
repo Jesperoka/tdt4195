@@ -63,6 +63,15 @@ impl SceneNodeBuilder {
         return self; 
     }
 
+    // Overload to just give name to unintialized nodes
+    pub fn init_name(self, name: String) -> Self {
+        {
+        let mut node = (*self.node).borrow_mut(); 
+        node.name = name; 
+        } 
+        return self;
+    }
+
     pub fn add_child(self, child: SceneNodeBuilder) -> Self {
         (*self.node).borrow_mut().children.push(child.node);
         return self;
@@ -79,6 +88,7 @@ impl SceneNode {
     pub fn print(&self) {
         println!(
             "SceneNode {{
+                Name:      {}
                 VAO:       {}
                 Indices:   {}
                 Children:  {}
@@ -87,6 +97,7 @@ impl SceneNode {
                 Scale:     [{:.2}, {:.2}, {:.2}]
                 Reference: [{:.2}, {:.2}, {:.2}]
             }}",
+            self.name,
             self.vao_id,
             self.index_count,
             self.children.len(),
@@ -122,6 +133,7 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
     where 
         F: Fn(&glm::Mat4, &glm::Mat4, f32),
     {
+    let offset: f32 = 0.77*extract_heli_number(&*node.borrow_mut().name);
     time_dependent_animation_step(node.borrow_mut(), elapsed);
     let node_borrow = node.borrow();
         
@@ -177,7 +189,7 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
 
     // Recursion
     for child in &node_borrow.children {
-        draw_scene(child, view_projection_matrix, &transformation_so_far, elapsed, set_uniforms);
+        draw_scene(child, view_projection_matrix, &transformation_so_far, elapsed+offset, set_uniforms);
     }
 }
 
@@ -204,4 +216,19 @@ fn time_dependent_animation_step(mut node_mutable_borrow: RefMut<SceneNode>, ela
         }
         _ => {}
     }
+}
+
+// Defaults to 0
+fn extract_heli_number(s: &str) -> f32 {
+    const PREFIX: &str = "Heli_";
+    
+    if s.starts_with(PREFIX) {
+        let num_str = &s[PREFIX.len()..];
+        
+        if let Ok(num) = num_str.parse::<i32>() {
+            return num as f32;
+        }
+    }
+
+    return 0.0;
 }

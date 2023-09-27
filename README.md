@@ -183,7 +183,7 @@ PDF version does not support GIFs, so the other options are recommended.*
 
 <h3 align="center">Task 6a Rendering 1</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t6c.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t6.png?raw=true" width=350>
 </p>
 <p align="center">More correct helicopter lighting.</p>
 
@@ -192,7 +192,7 @@ PDF version does not support GIFs, so the other options are recommended.*
 
 <h3 align="center">Task 6a Rendering 2</h3>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t6c.gif?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t6.gif?raw=true" width=350>
 </p>
 <p align="center">Five helicopters following a figure-eight path without colliding.</p>
 

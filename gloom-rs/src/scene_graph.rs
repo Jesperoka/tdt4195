@@ -1,7 +1,8 @@
 extern crate nalgebra_glm as glm;
 
-use std::{rc::Rc, cell::RefCell, cell::RefMut, ptr};
+use std::{rc::Rc, cell::RefCell, cell::RefMut, ptr, collections::HashMap};
 use crate::toolbox;
+use crate::shader::Shader;
 
 pub type Node = Rc<RefCell<SceneNode>>;
 
@@ -129,10 +130,17 @@ impl SceneNode {
     }
 }
 
-pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, elapsed: f32, set_uniforms: &F) 
-    where 
-        F: Fn(&glm::Mat4, &glm::Mat4, f32),
-    {
+// Recursively computes and stores transforms for each drawable node
+pub unsafe fn compute_transforms(node: &Node,
+                            transformation_so_far: &glm::Mat4, 
+                            node_transforms: &mut HashMap<String, glm::Mat4>,
+                            elapsed: f32, 
+                            // set_uniforms: &F, 
+                            // shadow_map_shader: &Shader, 
+                            // simple_shader: &Shader,
+                            // fancy_shader: &Shader
+                            ) {
+
     let offset: f32 = 0.77*extract_heli_number(&*node.borrow_mut().name);
     time_dependent_animation_step(node.borrow_mut(), elapsed);
     let node_borrow = node.borrow();
@@ -181,17 +189,96 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
 
         transformation_so_far = transformation_so_far * ref_translation * roto_translation * inv_ref_translation;                
 
-        // Render
-        set_uniforms(view_projection_matrix, &transformation_so_far, elapsed);
-        gl::BindVertexArray(node_borrow.vao_id); 
-        gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
+        // // Shadow map
+        // shadow_map_shader.activate();
+        // /* set any uniforms if any are at all needed */
+
+        // // Render
+        // if !node_borrow.name.starts_with("Heli_") { 
+        //     simple_shader.activate(); 
+        //     set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, simple_shader.program_id);
+        // } else { 
+        //     fancy_shader.activate(); 
+        //     set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, fancy_shader.program_id);
+        // }
+        // gl::BindVertexArray(node_borrow.vao_id); 
+        // gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
+
+        // Cache result
+        node_transforms.insert(node_borrow.name.clone(), transformation_so_far.clone());
     }
 
     // Recursion
     for child in &node_borrow.children {
-        draw_scene(child, view_projection_matrix, &transformation_so_far, elapsed+offset, set_uniforms);
+        compute_transforms(child, 
+                   &transformation_so_far, 
+                   node_transforms, 
+                   elapsed+offset, 
+                   );
     }
 }
+
+pub enum RenderMode {
+    ShadowPass,
+    Normal,
+}
+
+pub unsafe fn draw_scene<F>(
+    node: &Node,
+    view_projection_matrix: &glm::Mat4,
+    elapsed: f32,
+    set_uniforms: &F,
+    shadow_map_shader: &Shader,
+    simple_shader: &Shader,
+    fancy_shader: &Shader,
+    node_transforms: &HashMap<String, glm::Mat4>,
+    render_mode: RenderMode
+) where 
+    F: Fn(&glm::Mat4, &glm::Mat4, f32, u32),
+{
+    let node_borrow = node.borrow();
+    let transformation_so_far = node_transforms.get(&*node_borrow.name).expect("Transformation not found!");
+
+    match render_mode {
+        RenderMode::ShadowPass => {
+            // Shadow pass
+            shadow_map_shader.activate();
+            // Set any uniforms if any are at all needed
+
+            // Bind and draw
+            gl::BindVertexArray(node_borrow.vao_id); 
+            gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
+        },
+        RenderMode::Normal => {
+            // Render
+            if !node_borrow.name.starts_with("Heli_") { 
+                simple_shader.activate(); 
+                set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, simple_shader.program_id);
+            } else { 
+                fancy_shader.activate(); 
+                set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, fancy_shader.program_id);
+            }
+
+            // Bind and draw
+            gl::BindVertexArray(node_borrow.vao_id); 
+            gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
+        }
+    }
+
+    // Recursion
+    for child in &node_borrow.children {
+        draw_scene(child, 
+                   view_projection_matrix, 
+                   elapsed + offset, 
+                   set_uniforms, 
+                   shadow_map_shader, 
+                   simple_shader, 
+                   fancy_shader,
+                   node_transforms,
+                   render_mode);
+    }
+}
+
 
 // Side effect: mutates passed node to perform time based animation step 
 fn time_dependent_animation_step(mut node_mutable_borrow: RefMut<SceneNode>, elapsed: f32) { 

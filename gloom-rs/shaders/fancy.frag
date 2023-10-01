@@ -1,6 +1,7 @@
 #version 420 core
 
 in vec4 rgba;
+in vec3 nxnynz;
 
 out vec4 color;
 
@@ -19,10 +20,13 @@ vec3 palette( float t ) {
 
 void main()
 {
+    vec3 light_direction = normalize(vec3(0.8, -0.5, 0.6));
+    vec4 simple_color = vec4(rgba.rgb * max(0, dot(nxnynz, -light_direction)), rgba.a);
+
     vec2 pos = (gl_FragCoord.xy - resolution * 0.5) / resolution; // Adjust fragment position and normalize by resolution
     vec2 uv = pos;
     vec2 uv0 = uv;
-    vec3 finalColor = vec3(0.0);
+    vec3 fancy_color = vec3(0.0);
     
     for (float j = 0.0; j < 3.0; j++) {
         uv = uv0 + vec2(j) * 0.1;  // Add an offset based on the outer loop iteration
@@ -39,9 +43,9 @@ void main()
 
             d = pow(0.01 / d, 1.2);
 
-            finalColor += col * d;
+            fancy_color += col * d;
         }
     }
-        
-    color = mix(rgba, vec4(finalColor, 1.0), 0.5);
+    fancy_color = mix(simple_color.rgb, fancy_color, 0.5);  
+    color = vec4(fancy_color.rgb * max(0, dot(nxnynz, -light_direction)), rgba.a);
 }

@@ -4,6 +4,7 @@ use std::{
     str,
     ffi::CString,
     path::Path,
+    error::Error,
 };
 
 pub struct Shader {
@@ -151,4 +152,56 @@ impl ShaderBuilder {
             program_id: self.program_id
         }
     }
+}
+
+// Putting shadow mapping here because where else
+pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
+    // A separate framebuffer is needed for the shadow map 
+    let mut framebuffer_name: u32 = 0;
+    unsafe {
+        gl::GenFramebuffers(1, &mut framebuffer_name);
+        gl::BindFramebuffer(gl::FRAMEBUFFER, framebuffer_name);
+    }
+
+    // Depthmap is stored as a texture that can be sampled 
+    let mut depth_texture: u32 = 0;
+    unsafe {
+        gl::GenTextures(1, &mut depth_texture);
+        gl::BindTexture(gl::TEXTURE_2D, depth_texture);
+        gl::TexImage2D(
+            gl::TEXTURE_2D, 
+            0, 
+            gl::DEPTH_COMPONENT16 as i32, 
+            1024, 
+            1024, 
+            0, 
+            gl::DEPTH_COMPONENT, 
+            gl::FLOAT, 
+            std::ptr::null()
+            );
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE as i32);
+
+        gl::FramebufferTexture(gl::FRAMEBUFFER, gl::DEPTH_ATTACHMENT, depth_texture, 0);
+
+        gl::DrawBuffer(gl::NONE);
+    }
+
+    // Check that the framebuffer is ok
+    if unsafe { gl::CheckFramebufferStatus(gl::FRAMEBUFFER) } != gl::FRAMEBUFFER_COMPLETE {
+        return Err(Box::<dyn Error>::from("Framebuffer is not complete!".to_string()));
+    }
+
+    return Ok((framebuffer_name, depth_texture));
+}
+
+pub fn compute_depth_mvp_matrix() -> glm::Mat4 {
+    let light_inv_dir = glm::normalize(&glm::vec3(0.8, -0.5, 0.6));
+    let depth_projection_matrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, -10.0, 20.0);
+    let depth_view_matrix = glm::look_at(&light_inv_dir, &glm::vec3(0.0, 0.0, 0.0), &glm::vec3(0.0, 1.0, 0.0));
+    let depth_mvp = depth_projection_matrix * depth_view_matrix;
+
+    return depth_mvp; 
 }

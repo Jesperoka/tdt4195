@@ -8,6 +8,7 @@
 #![allow(unused_variables)]
 */
 extern crate nalgebra_glm as glm;
+use std::collections::HashMap;
 use std::{thread, mem, ptr, os::raw::c_void};
 use std::sync::{Mutex, Arc, RwLock};
 
@@ -184,6 +185,13 @@ fn main() {
         scene_graph_root.borrow().print_tree(0);
         
         // == // Set up your shaders here
+        let shadow_map_shader = unsafe {
+            shader::ShaderBuilder::new()
+                .attach_file("./shaders/shadow_map.frag")
+                .attach_file("./shaders/shadow_map.vert")
+                .link()
+        };
+
         let simple_shader = unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.frag")
@@ -191,16 +199,43 @@ fn main() {
                 .link()
         };
 
-        unsafe { simple_shader.activate(); }
 
-        let (time_location, homography_location, transformation_location, resolution_location) = unsafe {
+        let fancy_shader = unsafe {
+            shader::ShaderBuilder::new()
+                .attach_file("./shaders/fancy.frag")
+                .attach_file("./shaders/simple.vert")
+                .link()
+        };
+        
+        unsafe { shadow_map_shader.activate(); }
+        let depth_mvp_location = unsafe { shadow_map_shader.get_uniform_location("depth_mvp") };
+
+        unsafe { simple_shader.activate(); }
+        let simple_shader_uniform_locations = unsafe {
             (
                 simple_shader.get_uniform_location("time"),
+                simple_shader.get_uniform_location("resolution"),
                 simple_shader.get_uniform_location("homography"),
                 simple_shader.get_uniform_location("transformation"),
-                simple_shader.get_uniform_location("resolution")
             )
         };
+
+        unsafe { fancy_shader.activate(); }
+        let fancy_shader_uniform_locations = unsafe {
+            (
+                fancy_shader.get_uniform_location("time"),
+                fancy_shader.get_uniform_location("resolution"),
+                fancy_shader.get_uniform_location("homography"),
+                fancy_shader.get_uniform_location("transformation"),
+            )
+        };
+
+        // Storage for model transformations
+        let mut node_transforms: &HashMap<String, glm::Mat4> = &mut HashMap::new();
+
+        // Initialize shadow map variables
+        let (frame_buffer_name, depth_texture) = shader::create_depth_framebuffer().unwrap();
+        let depth_mvp_ptr = shader::compute_depth_mvp_matrix().as_ptr();
 
         // Initialize variables for camera control
         let fovy: f32 = 1.22;
@@ -294,6 +329,7 @@ fn main() {
             // == // Please compute camera transforms here (exercise 2 & 3)
             let homography: glm::Mat4 = perspective * angle_axis_rotation * major_axis_translation * initial_translation;
 
+            // Rendering
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
@@ -301,14 +337,26 @@ fn main() {
 
                 // == // Issue the necessary gl:: commands to draw your scene here
 
-                let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4, elapsed: f32| {
-                    gl::Uniform1f(time_location, elapsed);
-                    gl::Uniform2f(resolution_location, width as f32, height as f32);
-                    gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, view_proj_mat.as_ptr());
-                    gl::UniformMatrix4fv(transformation_location, 1, gl::FALSE, transformation_so_far.as_ptr());
+                let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4, elapsed: f32, program_id: u32| {
+                    if program_id == shadow_map_shader.program_id { 
+                        gl::UniformMatrix4fv(depth_mvp_location, 1, gl::FALSE, depth_mvp_ptr);
+                    }
+                    else if program_id == simple_shader.program_id {
+                        gl::Uniform1f(simple_shader_uniform_locations.0, elapsed);
+                        gl::Uniform2f(simple_shader_uniform_locations.1, width as f32, height as f32);
+                        gl::UniformMatrix4fv(simple_shader_uniform_locations.2, 1, gl::FALSE, view_proj_mat.as_ptr());
+                        gl::UniformMatrix4fv(simple_shader_uniform_locations.3, 1, gl::FALSE, transformation_so_far.as_ptr());
+                    }
+                    else if program_id == fancy_shader.program_id {
+                        gl::Uniform1f(fancy_shader_uniform_locations.0, elapsed);
+                        gl::Uniform2f(fancy_shader_uniform_locations.1, width as f32, height as f32);
+                        gl::UniformMatrix4fv(fancy_shader_uniform_locations.2, 1, gl::FALSE, view_proj_mat.as_ptr());
+                        gl::UniformMatrix4fv(fancy_shader_uniform_locations.3, 1, gl::FALSE, transformation_so_far.as_ptr());
+                    }
+                    else { println!("Unexpected shader program_id!"); }
                 };
-                
-                scene_graph::draw_scene(&scene_graph_root, &homography, &glm::identity(), elapsed, &set_uniforms);
+
+                scene_graph::compute_transforms(&scene_graph_root, &glm::identity(), &mut node_transforms, elapsed);
             }
 
             // Display the new color buffer on the display

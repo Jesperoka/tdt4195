@@ -132,20 +132,14 @@ impl SceneNode {
 
 // Recursively computes and stores transforms for each drawable node
 pub unsafe fn compute_transforms(node: &Node,
-                            transformation_so_far: &glm::Mat4, 
-                            node_transforms: &mut HashMap<String, glm::Mat4>,
-                            elapsed: f32, 
-                            // set_uniforms: &F, 
-                            // shadow_map_shader: &Shader, 
-                            // simple_shader: &Shader,
-                            // fancy_shader: &Shader
-                            ) {
+                                 node_transforms: &mut HashMap<String, glm::Mat4>,
+                                 transformation_so_far: &glm::Mat4, 
+                                 elapsed: f32, 
+                                ) {
 
     let offset: f32 = 0.77*extract_heli_number(&*node.borrow_mut().name);
     time_dependent_animation_step(node.borrow_mut(), elapsed);
     let node_borrow = node.borrow();
-        
-    // Transformations
     let mut transformation_so_far = *transformation_so_far; 
 
     if node_borrow.index_count > 0 {
@@ -189,93 +183,81 @@ pub unsafe fn compute_transforms(node: &Node,
 
         transformation_so_far = transformation_so_far * ref_translation * roto_translation * inv_ref_translation;                
 
-        // // Shadow map
-        // shadow_map_shader.activate();
-        // /* set any uniforms if any are at all needed */
-
-        // // Render
-        // if !node_borrow.name.starts_with("Heli_") { 
-        //     simple_shader.activate(); 
-        //     set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, simple_shader.program_id);
-        // } else { 
-        //     fancy_shader.activate(); 
-        //     set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, fancy_shader.program_id);
-        // }
-        // gl::BindVertexArray(node_borrow.vao_id); 
-        // gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
-
-        // Cache result
+        // Cache result for use in draw_scene()
         node_transforms.insert(node_borrow.name.clone(), transformation_so_far.clone());
     }
 
-    // Recursion
+    // Recurse
     for child in &node_borrow.children {
         compute_transforms(child, 
-                   &transformation_so_far, 
-                   node_transforms, 
-                   elapsed+offset, 
-                   );
+                           node_transforms, 
+                           &transformation_so_far, 
+                           elapsed+offset);
     }
 }
 
 pub enum RenderMode {
     ShadowPass,
-    Normal,
+    MainPass,
 }
 
+// Recursively traverses scene_graph and renders scene according to which render pass we are in
 pub unsafe fn draw_scene<F>(
     node: &Node,
-    view_projection_matrix: &glm::Mat4,
-    elapsed: f32,
+    node_transforms: &HashMap<String, glm::Mat4>,
+    render_mode: &RenderMode,
+    projection_matrix: &glm::Mat4,
     set_uniforms: &F,
     shadow_map_shader: &Shader,
     simple_shader: &Shader,
-    fancy_shader: &Shader,
-    node_transforms: &HashMap<String, glm::Mat4>,
-    render_mode: RenderMode
-) where 
-    F: Fn(&glm::Mat4, &glm::Mat4, f32, u32),
-{
+    fancy_shader: &Shader) 
+
+    where F: Fn(&glm::Mat4, &glm::Mat4, &Shader) {
+
     let node_borrow = node.borrow();
-    let transformation_so_far = node_transforms.get(&*node_borrow.name).expect("Transformation not found!");
 
-    match render_mode {
-        RenderMode::ShadowPass => {
-            // Shadow pass
-            shadow_map_shader.activate();
-            // Set any uniforms if any are at all needed
+    // Clear scene at the start of each pass
+    // if &*node_borrow.name == "root" {
+    //     gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
+    //     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    // }
 
-            // Bind and draw
-            gl::BindVertexArray(node_borrow.vao_id); 
-            gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
-        },
-        RenderMode::Normal => {
-            // Render
-            if !node_borrow.name.starts_with("Heli_") { 
-                simple_shader.activate(); 
-                set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, simple_shader.program_id);
-            } else { 
-                fancy_shader.activate(); 
-                set_uniforms(view_projection_matrix, &transformation_so_far, elapsed, fancy_shader.program_id);
+    // Only process drawable nodes
+    if let Some(transformation_so_far) = node_transforms.get(&*node_borrow.name) {
+
+        // Which render pass are we in?
+        match render_mode {
+
+            RenderMode::ShadowPass => {
+                set_uniforms(&glm::identity(), &transformation_so_far, shadow_map_shader);
+            },
+
+            RenderMode::MainPass => {
+                // if !node_borrow.name.starts_with("Heli_") { 
+                //     set_uniforms(projection_matrix, &transformation_so_far, simple_shader);
+                // } else { 
+                //     set_uniforms(projection_matrix, &transformation_so_far, fancy_shader);
+                // }
+                set_uniforms(projection_matrix, &transformation_so_far, simple_shader);
             }
-
-            // Bind and draw
-            gl::BindVertexArray(node_borrow.vao_id); 
-            gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
         }
+
+        // Render
+        gl::BindVertexArray(node_borrow.vao_id); 
+        gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
     }
 
-    // Recursion
+    // Recurse
     for child in &node_borrow.children {
         draw_scene(child, 
-                   view_projection_matrix, 
-                   elapsed + offset, 
+                   node_transforms,
+                   render_mode,
+                   projection_matrix, 
                    set_uniforms, 
                    shadow_map_shader, 
                    simple_shader, 
                    fancy_shader,
-                   node_transforms,
-                   render_mode);
+                   );
     }
 }
 
@@ -283,27 +265,29 @@ pub unsafe fn draw_scene<F>(
 // Side effect: mutates passed node to perform time based animation step 
 fn time_dependent_animation_step(mut node_mutable_borrow: RefMut<SceneNode>, elapsed: f32) { 
     const ROT_SPEED: f32 = 1000.0;
-    match &*node_mutable_borrow.name {
-        "Heli_Body" => {
-            let heading = toolbox::simple_heading_animation(elapsed);
-            node_mutable_borrow.position[0] = heading.x;
-            node_mutable_borrow.position[2] = heading.z;
-            node_mutable_borrow.rotation[0] = heading.pitch;
-            node_mutable_borrow.rotation[1] = heading.yaw;
-            node_mutable_borrow.rotation[2] = heading.roll; 
-        }
-        // "Heli_Door" => {
 
-        // }
-        "Heli_Main_Rotor" => {
-            node_mutable_borrow.rotation[1] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
-        }
-        "Heli_Tail_Rotor" => {
-            node_mutable_borrow.rotation[0] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
-        }
-        _ => {}
+    let name = &*node_mutable_borrow.name;
+
+    if name.starts_with("Heli_Body") {
+
+        let heading = toolbox::simple_heading_animation(elapsed);
+        node_mutable_borrow.position[0] = heading.x;
+        node_mutable_borrow.position[2] = heading.z;
+        node_mutable_borrow.rotation[0] = heading.pitch;
+        node_mutable_borrow.rotation[1] = heading.yaw;
+        node_mutable_borrow.rotation[2] = heading.roll; 
+
+    } else if name.starts_with("Heli_Main_Rotor") {
+
+        node_mutable_borrow.rotation[1] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
+
+    } else if name.starts_with("Heli_Tail_Rotor") {
+
+        node_mutable_borrow.rotation[0] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
+
     }
 }
+
 
 // Defaults to 0
 fn extract_heli_number(s: &str) -> f32 {

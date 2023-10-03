@@ -8,6 +8,7 @@ out vec4 color;
 uniform float time;
 uniform mat4 homography;
 uniform vec2 resolution;
+uniform sampler2D shadow_map;
 
 vec3 palette( float t ) {
     vec3 a = vec3(0.5, 0.5, 0.5);

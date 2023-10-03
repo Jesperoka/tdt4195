@@ -26,6 +26,9 @@ pub enum ShaderType {
 }
 
 impl Shader {
+    pub fn placeholder() -> Shader {
+        Shader {program_id: u32::MAX - 69420} // placeholder program_id
+    }
     // Make sure the shader is active before calling this
     pub unsafe fn get_uniform_location(&self, name: &str) -> i32 {
         let name_cstr = CString::new(name).expect("CString::new failed");
@@ -155,12 +158,14 @@ impl ShaderBuilder {
 }
 
 // Putting shadow mapping here because where else
+pub const SHADOW_RES: i32 = 2*3840; 
+
 pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
     // A separate framebuffer is needed for the shadow map 
-    let mut framebuffer_name: u32 = 0;
+    let mut framebuffer_id: u32 = 0;
     unsafe {
-        gl::GenFramebuffers(1, &mut framebuffer_name);
-        gl::BindFramebuffer(gl::FRAMEBUFFER, framebuffer_name);
+        gl::GenFramebuffers(1, &mut framebuffer_id);
+        gl::BindFramebuffer(gl::FRAMEBUFFER, framebuffer_id);
     }
 
     // Depthmap is stored as a texture that can be sampled 
@@ -171,9 +176,9 @@ pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
         gl::TexImage2D(
             gl::TEXTURE_2D, 
             0, 
-            gl::DEPTH_COMPONENT16 as i32, 
-            1024, 
-            1024, 
+            gl::DEPTH_COMPONENT32F as i32, 
+            SHADOW_RES, 
+            SHADOW_RES, 
             0, 
             gl::DEPTH_COMPONENT, 
             gl::FLOAT, 
@@ -194,14 +199,19 @@ pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
         return Err(Box::<dyn Error>::from("Framebuffer is not complete!".to_string()));
     }
 
-    return Ok((framebuffer_name, depth_texture));
+    return Ok((framebuffer_id, depth_texture));
 }
 
 pub fn compute_depth_mvp_matrix() -> glm::Mat4 {
-    let light_inv_dir = glm::normalize(&glm::vec3(0.8, -0.5, 0.6));
-    let depth_projection_matrix = glm::ortho(-10.0, 10.0, -10.0, 10.0, -10.0, 20.0);
-    let depth_view_matrix = glm::look_at(&light_inv_dir, &glm::vec3(0.0, 0.0, 0.0), &glm::vec3(0.0, 1.0, 0.0));
-    let depth_mvp = depth_projection_matrix * depth_view_matrix;
+    let light_inv_dir = glm::vec3(0.8, -0.5, 0.6); // this is not inv_ but light direction itself
+    let up = glm::vec3(0.0, 1.0, 0.0);
+    let depth_projection_matrix = glm::ortho_lh_zo(-1200.0, 1200.0, -1200.0, 1200.0, 0.01, 1000.0);
+    let depth_view_matrix = glm::look_at(&light_inv_dir, &glm::vec3(0.0, 0.0, 0.0), &up);
 
-    return depth_mvp; 
+    // Rotating first allows for better alignment of view frustum with scene 
+    let rotation_matrix = glm::rotate(&glm::Mat4::identity(), -0.995, &light_inv_dir);
+    let depth_mvp = depth_projection_matrix * depth_view_matrix; // * rotation_matrix;
+
+    return depth_mvp;
 }
+

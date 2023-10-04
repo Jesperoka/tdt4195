@@ -2,6 +2,7 @@
 
 in vec4 rgba;
 in vec3 nxnynz;
+in vec3 xyz_light_space; 
 
 out vec4 color;
 
@@ -21,8 +22,18 @@ vec3 palette( float t ) {
 
 void main()
 {
+    // Shadow mappign 
     vec3 light_direction = normalize(vec3(0.8, -0.5, 0.6));
-    vec4 simple_color = vec4(rgba.rgb * max(0, dot(nxnynz, -light_direction)), rgba.a);
+    float light_view_surface_depth = texture(shadow_map, xyz_light_space.xy).r;
+    float bias = 0;// max(0.05 * (1.0 - dot(normalize(nxnynz), light_direction)), 0.005);
+    float dot_prod = dot(normalize(nxnynz), -light_direction);
+    float shadow_mix_factor = xyz_light_space.z + bias < light_view_surface_depth ? 0.0f : min(1.0, 1.0 - (2.8*pow((dot_prod - 0.5), 2) + 0.3)); 
+    vec4 shadow_color = vec4(0.1, 0.1, 0.1, 1.0f);
+    vec4 lambertian_shade = vec4(rgba.rgb * max(0, dot(nxnynz, -light_direction)), rgba.a);
+
+    vec4 simple_color = mix(lambertian_shade, shadow_color, shadow_mix_factor);
+
+//    vec4 simple_color = vec4(rgba.rgb * max(0, dot(nxnynz, -light_direction)), rgba.a);
 
     vec2 pos = (gl_FragCoord.xy - resolution * 0.5) / resolution; // Adjust fragment position and normalize by resolution
     vec2 uv = pos;

@@ -158,7 +158,7 @@ impl ShaderBuilder {
 }
 
 // Putting shadow mapping here because where else
-pub const SHADOW_RES: i32 = 2*3840; 
+pub const SHADOW_RES: (i32, i32) = (2*3840, 2*3840); 
 
 pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
     // A separate framebuffer is needed for the shadow map 
@@ -177,8 +177,8 @@ pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
             gl::TEXTURE_2D, 
             0, 
             gl::DEPTH_COMPONENT32F as i32, 
-            SHADOW_RES, 
-            SHADOW_RES, 
+            SHADOW_RES.0, 
+            SHADOW_RES.1, 
             0, 
             gl::DEPTH_COMPONENT, 
             gl::FLOAT, 
@@ -188,9 +188,11 @@ pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
         gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
         gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);
         gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_COMPARE_MODE, gl::COMPARE_REF_TO_TEXTURE as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_COMPARE_FUNC, gl::LEQUAL as i32);
+
 
         gl::FramebufferTexture(gl::FRAMEBUFFER, gl::DEPTH_ATTACHMENT, depth_texture, 0);
-
         gl::DrawBuffer(gl::NONE);
     }
 
@@ -205,12 +207,12 @@ pub fn create_depth_framebuffer() -> Result<(u32, u32), Box<dyn Error>> {
 pub fn compute_depth_mvp_matrix() -> glm::Mat4 {
     let light_inv_dir = glm::vec3(0.8, -0.5, 0.6); // this is not inv_ but light direction itself
     let up = glm::vec3(0.0, 1.0, 0.0);
-    let depth_projection_matrix = glm::ortho_lh_zo(-1200.0, 1200.0, -1200.0, 1200.0, 0.01, 1000.0);
+    let depth_projection_matrix = glm::ortho_lh_zo(-870.0, 870.0, -870.0, 870.0, 10.0, 1000.0);
     let depth_view_matrix = glm::look_at(&light_inv_dir, &glm::vec3(0.0, 0.0, 0.0), &up);
 
     // Rotating first allows for better alignment of view frustum with scene 
-    let rotation_matrix = glm::rotate(&glm::Mat4::identity(), -0.995, &light_inv_dir);
-    let depth_mvp = depth_projection_matrix * depth_view_matrix; // * rotation_matrix;
+    let rotation_matrix = glm::rotate(&glm::Mat4::identity(), -0.845, &light_inv_dir);
+    let depth_mvp = depth_projection_matrix * depth_view_matrix * rotation_matrix;
 
     return depth_mvp;
 }

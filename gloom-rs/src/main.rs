@@ -19,7 +19,6 @@ mod mesh;
 mod scene_graph;
 mod toolbox;
 
-use gl::CullFace;
 use glutin::event::{Event, WindowEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
 use glutin::event_loop::ControlFlow;
 
@@ -114,9 +113,9 @@ fn main() {
 
     let render_thread = thread::spawn(move || {
         let context = unsafe {
-            let c = windowed_context.make_current().unwrap();
-            gl::load_with(|symbol| c.get_proc_address(symbol) as *const _);
-            c
+            let ctx = windowed_context.make_current().unwrap();
+            gl::load_with(|symbol| ctx.get_proc_address(symbol) as *const _);
+            ctx
         };
 
         let mut window_aspect_ratio = INITIAL_SCREEN_W as f32 / INITIAL_SCREEN_H as f32;
@@ -125,13 +124,12 @@ fn main() {
         unsafe {
             gl::Enable(gl::DEPTH_TEST);
             gl::DepthFunc(gl::LESS);
-            // gl::Enable(gl::CULL_FACE);
-            // gl::CullFace(gl::FRONT);
             gl::Disable(gl::MULTISAMPLE);
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
             gl::Enable(gl::DEBUG_OUTPUT_SYNCHRONOUS);
             gl::DebugMessageCallback(Some(util::debug_callback), ptr::null());
+            gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
 
             // Print some diagnostics
             println!("{}: {}", util::get_gl_string(gl::VENDOR), util::get_gl_string(gl::RENDERER));
@@ -353,7 +351,6 @@ fn main() {
 
             // Rendering
             unsafe { // == // Issue the necessary gl:: commands to draw your scene here
-                // const SHADOW_MAP_TEXTURE_ID: u32 = 0;
 
                 let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4, shader: &shader::Shader| {
                     shader.activate();
@@ -389,16 +386,7 @@ fn main() {
                                                 &glm::identity(), 
                                                 elapsed);
 
-                gl::DrawBuffer(gl::NONE);
-                gl::Viewport(0, 0, shader::SHADOW_RES, shader::SHADOW_RES);
-                gl::BindFramebuffer(gl::FRAMEBUFFER, depth_framebuffer_id); 
-                gl::ActiveTexture(gl::TEXTURE0);
-                gl::BindTexture(gl::TEXTURE_2D, depth_texture);
-                gl::Clear(gl::DEPTH_BUFFER_BIT);
-                gl::DepthMask(gl::TRUE);
-                gl::Enable(gl::CULL_FACE);
-                gl::CullFace(gl::BACK);
-
+                scene_graph::set_opengl_rendering_options(scene_graph::RenderMode::ShadowPass, depth_framebuffer_id, shader::SHADOW_RES); 
                 scene_graph::draw_scene(&scene_graph_root, 
                                         &mut node_transforms, 
                                         &scene_graph::RenderMode::ShadowPass, 
@@ -407,24 +395,8 @@ fn main() {
                                         &shadow_map_shader,
                                         &shader::Shader::placeholder(),
                                         &shader::Shader::placeholder());
-
-                // context.swap_buffers().unwrap(); // we use "double buffering" to avoid artifacts
                                                  
-                gl::BindFramebuffer(gl::FRAMEBUFFER, 0);
-
-                gl::Viewport(0, 0, width as i32, height as i32);
-                // gl::BindFramebuffer(gl::FRAMEBUFFER, 0);
-
-                gl::ActiveTexture(gl::TEXTURE0);
-                gl::BindTexture(gl::TEXTURE_2D, depth_texture);
-
-                gl::DrawBuffer(gl::BACK);
-
-                gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
-                gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-
-                gl::Disable(gl::CULL_FACE);
-
+                scene_graph::set_opengl_rendering_options(scene_graph::RenderMode::MainPass, 0, (width as i32, height as i32)); 
                 scene_graph::draw_scene(&scene_graph_root, 
                                         &mut node_transforms,
                                         &scene_graph::RenderMode::MainPass,

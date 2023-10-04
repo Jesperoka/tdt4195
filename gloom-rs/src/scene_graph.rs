@@ -2,7 +2,7 @@ extern crate nalgebra_glm as glm;
 
 use std::{rc::Rc, cell::RefCell, cell::RefMut, ptr, collections::HashMap};
 use crate::toolbox;
-use crate::shader::Shader;
+use crate::shader::{Shader, SHADOW_RES};
 
 pub type Node = Rc<RefCell<SceneNode>>;
 
@@ -217,10 +217,10 @@ pub unsafe fn draw_scene<F>(
     let node_borrow = node.borrow();
 
     // Clear scene at the start of each pass
-    // if &*node_borrow.name == "root" {
-    //     gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
-    //     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-    // }
+    if &*node_borrow.name == "root" {
+        gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
+        gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    }
 
     // Only process drawable nodes
     if let Some(transformation_so_far) = node_transforms.get(&*node_borrow.name) {
@@ -233,12 +233,11 @@ pub unsafe fn draw_scene<F>(
             },
 
             RenderMode::MainPass => {
-                // if !node_borrow.name.starts_with("Heli_") { 
-                //     set_uniforms(projection_matrix, &transformation_so_far, simple_shader);
-                // } else { 
-                //     set_uniforms(projection_matrix, &transformation_so_far, fancy_shader);
-                // }
-                set_uniforms(projection_matrix, &transformation_so_far, simple_shader);
+                if !node_borrow.name.starts_with("Heli_") { 
+                    set_uniforms(projection_matrix, &transformation_so_far, simple_shader);
+                } else { 
+                    set_uniforms(projection_matrix, &transformation_so_far, fancy_shader);
+                }
             }
         }
 
@@ -261,6 +260,24 @@ pub unsafe fn draw_scene<F>(
     }
 }
 
+pub unsafe fn set_opengl_rendering_options(render_mode: RenderMode, framebuffer_id: u32, viewport_res: (i32, i32)) {
+    match render_mode {
+        RenderMode::ShadowPass => {
+            gl::BindFramebuffer(gl::FRAMEBUFFER, framebuffer_id); 
+            gl::Viewport(0, 0, viewport_res.0, viewport_res.1);
+            gl::Clear(gl::DEPTH_BUFFER_BIT);
+            gl::Enable(gl::CULL_FACE);
+            gl::CullFace(gl::BACK); // gl::BACK because I am using left-handed clip-space
+        }
+        RenderMode::MainPass => {
+            gl::BindFramebuffer(gl::FRAMEBUFFER, framebuffer_id);
+            gl::Viewport(0, 0, viewport_res.0, viewport_res.1);
+            gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+            gl::Disable(gl::CULL_FACE);
+
+        }
+    } 
+}
 
 // Side effect: mutates passed node to perform time based animation step 
 fn time_dependent_animation_step(mut node_mutable_borrow: RefMut<SceneNode>, elapsed: f32) { 

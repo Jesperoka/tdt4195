@@ -8,6 +8,7 @@
 #![allow(unused_variables)]
 */
 extern crate nalgebra_glm as glm;
+use std::collections::HashMap;
 use std::{thread, mem, ptr, os::raw::c_void};
 use std::sync::{Mutex, Arc, RwLock};
 
@@ -22,8 +23,8 @@ use glutin::event::{Event, WindowEvent, KeyboardInput, ElementState::{Pressed, R
 use glutin::event_loop::ControlFlow;
 
 // initial window size
-const INITIAL_SCREEN_W: u32 = 800;
-const INITIAL_SCREEN_H: u32 = 800; // 600
+const INITIAL_SCREEN_W: u32 = 1024;
+const INITIAL_SCREEN_H: u32 = 1024; // 600
 
 // Get the size of an arbitrary array of numbers measured in bytes
 fn byte_size_of_array<T>(val: &[T]) -> isize {
@@ -112,9 +113,9 @@ fn main() {
 
     let render_thread = thread::spawn(move || {
         let context = unsafe {
-            let c = windowed_context.make_current().unwrap();
-            gl::load_with(|symbol| c.get_proc_address(symbol) as *const _);
-            c
+            let ctx = windowed_context.make_current().unwrap();
+            gl::load_with(|symbol| ctx.get_proc_address(symbol) as *const _);
+            ctx
         };
 
         let mut window_aspect_ratio = INITIAL_SCREEN_W as f32 / INITIAL_SCREEN_H as f32;
@@ -123,12 +124,12 @@ fn main() {
         unsafe {
             gl::Enable(gl::DEPTH_TEST);
             gl::DepthFunc(gl::LESS);
-            //gl::Enable(gl::CULL_FACE);
             gl::Disable(gl::MULTISAMPLE);
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
             gl::Enable(gl::DEBUG_OUTPUT_SYNCHRONOUS);
             gl::DebugMessageCallback(Some(util::debug_callback), ptr::null());
+            gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
 
             // Print some diagnostics
             println!("{}: {}", util::get_gl_string(gl::VENDOR), util::get_gl_string(gl::RENDERER));
@@ -144,46 +145,62 @@ fn main() {
         let scene = scene_geometry::init_scene_geometry(TERRAIN_MODEL_PATH, HELICOPTER_MODEL_PATH); 
 
         // NOTE: scene_graph.rs is modified because I wanted to try Rust stuff 
-        let mut scene_graph_builder = scene_graph::SceneNodeBuilder::new(); // graph root
+        let mut scene_graph_builder = scene_graph::SceneNodeBuilder::new()
+            .init_name("root".to_string())
+            .add_child(
+                scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[0], scene.triangle_counts[0])
+                .init(glm::zero(), 
+                      glm::zero(), 
+                      glm::vec3(1.0, 1.0, 1.0), 
+                      glm::vec3(0.0, 0.0, 0.0),
+                      "Terrain".to_string())); 
+
         for i in 0..5 {
-            scene_graph_builder = scene_graph_builder.add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[0], scene.triangle_counts[0])
-                                                                .init(glm::zero(), 
-                                                                      glm::zero(), 
-                                                                      glm::vec3(1.0, 1.0, 1.0), 
-                                                                      glm::vec3(0.0, 0.0, 0.0),
-                                                                      "Terrain".to_string())
-                                                                .add_child(scene_graph::SceneNodeBuilder::new().init_name("Heli_".to_string()+&i.to_string())
-                                                                           .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
-                                                                                      .init(glm::vec3(0.0, 5.0, 0.0), 
-                                                                                            glm::vec3(0.2, 0.0, 0.3), 
-                                                                                            glm::vec3(1.0, 1.0, 1.0), 
-                                                                                            glm::vec3(0.0, 0.0, 0.0),
-                                                                                            "Heli_Body".to_string())
-                                                                                      .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
-                                                                                                 .init(glm::zero(), 
-                                                                                                       glm::vec3(0.0, 0.0, 0.5), 
-                                                                                                       glm::vec3(1.0, 1.0, 1.0), 
-                                                                                                       glm::vec3(0.7, 0.5, 0.0),
-                                                                                                       "Heli_Door".to_string()))
-                                                                                      .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
-                                                                                                 .init(glm::zero(), 
-                                                                                                       glm::vec3(0.0, 0.7, 0.0), 
-                                                                                                       glm::vec3(1.0, 1.0, 1.0), 
-                                                                                                       glm::zero(),
-                                                                                                       "Heli_Main_Rotor".to_string()))
-                                                                                      .add_child(scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
-                                                                                                 .init(glm::zero(), 
-                                                                                                       glm::vec3(0.7, 0.0, 0.0), 
-                                                                                                       glm::vec3(1.0, 1.0, 1.0), 
-                                                                                                       glm::vec3(0.35, 2.3, 10.4),
-                                                                                                       "Heli_Tail_Rotor".to_string()))
-                                                                                      )));
+            scene_graph_builder = scene_graph_builder 
+                .add_child(
+                    scene_graph::SceneNodeBuilder::new().init_name("Heli_".to_string()+&i.to_string())
+                    .add_child(
+                        scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[1], scene.triangle_counts[1])
+                        .init(glm::vec3(0.0, 5.0, 0.0), 
+                              glm::vec3(0.2, 0.0, 0.3), 
+                              glm::vec3(1.0, 1.0, 1.0), 
+                              glm::vec3(0.0, 0.0, 0.0),
+                              "Heli_Body_".to_string()+&i.to_string())
+                        .add_child(
+                            scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[2], scene.triangle_counts[2])
+                            .init(glm::zero(), 
+                                  glm::vec3(0.0, 0.0, 0.5), 
+                                  glm::vec3(1.0, 1.0, 1.0), 
+                                  glm::vec3(0.7, 0.5, 0.0),
+                                  "Heli_Door_".to_string()+&i.to_string()))
+                        .add_child(
+                            scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[3], scene.triangle_counts[3])
+                            .init(glm::zero(), 
+                                  glm::vec3(0.0, 0.7, 0.0), 
+                                  glm::vec3(1.0, 1.0, 1.0), 
+                                  glm::zero(),
+                                  "Heli_Main_Rotor_".to_string()+&i.to_string()))
+                        .add_child(
+                            scene_graph::SceneNodeBuilder::from_vao(scene.vao_ids[4], scene.triangle_counts[4])
+                            .init(glm::zero(), 
+                                  glm::vec3(0.7, 0.0, 0.0), 
+                                  glm::vec3(1.0, 1.0, 1.0), 
+                                  glm::vec3(0.35, 2.3, 10.4),
+                                  "Heli_Tail_Rotor_".to_string()+&i.to_string()))
+                        ));
         }
 
         let scene_graph_root = scene_graph_builder.build(); 
         scene_graph_root.borrow().print_tree(0);
         
         // == // Set up your shaders here
+        let shadow_map_shader = unsafe {
+            shader::ShaderBuilder::new()
+                .attach_file("./shaders/shadow_map.frag")
+                .attach_file("./shaders/shadow_map.vert")
+                .link()
+        };
+
         let simple_shader = unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.frag")
@@ -191,16 +208,52 @@ fn main() {
                 .link()
         };
 
-        unsafe { simple_shader.activate(); }
 
-        let (time_location, homography_location, transformation_location, resolution_location) = unsafe {
+        let fancy_shader = unsafe {
+            shader::ShaderBuilder::new()
+                .attach_file("./shaders/fancy.frag")
+                .attach_file("./shaders/simple.vert")
+                .link()
+        };
+        
+        unsafe { shadow_map_shader.activate(); }
+        let shadow_map_shader_uniform_locations = unsafe { 
             (
-                simple_shader.get_uniform_location("time"),
-                simple_shader.get_uniform_location("homography"),
-                simple_shader.get_uniform_location("transformation"),
-                simple_shader.get_uniform_location("resolution")
+            shadow_map_shader.get_uniform_location("depth_mvp"),
+            shadow_map_shader.get_uniform_location("transformation"),
             )
         };
+
+        unsafe { simple_shader.activate(); }
+        let simple_shader_uniform_locations = unsafe {
+            (
+                simple_shader.get_uniform_location("time"),
+                simple_shader.get_uniform_location("resolution"),
+                simple_shader.get_uniform_location("homography"),
+                simple_shader.get_uniform_location("transformation"),
+                simple_shader.get_uniform_location("depth_mvp"),
+                simple_shader.get_uniform_location("shadow_map"),
+            )
+        };
+
+        unsafe { fancy_shader.activate(); }
+        let fancy_shader_uniform_locations = unsafe {
+            (
+                fancy_shader.get_uniform_location("time"),
+                fancy_shader.get_uniform_location("resolution"),
+                fancy_shader.get_uniform_location("homography"),
+                fancy_shader.get_uniform_location("transformation"),
+                fancy_shader.get_uniform_location("depth_mvp"),
+                fancy_shader.get_uniform_location("shadow_map"),
+            )
+        };
+
+        // Storage for model transformations
+        let mut node_transforms: HashMap<String, glm::Mat4> = HashMap::new();
+
+        // Initialize shadow map variables
+        let (depth_framebuffer_id, depth_texture) = shader::create_depth_framebuffer().unwrap();
+        let depth_mvp = shader::compute_depth_mvp_matrix();
 
         // Initialize variables for camera control
         let fovy: f32 = 1.22;
@@ -214,10 +267,12 @@ fn main() {
         let mut width = INITIAL_SCREEN_W;
         let mut height = INITIAL_SCREEN_H;
 
-        // The main rendering loop
         let first_frame_time = std::time::Instant::now();
         let mut previous_frame_time = first_frame_time;
+
+        // MAIN RENDERING LOOP
         loop {
+
             // Compute time passed since the previous frame and since the start of the program
             let now = std::time::Instant::now();
             let elapsed = now.duration_since(first_frame_time).as_secs_f32();
@@ -294,26 +349,69 @@ fn main() {
             // == // Please compute camera transforms here (exercise 2 & 3)
             let homography: glm::Mat4 = perspective * angle_axis_rotation * major_axis_translation * initial_translation;
 
-            unsafe {
-                // Clear the color and depth buffers
-                gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
-                gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+            // Rendering
+            unsafe { // == // Issue the necessary gl:: commands to draw your scene here
 
-                // == // Issue the necessary gl:: commands to draw your scene here
+                let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4, shader: &shader::Shader| {
+                    shader.activate();
+                    if shader.program_id == shadow_map_shader.program_id { 
+                        
+                        gl::UniformMatrix4fv(shadow_map_shader_uniform_locations.0, 1, gl::FALSE, depth_mvp.as_ptr());
+                        gl::UniformMatrix4fv(shadow_map_shader_uniform_locations.1, 1, gl::FALSE, transformation_so_far.as_ptr());
 
-                let set_uniforms = |view_proj_mat: &glm::Mat4, transformation_so_far: &glm::Mat4, elapsed: f32| {
-                    gl::Uniform1f(time_location, elapsed);
-                    gl::Uniform2f(resolution_location, width as f32, height as f32);
-                    gl::UniformMatrix4fv(homography_location, 1, gl::FALSE, view_proj_mat.as_ptr());
-                    gl::UniformMatrix4fv(transformation_location, 1, gl::FALSE, transformation_so_far.as_ptr());
+                    } else if shader.program_id == simple_shader.program_id   {
+
+                        gl::Uniform1f(simple_shader_uniform_locations.0, elapsed);
+                        gl::Uniform2f(simple_shader_uniform_locations.1, width as f32, height as f32);
+                        gl::UniformMatrix4fv(simple_shader_uniform_locations.2, 1, gl::FALSE, view_proj_mat.as_ptr());
+                        gl::UniformMatrix4fv(simple_shader_uniform_locations.3, 1, gl::FALSE, transformation_so_far.as_ptr());
+                        gl::UniformMatrix4fv(simple_shader_uniform_locations.4, 1, gl::FALSE, depth_mvp.as_ptr());
+                        gl::Uniform1i(simple_shader_uniform_locations.5, 0);
+
+                    } else if shader.program_id == fancy_shader.program_id { 
+                        
+                        gl::Uniform1f(fancy_shader_uniform_locations.0, elapsed);
+                        gl::Uniform2f(fancy_shader_uniform_locations.1, width as f32, height as f32);
+                        gl::UniformMatrix4fv(fancy_shader_uniform_locations.2, 1, gl::FALSE, view_proj_mat.as_ptr());
+                        gl::UniformMatrix4fv(fancy_shader_uniform_locations.3, 1, gl::FALSE, transformation_so_far.as_ptr());
+                        gl::UniformMatrix4fv(fancy_shader_uniform_locations.4, 1, gl::FALSE, depth_mvp.as_ptr());
+                        gl::Uniform1i(fancy_shader_uniform_locations.5, 0);
+
+                    }
+                    else { println!("Unexpected shader program_id!"); }
                 };
-                
-                scene_graph::draw_scene(&scene_graph_root, &homography, &glm::identity(), elapsed, &set_uniforms);
+
+                scene_graph::compute_transforms(&scene_graph_root, 
+                                                &mut node_transforms, 
+                                                &glm::identity(), 
+                                                elapsed);
+
+                scene_graph::set_opengl_rendering_options(scene_graph::RenderMode::ShadowPass, depth_framebuffer_id, shader::SHADOW_RES); 
+                scene_graph::draw_scene(&scene_graph_root, 
+                                        &mut node_transforms, 
+                                        &scene_graph::RenderMode::ShadowPass, 
+                                        &depth_mvp,
+                                        &set_uniforms, 
+                                        &shadow_map_shader,
+                                        &shader::Shader::placeholder(),
+                                        &shader::Shader::placeholder());
+                                                 
+                scene_graph::set_opengl_rendering_options(scene_graph::RenderMode::MainPass, 0, (width as i32, height as i32)); 
+                scene_graph::draw_scene(&scene_graph_root, 
+                                        &mut node_transforms,
+                                        &scene_graph::RenderMode::MainPass,
+                                        &homography,
+                                        &set_uniforms, 
+                                        &shader::Shader::placeholder(),
+                                        &simple_shader, 
+                                        &fancy_shader,
+                                        );
             }
 
             // Display the new color buffer on the display
             context.swap_buffers().unwrap(); // we use "double buffering" to avoid artifacts
-        }
+                                             
+        } // END MAIN RENDERING LOOP
     });
 
 

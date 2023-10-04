@@ -1,11 +1,11 @@
 use crate::mesh::{Mesh, Terrain, Helicopter};
 use crate::create_vao;
 
-pub const NUM_VAOs: usize = 5;
+pub const NUM_VAOS: usize = 5;
 
 pub struct Scene {
-    pub vao_ids: [u32; NUM_VAOs],
-    pub triangle_counts: [i32; NUM_VAOs],
+    pub vao_ids: [u32; NUM_VAOS],
+    pub triangle_counts: [i32; NUM_VAOS],
 }
 
 // Instantiate all VAOs in the scene
@@ -21,7 +21,7 @@ pub fn init_scene_geometry(terrain_model_path: &str, helicopter_model_path: &str
 }
 
 
-fn create_vaos(terrain_mesh: &Mesh, helicopter_meshes: &Helicopter) -> [u32; NUM_VAOs] {
+fn create_vaos(terrain_mesh: &Mesh, helicopter_meshes: &Helicopter) -> [u32; NUM_VAOS] {
 
     let terrain_vao_id = unsafe { 
         create_vao(
@@ -70,7 +70,7 @@ fn create_vaos(terrain_mesh: &Mesh, helicopter_meshes: &Helicopter) -> [u32; NUM
             helicopter_tail_rotor_vao_id];
 }
 
-fn count_indices(terrain: &Mesh, heli: &Helicopter) -> [i32; NUM_VAOs] {
+fn count_indices(terrain: &Mesh, heli: &Helicopter) -> [i32; NUM_VAOS] {
     return [
         terrain.indices.len() as i32, 
         heli.body.indices.len() as i32,

@@ -1,7 +1,8 @@
 extern crate nalgebra_glm as glm;
 
-use std::{rc::Rc, cell::RefCell, cell::RefMut, ptr};
+use std::{rc::Rc, cell::RefCell, cell::RefMut, ptr, collections::HashMap};
 use crate::toolbox;
+use crate::shader::{Shader, SHADOW_RES};
 
 pub type Node = Rc<RefCell<SceneNode>>;
 
@@ -129,15 +130,16 @@ impl SceneNode {
     }
 }
 
-pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, elapsed: f32, set_uniforms: &F) 
-    where 
-        F: Fn(&glm::Mat4, &glm::Mat4, f32),
-    {
+// Recursively computes and stores transforms for each drawable node
+pub unsafe fn compute_transforms(node: &Node,
+                                 node_transforms: &mut HashMap<String, glm::Mat4>,
+                                 transformation_so_far: &glm::Mat4, 
+                                 elapsed: f32, 
+                                ) {
+
     let offset: f32 = 0.77*extract_heli_number(&*node.borrow_mut().name);
     time_dependent_animation_step(node.borrow_mut(), elapsed);
     let node_borrow = node.borrow();
-        
-    // Transformations
     let mut transformation_so_far = *transformation_so_far; 
 
     if node_borrow.index_count > 0 {
@@ -181,42 +183,128 @@ pub unsafe fn draw_scene<F>(node: &Node, view_projection_matrix: &glm::Mat4, tra
 
         transformation_so_far = transformation_so_far * ref_translation * roto_translation * inv_ref_translation;                
 
+        // Cache result for use in draw_scene()
+        node_transforms.insert(node_borrow.name.clone(), transformation_so_far.clone());
+    }
+
+    // Recurse
+    for child in &node_borrow.children {
+        compute_transforms(child, 
+                           node_transforms, 
+                           &transformation_so_far, 
+                           elapsed+offset);
+    }
+}
+
+pub enum RenderMode {
+    ShadowPass,
+    MainPass,
+}
+
+// Recursively traverses scene_graph and renders scene according to which render pass we are in
+pub unsafe fn draw_scene<F>(
+    node: &Node,
+    node_transforms: &HashMap<String, glm::Mat4>,
+    render_mode: &RenderMode,
+    projection_matrix: &glm::Mat4,
+    set_uniforms: &F,
+    shadow_map_shader: &Shader,
+    simple_shader: &Shader,
+    fancy_shader: &Shader) 
+
+    where F: Fn(&glm::Mat4, &glm::Mat4, &Shader) {
+
+    let node_borrow = node.borrow();
+
+    // Clear scene at the start of each pass
+    if &*node_borrow.name == "root" {
+        gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky, full opacity
+        gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    }
+
+    // Only process drawable nodes
+    if let Some(transformation_so_far) = node_transforms.get(&*node_borrow.name) {
+
+        // Which render pass are we in?
+        match render_mode {
+
+            RenderMode::ShadowPass => {
+                set_uniforms(&glm::identity(), &transformation_so_far, shadow_map_shader);
+            },
+
+            RenderMode::MainPass => {
+                if !node_borrow.name.starts_with("Heli_") { 
+                    set_uniforms(projection_matrix, &transformation_so_far, simple_shader);
+                } else { 
+                    set_uniforms(projection_matrix, &transformation_so_far, fancy_shader);
+                }
+            }
+        }
+
         // Render
-        set_uniforms(view_projection_matrix, &transformation_so_far, elapsed);
         gl::BindVertexArray(node_borrow.vao_id); 
         gl::DrawElements(gl::TRIANGLES, node_borrow.index_count, gl::UNSIGNED_INT, ptr::null());
     }
 
-    // Recursion
+    // Recurse
     for child in &node_borrow.children {
-        draw_scene(child, view_projection_matrix, &transformation_so_far, elapsed+offset, set_uniforms);
+        draw_scene(child, 
+                   node_transforms,
+                   render_mode,
+                   projection_matrix, 
+                   set_uniforms, 
+                   shadow_map_shader, 
+                   simple_shader, 
+                   fancy_shader,
+                   );
     }
+}
+
+pub unsafe fn set_opengl_rendering_options(render_mode: RenderMode, framebuffer_id: u32, viewport_res: (i32, i32)) {
+    match render_mode {
+        RenderMode::ShadowPass => {
+            gl::BindFramebuffer(gl::FRAMEBUFFER, framebuffer_id); 
+            gl::Viewport(0, 0, viewport_res.0, viewport_res.1);
+            gl::Clear(gl::DEPTH_BUFFER_BIT);
+            gl::Enable(gl::CULL_FACE);
+            gl::CullFace(gl::BACK); // gl::BACK because I am using left-handed clip-space
+        }
+        RenderMode::MainPass => {
+            gl::BindFramebuffer(gl::FRAMEBUFFER, framebuffer_id);
+            gl::Viewport(0, 0, viewport_res.0, viewport_res.1);
+            gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+            gl::Disable(gl::CULL_FACE);
+
+        }
+    } 
 }
 
 // Side effect: mutates passed node to perform time based animation step 
 fn time_dependent_animation_step(mut node_mutable_borrow: RefMut<SceneNode>, elapsed: f32) { 
     const ROT_SPEED: f32 = 1000.0;
-    match &*node_mutable_borrow.name {
-        "Heli_Body" => {
-            let heading = toolbox::simple_heading_animation(elapsed);
-            node_mutable_borrow.position[0] = heading.x;
-            node_mutable_borrow.position[2] = heading.z;
-            node_mutable_borrow.rotation[0] = heading.pitch;
-            node_mutable_borrow.rotation[1] = heading.yaw;
-            node_mutable_borrow.rotation[2] = heading.roll; 
-        }
-        // "Heli_Door" => {
 
-        // }
-        "Heli_Main_Rotor" => {
-            node_mutable_borrow.rotation[1] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
-        }
-        "Heli_Tail_Rotor" => {
-            node_mutable_borrow.rotation[0] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
-        }
-        _ => {}
+    let name = &*node_mutable_borrow.name;
+
+    if name.starts_with("Heli_Body") {
+
+        let heading = toolbox::simple_heading_animation(elapsed);
+        node_mutable_borrow.position[0] = heading.x;
+        node_mutable_borrow.position[2] = heading.z;
+        node_mutable_borrow.rotation[0] = heading.pitch;
+        node_mutable_borrow.rotation[1] = heading.yaw;
+        node_mutable_borrow.rotation[2] = heading.roll; 
+
+    } else if name.starts_with("Heli_Main_Rotor") {
+
+        node_mutable_borrow.rotation[1] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
+
+    } else if name.starts_with("Heli_Tail_Rotor") {
+
+        node_mutable_borrow.rotation[0] = ROT_SPEED * (elapsed % (2.0 * std::f32::consts::PI));
+
     }
 }
+
 
 // Defaults to 0
 fn extract_heli_number(s: &str) -> f32 {

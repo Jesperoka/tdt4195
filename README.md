@@ -266,12 +266,11 @@ unsafe fn draw_scene(node: &scene_graph::SceneNode,
 <br>
 
 <h2 align="center">Task 7: Optional Challenges </h2>
-<h3 align="left">Task 7a</h3>
 
 <h3 align="left">Task 7e</h3>
 
         I've been using the intrinsic rotation matrix:
-        
+
 $$
 \begin{align}
 R = R_z(\alpha) \, R_y(\beta) \, R_x(\gamma) = \begin{bmatrix}

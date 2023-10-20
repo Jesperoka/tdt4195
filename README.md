@@ -88,8 +88,8 @@ floor operator).
 **Answer:**
 
 1. The image is a 3 x 5 image, so our probability mass function is<p align="center">$p_r(r_k)=\frac{n_k}{15}$</p>where
-intensity levels<p align="center">$r_k\in\{0,1,2,3,4,5,6,7\}$</p>are mapped to their counts<p align="center">
-    $n_k\in\{1,1,0,1,2,2,4,4\}$</p>through their index $k$. This gives us the following histrogram:
+intensity levels<p align="center">$r_k\in\\{0,1,2,3,4,5,6,7\\}$</p>are mapped to their counts<p align="center">
+    $n_k\in\\{1,1,0,1,2,2,4,4\\}$</p>through their index $k$. This gives us the following histrogram:
 
 <table align="center" cellspacing="0" cellpadding="0">
     <tr style="border: none;">
@@ -177,6 +177,8 @@ intensity levels<p align="center">$r_k\in\{0,1,2,3,4,5,6,7\}$</p>are mapped to t
         <td style="border: none;"><b>r</b></td>
     </tr>
 </table>
+
+
 
 
 <h3 align="center">Temp</h3>

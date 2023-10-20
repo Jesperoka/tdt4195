@@ -87,9 +87,97 @@ floor operator).
 
 **Answer:**
 
-1. The image is a 3 x 5 image, so our probability mass function is<br><p align="center">$p_r(r_k)=\frac{n_k}{3\times5}$</p>where intensity
-levels<p align="center">$r_k\in\{0,1,2,3,4,5,6,7\}$</p>
-2.
+1. The image is a 3 x 5 image, so our probability mass function is<p align="center">$p_r(r_k)=\frac{n_k}{15}$</p>where
+intensity levels<p align="center">$r_k\in\{0,1,2,3,4,5,6,7\}$</p>are mapped to their counts<p align="center">
+    $n_k\in\{1,1,0,1,2,2,4,4\}$</p>through their index $k$. This gives us the following histrogram:
+
+<table align="center" cellspacing="0" cellpadding="0">
+    <tr style="border: none;">
+        <td style="border: none;"><b >n</b></td>
+        <td style="border-right: none; border-left: none; border-top: none; border-bottom: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+    </tr>
+    <tr style="border: none;">
+        <td style="border: none;">5</td>
+        <td style="border-right: none; border-top: none; border-bottom: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+    </tr>
+    <tr style="border: none;">
+        <td style="border: none;">4</td>
+        <td style="border-right: none; border-top: none; border-bottom: none;"> </td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;"></td>
+    </tr>
+    <tr style="border: none;">
+        <td style="border: none;">3</td>
+        <td style="border-right: none; border-top: none; border-bottom: none;"> </td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;"></td>
+    </tr>
+    <tr style="border: none;">
+        <td style="border: none;">2</td>
+        <td style="border-right: none; border-top: none; border-bottom: none;"> </td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;"></td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;"></td>
+    </tr>
+    <tr style="border: none;">
+        <td style="border: none;">1</td>
+        <td style="border-right: none; border-top: none; border-bottom: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;"></td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;">*</td>
+        <td style="border: none;"></td>
+    </tr>
+    <tr style="border: none;">
+        <td style="border: none;"></td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">0</td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">1</td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">2</td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">3</td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">4</td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">5</td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">6</td>
+        <td style="border-right: none; border-left: none; border-bottom: none;">7</td>
+        <td style="border: none;"><b>r</b></td>
+    </tr>
+</table>
+
 
 <h3 align="center">Temp</h3>
 <p align="center">

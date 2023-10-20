@@ -51,12 +51,13 @@ more noticable to us).
 
 **Question:**
 
-Perform histogram equalization by hand on the 3-bit (8 intensity levels) image in Figure 1a
+Perform histogram equalization by hand on the 3-bit (8 intensity levels) image in [Figure 1a](#figure-1a)
 Your report must include all the steps you did to compute the histogram, the transformation, and
 the transformed image. Round down any resulting pixel intensities that are not integers (use the
 floor operator).
 
 
+<a name="figure-1a"></a>
 <div align="center">
 <table border="1">
     <tr>
@@ -81,6 +82,7 @@ floor operator).
         <td>0</td>
     </tr>
 </table>
+<b>Figure 1a:</b>  
 </div>
 
 **Answer:**

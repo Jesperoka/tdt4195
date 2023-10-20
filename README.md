@@ -57,8 +57,8 @@ the transformed image. Round down any resulting pixel intensities that are not i
 floor operator).
 
 
-<a name="figure-1a"></a>
 <div align="center">
+<a name="figure-1a"></a>
 <table border="1">
     <tr>
         <td>1</td>

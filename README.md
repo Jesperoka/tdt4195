@@ -286,10 +286,10 @@ Thus the result of the convolution is a $(3 - (3-1)) \times (5 - (3 - 1)) = 1 \t
             <td>1⋅7+0⋅6+(-1)⋅3+2⋅6+0⋅5+(-2)⋅6+1⋅4+0⋅7+(-1)⋅7</td>
             <td>1⋅6+0⋅3+(-1)⋅6+2⋅5+0⋅6+(-2)⋅4+1⋅7+0⋅7+(-1)⋅0</td>
         </tr>
-    </table> 
+    </table>
 </div>
 
-which, barring any mistakes, should evaluate to 
+which, barring any mistakes, should evaluate to
 
 <div align="center">
     <a name="figure-1b"></a>
@@ -308,16 +308,42 @@ which, barring any mistakes, should evaluate to
 
 **Question:**
 
-Implement a function that converts an RGB image to grayscale. Use Equation 1. Implement
-this in the function 'greyscale'
+Implement a function that converts an RGB image to grayscale. Use [Equation 1](#eq1). Implement
+this in the function `greyscale`.
+
+<a name="eq1"></a>
+$$\text{GRAY}[i][j] = 0.212\cdot\text{R}[i][j] + 0.7152\cdot\text{G}[i][j] + 0.0722\cdot\text{B}[i][j]$$
+
+**In your report**, include the image duck.jpeg as a grayscale image.
 
 **Answer:**
 
+[Figure 2a](#figure-2a) shows the result of the conversion to greyscale.
 
 <h3 align="center">Temp</h3>
+<a name="figure-2a"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
 </p>
-<p align="center"></p>
+<p align="center"><b>Figure 2a:</b>Before and after greyscale transformation.</p>
 
-<h3 align="left">Task 1d</h3>
+<h3 align="left">b)</h3>
+
+**Question:**
+
+Implement a function that takes a grayscale image and applies the following intensity transformation <p align="center">$T(p) = 1 − p$</p> Implement this in the function `inverse`.
+
+**In your report**, apply the transformation on duck.jpeg, and include in your report.
+
+**Answer:**
+
+[Figure 2b](#figure-2b) shows the result of the conversion to greyscale.
+
+<h3 align="center">Temp</h3>
+<a name="figure-2b"></a>
+<p align="center">
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 2b:</b>Before and after intensity inversion transformation.</p>

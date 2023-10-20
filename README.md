@@ -58,36 +58,38 @@ floor operator).
 
 
 <div align="center">
-<a name="figure-1a"></a>
-<table border="1">
-    <tr>
-        <td>1</td>
-        <td>7</td>
-        <td>6</td>
-        <td>3</td>
-        <td>6</td>
-    </tr>
-    <tr>
-        <td>7</td>
-        <td>6</td>
-        <td>5</td>
-        <td>6</td>
-        <td>4</td>
-    </tr>
-    <tr>
-        <td>5</td>
-        <td>4</td>
-        <td>7</td>
-        <td>7</td>
-        <td>0</td>
-    </tr>
-</table>
-<b>Figure 1a:</b>  
+    <a name="figure-1a"></a>
+    <table border="1">
+        <tr>
+            <td>1</td>
+            <td>7</td>
+            <td>6</td>
+            <td>3</td>
+            <td>6</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>6</td>
+            <td>5</td>
+            <td>6</td>
+            <td>4</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>4</td>
+            <td>7</td>
+            <td>7</td>
+            <td>0</td>
+        </tr>
+    </table>
+    <b>Figure 1a:</b> 3 x 5, 3-bit image to be equalized
 </div>
 
 **Answer:**
 
-
+1. The image is a 3 x 5 image, so our probability mass function is<br><p align="center">$p_r(r_k)=\frac{n_k}{3\times5}$</p>where intensity
+levels<p align="center">$r_k\in\{0,1,2,3,4,5,6,7\}$</p>
+2.
 
 <h3 align="center">Temp</h3>
 <p align="center">

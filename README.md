@@ -323,8 +323,9 @@ $$\text{GRAY}[i][j] = 0.212\cdot\text{R}[i][j] + 0.7152\cdot\text{G}[i][j] + 0.0
 <h3 align="center">Temp</h3>
 <a name="figure-2a"></a>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/images/duck.jpeg?raw=true" width=350>
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_greyscale.jpeg?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/images/duck.jpeg?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_greyscale.jpeg?raw=true"
+        width=350>
 </p>
 <p align="center"><b>Figure 2a:</b>Before and after greyscale transformation.</p>
 
@@ -332,18 +333,57 @@ $$\text{GRAY}[i][j] = 0.212\cdot\text{R}[i][j] + 0.7152\cdot\text{G}[i][j] + 0.0
 
 **Question:**
 
-Implement a function that takes a grayscale image and applies the following intensity transformation <p align="center">$T(p) = 1 − p$</p> Implement this in the function `inverse`.
+Implement a function that takes a grayscale image and applies the following intensity transformation <p align="center">
+    $T(p) = 1 − p$</p> Implement this in the function `inverse`.
 
 **In your report**, apply the transformation on duck.jpeg, and include in your report.
 
 **Answer:**
 
-[Figure 2b](#figure-2b) shows the result of the conversion to greyscale.
+[Figure 2b](#figure-2b) shows the result of the conversion to intensity inverse.
 
 <h3 align="center">Temp</h3>
 <a name="figure-2b"></a>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_greyscale.jpeg?raw=true"
+        width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_inverse.jpeg?raw=true"
+        width=350>
 </p>
 <p align="center"><b>Figure 2b:</b>Before and after intensity inversion transformation.</p>
+
+<h3 align="left">c)</h3>
+
+**Question:**
+
+Implement a function that takes an RGB image and a convolutional kernel as input, and performs 2D spatial convolution.
+Assume the size of the kernel is odd numbered, e.g. 3 × 3, 5 × 5, or 7 × 7. You must implement the convolution operation
+yourself from scratch. Implement the function in `convolve_im`.
+
+You are not required to implement a procedure for adding or removing padding (you can return zero in cases when the
+convolutional kernel goes outside the original image).
+
+**In your report**, test out the convolution function you made. Convolve the image duck.jpeg with the sobel kernel ($h_a$)
+and the smoothing kernel ($h_b$) in [Equation 2](#eq2). Show both images in your report.
+
+<a name="eq2"></a>
+$$h_a = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1
+\end{bmatrix}, h_b=\frac{1}{256}\begin{bmatrix} 1 & 4 & 6 & 4 & 1 \\ 4 & 16 & 24 & 16 & 4 \\ 6 & 24 & 36 & 24 & 6 \\ 4 & 16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1  \end{bmatrix}$$
+
+**In your report**, apply the transformation on duck.jpeg, and include in your report.
+
+**Answer:**
+
+[Figure 2b](#figure-2b) shows the result of the result of the convolutions.
+
+<h3 align="center">Temp</h3>
+<a name="figure-2b"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/im_sobel.jpg?raw=true"
+        width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/im_smoothed.jpg?raw=true"
+        width=350>
+</p>
+<p align="center"><b>Figure 2b:</b>Convolutions with smoothing and Sobel kernel</p>
+
+

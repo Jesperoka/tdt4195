@@ -5,6 +5,24 @@ import os
 import subprocess
 import time
 
+# Mapping from NumPy dtypes to Torch dtypes using numpy's dtype object
+numpy_to_torch_dtype = {
+    np.dtype('float16'): torch.float16,
+    np.dtype('float32'): torch.float32,
+    np.dtype('float64'): torch.float64,
+    np.dtype('uint8'): torch.uint8,
+    np.dtype('int8'): torch.int8,
+    np.dtype('int16'): torch.int16,
+    np.dtype('int32'): torch.int32,
+    np.dtype('int64'): torch.int64,
+    np.dtype('bool_'): torch.bool,
+    np.dtype('complex64'): torch.complex64,
+    np.dtype('complex128'): torch.complex128
+}
+
+# Mapping from Torch dtypes to NumPy dtypes
+torch_to_np_numpy_dtype = {v: k for k, v in numpy_to_torch_dtype.items()}
+
 
 def compute_loss_and_accuracy(dataloader, model, loss_function):
     """

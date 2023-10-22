@@ -67,20 +67,20 @@ def my_convolve_im(
     assert len(im.shape) == 3
 
     transpose = False
-    # if im.shape[1] >= im.shape[0]: 
-    #     transpose = True
-    #     im = np.transpose(im, axes=(1, 0, 2))
+    if im.shape[1] >= im.shape[0]: 
+        transpose = True
+        im = im.T
 
     # Assuming odd kernel size (K x K) that is less than image size (H x W)
     (h, w, _) = im.shape
     n = kernel.shape[0] # we assume square kernel
-    toeplitz_matrices = [toeplitz_zero_pad(kernel[i,:], w) if not transpose else toeplitz_zero_pad(kernel[i,:], w).T  for i in range(n)]
+    toeplitz_matrices = [toeplitz_zero_pad(kernel[i,:], w) for i in range(n)]
 
     # TODO: transpose image such that width is smallest dim
 
-    overlap = int(n/2)*w 
-    seg_size = 5*n*w 
-    assert(seg_size >= n*w and overlap == int(n/2)*w)
+    overlap = w # overlap is negative number
+    seg_size = 5*w 
+    assert(seg_size >= 3*w and overlap == w)
     im_vec_r = im[:,:,0].reshape((h*w, 1))
     im_vec_g = im[:,:,1].reshape((h*w, 1))
     im_vec_b = im[:,:,2].reshape((h*w, 1))
@@ -90,36 +90,29 @@ def my_convolve_im(
     
     idx = 0
     while idx + seg_size < h*w:
-        print(idx,"/",h*w)
-        # First segment
-        block_toeplitz_matrix = block_toeplitz_zero_pad(toeplitz_matrices, seg_size)
-        if idx == 0: # first iteration
-            r.append((block_toeplitz_matrix @ im_vec_r[idx:idx+seg_size])[:-overlap])
-            g.append((block_toeplitz_matrix @ im_vec_g[idx:idx+seg_size])[:-overlap])
-            b.append((block_toeplitz_matrix @ im_vec_b[idx:idx+seg_size])[:-overlap])
-            idx += seg_size - overlap 
 
-        # All middle segments # TODO: assign to vector slice
-        r.append((block_toeplitz_matrix @ im_vec_r[idx:idx+seg_size])[overlap:-overlap])
-        g.append((block_toeplitz_matrix @ im_vec_g[idx:idx+seg_size])[overlap:-overlap])
-        b.append((block_toeplitz_matrix @ im_vec_b[idx:idx+seg_size])[overlap:-overlap])
+        r.append((block_toeplitz_zero_pad(toeplitz_matrices, seg_size) @ im_vec_r[idx:idx+seg_size])[overlap:-overlap])
+        g.append((block_toeplitz_zero_pad(toeplitz_matrices, seg_size) @ im_vec_g[idx:idx+seg_size])[overlap:-overlap])
+        b.append((block_toeplitz_zero_pad(toeplitz_matrices, seg_size) @ im_vec_b[idx:idx+seg_size])[overlap:-overlap])
+
+        print(idx, seg_size, overlap)
+
         idx += seg_size - 2*overlap 
 
-    # Last segment
-    else:  
+    else: # final segment 
+
         seg_size = h*w - idx
-        block_toeplitz_matrix = block_toeplitz_zero_pad(toeplitz_matrices, seg_size)
-        r.append(block_toeplitz_matrix @ im_vec_r[idx:idx+seg_size])
-        g.append(block_toeplitz_matrix @ im_vec_g[idx:idx+seg_size])
-        b.append(block_toeplitz_matrix @ im_vec_b[idx:idx+seg_size])
+        r.append(block_toeplitz_zero_pad(toeplitz_matrices, seg_size) @ im_vec_r[idx:idx+seg_size])
+        g.append(block_toeplitz_zero_pad(toeplitz_matrices, seg_size) @ im_vec_g[idx:idx+seg_size])
+        b.append(block_toeplitz_zero_pad(toeplitz_matrices, seg_size) @ im_vec_b[idx:idx+seg_size])
 
     r = np.concatenate(r, axis=0).reshape((h, w))
     g = np.concatenate(g, axis=0).reshape((h, w))
     b = np.concatenate(b, axis=0).reshape((h, w))
 
-    return np.dstack((r, g, b)) if not transpose else np.transpose(np.dstack((r, g, b)), axes=(1, 0, 2))
+    return np.dstack((r, g, b)) if not transpose else np.dstack((r, g, b)).T
 
-# The dumbest possible (edit: now not so sure my other one isn't dumber) implementation of 2D convolution, just to test correctness
+# The dumbest possible (not so sure my other one isn't dumber) implementation of 2D convolution, just to test correctness
 def convolve_im(im, kernel):
     H, W, _ = im.shape
     K, _ = kernel.shape
@@ -144,8 +137,8 @@ if __name__ == "__main__":
     sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
 
     # Convolve images
-    im_smoothed = my_convolve_im(im.copy(), h_b)
-    save_im(output_dir.joinpath("im_smoothed.jpg"), im_smoothed)
+    # im_smoothed = my_convolve_im(im.copy(), h_b)
+    # save_im(output_dir.joinpath("im_smoothed.jpg"), im_smoothed)
     im_sobel = my_convolve_im(im, sobel_x)
     save_im(output_dir.joinpath("im_sobel.jpg"), im_sobel)
 

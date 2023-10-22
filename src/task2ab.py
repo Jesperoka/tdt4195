@@ -26,7 +26,7 @@ def inverse(im):
     Returns:
         im ([type]): [np.array of shape [H, W]]
     """
-    return 255 - im
+    return 1 - im
 
 
 if __name__ == "__main__":

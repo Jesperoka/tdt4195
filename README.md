@@ -323,8 +323,8 @@ $$\text{GRAY}[i][j] = 0.212\cdot\text{R}[i][j] + 0.7152\cdot\text{G}[i][j] + 0.0
 <h3 align="center">Temp</h3>
 <a name="figure-2a"></a>
 <p align="center">
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
-<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_3/imgs/a3_t1c_1.png?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/images/duck.jpeg?raw=true" width=350>
+<img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_greyscale.jpeg?raw=true" width=350>
 </p>
 <p align="center"><b>Figure 2a:</b>Before and after greyscale transformation.</p>
 

@@ -363,27 +363,108 @@ yourself from scratch. Implement the function in `convolve_im`.
 You are not required to implement a procedure for adding or removing padding (you can return zero in cases when the
 convolutional kernel goes outside the original image).
 
-**In your report**, test out the convolution function you made. Convolve the image duck.jpeg with the sobel kernel ($h_a$)
+**In your report**, test out the convolution function you made. Convolve the image duck.jpeg with the sobel kernel
+($h_a$)
 and the smoothing kernel ($h_b$) in [Equation 2](#eq2). Show both images in your report.
 
 <a name="eq2"></a>
 $$h_a = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1
-\end{bmatrix}, h_b=\frac{1}{256}\begin{bmatrix} 1 & 4 & 6 & 4 & 1 \\ 4 & 16 & 24 & 16 & 4 \\ 6 & 24 & 36 & 24 & 6 \\ 4 & 16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1  \end{bmatrix}$$
+\end{bmatrix}, h_b=\frac{1}{256}\begin{bmatrix} 1 & 4 & 6 & 4 & 1 \\ 4 & 16 & 24 & 16 & 4 \\ 6 & 24 & 36 & 24 & 6 \\ 4 &
+16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1 \end{bmatrix}$$
 
 **In your report**, apply the transformation on duck.jpeg, and include in your report.
 
 **Answer:**
 
-[Figure 2b](#figure-2b) shows the result of the result of the convolutions.
+The convolution I implemented uses zero-padding and unit stride. Convolutions are [embarrasingly
+parallel](https://en.wikipedia.org/wiki/Embarrassingly_parallel) (alas, see the note below ;( ), and the separation
+between rgb channels even more so, thus we can easily process each channel concurrently.
+
+[Figure 2c](#figure-2c) shows the result of the result of the convolutions.
 
 <h3 align="center">Temp</h3>
-<a name="figure-2b"></a>
+<a name="figure-2c"></a>
 <p align="center">
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/im_sobel.jpg?raw=true"
         width=350>
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/im_smoothed.jpg?raw=true"
         width=350>
 </p>
-<p align="center"><b>Figure 2b:</b>Convolutions with smoothing and Sobel kernel</p>
+<p align="center"><b>Figure 2c:</b>Convolutions with Sobel and smoothing kernel</p>
+
+*Note:
+I spent 2 whole days implementing the (toeplitz) matrix multiplication version of 2d convolution (with zero-padding and
+unit stride), only to realize the block matrix you end up with as convolution operator is too large to fit in memory, so
+naturally I spent another half a day making it work on image segments, only to realize that overlap needed between
+segments scales with kernel size and image width, so the implementation is slower than just using (python) for loops.
+wtf is wrong with me?*
+
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/pain.png?raw=true" width=350>
+</p>
+<p align="center"><i>pain.png</i></p>
+
+<h3 align="center">Part 2: Neural Networks</h3>
+
+<h3 align="left">Task 3: Theory</h3>
+
+<h3 align="left">a)</h3>
+
+**Question:**
+
+A single-layer neural network is a linear function. Which of these binary operation(s) can not be represented by a
+single-layer neural network (AND, OR, NOT, NOR, NAND, or XOR).
+
+**Answer:**
+
+XOR, because it does not have a linear decision boundary.
+
+<h3 align="left">b)</h3>
+
+**Question:**
+
+Explain in one sentence what a hyperparameter for a neural network is. Give two examples of a hyperparameter.
+
+**Answer:**
+
+A hyperparameter for a neural network is any changeable-by-you aspect of the neural network and its training and/or
+inference process, that are not optimized by the optimization procedure (usually some form of gradient based
+optimization) used to find the minimum of the loss function.
+
+Examples of hyperparameters are number of layers, neurons
+per layer, optimizer, step size, any parameters to non-trainable layers like batch normalization or dropout, pre- and
+postprocessing of data and outputs like how data augmentation is performed or use of model ensembles, Platt Scaling, and
+the list goes
+on.
+
+<h3 align="left">c)</h3>
+
+**Question:**
+
+Why is the softmax activation functioned used in the last layer for neural networks trained to classify objects?
+
+**Answer:**
+
+Minimizing (log) cross-entropy is equivalent (but computationally superior) to minimizing the Kullback Leibler
+divergence, which is a distance function between probability distributions. Estimating a parameterized approximation of
+a true distribution is usually how we model class prediction problems, especially in the context of neural networks.
+Taking the softmax of the output forces the estimated approximate probability distribution to be a valid probability
+distribution (depending on philosophical definitions and some other details), and this is why it is a common practice
+(but it is not always [necessary](https://arxiv.org/abs/2011.11538) or [optimal](https://arxiv.org/abs/1711.03953)).
+It's really just a normalization of logits, which can [be](https://arxiv.org/pdf/1812.05720.pdf)
+[done](https://stats.stackexchange.com/a/251654) [in](https://en.wikipedia.org/wiki/Platt_scaling)
+[multiple](https://arxiv.org/pdf/2205.09310.pdf) (better) [ways](https://proceedings.mlr.press/v70/guo17a/guo17a.pdf).
+
+<h3 align="left">d)</h3>
+
+**Question:**
+
+[Figure 3](#figure-3) shows a simple neural network. Perform a forward pass and backward pass on this
+network with the given input values. Use [Equation 3](#eq3) as the cost function and let the target value
+be y = 1.
+
+<p align="center">$T(p)=p$</p>
+
+**Answer:**
 
 

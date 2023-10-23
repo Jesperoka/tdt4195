@@ -1,7 +1,6 @@
+*Assignments are separated by github branch.*<br>
+
 <h1 align="center"><a id="tsd"></a>Assignments in TDT4195 Visual Computing Fundamentals</h1>
-
-*Assignments are separated by github branch.*<br><br>
-
 
 <div align="center">
   

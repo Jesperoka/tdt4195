@@ -302,7 +302,7 @@ which, barring any mistakes, should evaluate to
     </table>
 </div>
 
-<h3 align="left">Task 2: Programming</h3>
+<h2 align="left">Task 2: Programming</h2>
 
 <h3 align="left">a)</h3>
 
@@ -407,9 +407,9 @@ wtf is wrong with me?*
 </p>
 <p align="center"><i>pain.png</i></p>
 
-<h3 align="center">Part 2: Neural Networks</h3>
+<h2 align="center">Part 2: Neural Networks</h2>
 
-<h3 align="left">Task 3: Theory</h3>
+<h2 align="left">Task 3: Theory</h2>
 
 <h3 align="left">a)</h3>
 
@@ -470,13 +470,13 @@ Find and report the final values for ∂C/∂w1, ∂C/∂w2, ∂C/∂w3, ∂C/�
 
 Explain each step in the computation, such that it is clear how you compute the derivatives.
 
-<a name="eq3">Task 3d Neural Network</a>
+<a name="eq3"></a>
 <p align="center">$C(y_n, \hat{y}_n)=\frac{1}{2}(y_n - \hat{y}_n)^2$</p>
 
-<h3 align="center">Temp</h3>
+<h3 align="center">Task 3d Neural Network</h3>
 <a name="figure-3a"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/simple_nn.png?raw=true" width=400>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/simple_nn.png?raw=true" width=650>
 </p>
 <p align="center"><b>Figure 3a: </b>Simple neural network</p>
 
@@ -489,7 +489,7 @@ of each node with respect to each of its inputs, excluding the inputs to the net
 <h3 align="center">Task 3d Forward Pass</h3>
 <a name="figure-3b"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/forward_pass.jpg?raw=true" width=400>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/forward_pass.jpg?raw=true" width=650>
 </p>
 <p align="center"><b>Figure 3b: </b>Evaluation of a forward pass, with node output values in orange, and node
     derivatives w.r.t. their inputs in blue.</p>
@@ -501,25 +501,79 @@ reference to the values in [Figure 3b](#figure-3b).
 <h3 align="center">Task 3d Backward Pass</h3>
 <a name="figure-3c"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/backward_pass.jpg?raw=true" width=400>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/backward_pass.jpg?raw=true" width=650>
 </p>
-<p align="center"><b>Figure 3c: </b>Evaluation of a backward pass, giving us the gradient of the cost function w.r.t. all the weights and biases.</p>
+<p align="center"><b>Figure 3c: </b>Evaluation of a backward pass, giving us the gradient of the cost function w.r.t.
+    all the weights and biases.</p>
 
 
 <h3 align="left">e)</h3>
 
 **Question:**
 
-Compute the updated weights w1, w3, and b1 \[note: *I am assuming this is a typo and we were meant to compute all the weight updates*\] by using gradient descent and the values you
+Compute the updated weights w1, w3, and b1 \[note: *I am assuming this is a typo and we were meant to compute all the
+weight updates*\] by using gradient descent and the values you
 found in task d. Use α = 0.1
 
 **Answer:**
 
-The computation is shown in [Figure-3d](#figure-3d).
+The computation is shown in [Figure 3d](#figure-3d).
 
 <h3 align="center">Task 3e Gradient Descent Step</h3>
 <a name="figure-3d"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/gradient_descent.jpg?raw=true" width=400>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/gradient_descent.jpg?raw=true" width=650>
 </p>
 <p align="center"><b>Figure 3d: </b>A single gradient descent step.</p>
+
+<h2 align="left">Task 4: Programming</h2>
+
+<h3 align="left">a)</h3>
+
+**Question:**
+
+Use the given starter code and train a single-layer neural network with batch size of 64. Then, normalize every image
+between a range of [-1. 1], and train the network again.
+
+Plot the training and validation loss from both of the networks in the same graph. Include the graph in your report.
+
+Do you notice any difference when training your network with/without normalization?
+
+**Use normalization for every subsequent task.**
+
+**Answer:**
+
+
+
+<h3 align="left">b)</h3>
+
+**Question:**
+
+The trained neural network will have one weight with shape [num classes, 28 × 28]. To visualize the learned weight, we
+can plot the weight as a 28 × 28 grayscale image. For each digit (0-9), plot the learned weight as a 28 × 28 image. In
+your report, include the image for each weight, and describe what you observe (1-2 sentences).
+
+**Answer:**
+
+
+
+<h3 align="left">c)</h3>
+
+**Question:**
+
+Set the learning rate to lr = 1.0, and train the network from scratch. Report the accuracy and average cross entropy
+loss on the validation set. In 1-2 sentences, explain why the network achieves worse/better accuracy than previously.
+
+**Answer:**
+
+
+
+<h3 align="left">d)</h3>
+
+**Question:**
+
+Include an hidden layer with 64 nodes in the network, with ReLU as the activation function for the first layer. Train
+this network with the same hyperparameters as previously. Plot the training and validation loss from this network
+together with the loss from task (a). Include the plot in your report. What do you observe?
+
+**Answer:**

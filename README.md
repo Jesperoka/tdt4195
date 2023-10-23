@@ -320,14 +320,14 @@ $$\text{GRAY}[i][j] = 0.212\cdot\text{R}[i][j] + 0.7152\cdot\text{G}[i][j] + 0.0
 
 [Figure 2a](#figure-2a) shows the result of the conversion to greyscale.
 
-<h3 align="center">Temp</h3>
+<h3 align="center">Greyscale</h3>
 <a name="figure-2a"></a>
 <p align="center">
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/images/duck.jpeg?raw=true" width=350>
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_greyscale.jpeg?raw=true"
         width=350>
 </p>
-<p align="center"><b>Figure 2a:</b>Before and after greyscale transformation.</p>
+<p align="center"><b>Figure 2a: </b>Before and after greyscale transformation.</p>
 
 <h3 align="left">b)</h3>
 
@@ -342,7 +342,7 @@ Implement a function that takes a grayscale image and applies the following inte
 
 [Figure 2b](#figure-2b) shows the result of the conversion to intensity inverse.
 
-<h3 align="center">Temp</h3>
+<h3 align="center">Inversion</h3>
 <a name="figure-2b"></a>
 <p align="center">
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_greyscale.jpeg?raw=true"
@@ -350,7 +350,7 @@ Implement a function that takes a grayscale image and applies the following inte
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/duck_inverse.jpeg?raw=true"
         width=350>
 </p>
-<p align="center"><b>Figure 2b:</b>Before and after intensity inversion transformation.</p>
+<p align="center"><b>Figure 2b: </b>Before and after intensity inversion transformation.</p>
 
 <h3 align="left">c)</h3>
 
@@ -368,9 +368,12 @@ convolutional kernel goes outside the original image).
 and the smoothing kernel ($h_b$) in [Equation 2](#eq2). Show both images in your report.
 
 <a name="eq2"></a>
-$$h_a = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1
-\end{bmatrix}, h_b=\frac{1}{256}\begin{bmatrix} 1 & 4 & 6 & 4 & 1 \\ 4 & 16 & 24 & 16 & 4 \\ 6 & 24 & 36 & 24 & 6 \\ 4 &
-16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1 \end{bmatrix}$$
+<p align="center">
+    $h_a = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1
+    \end{bmatrix}, h_b=\frac{1}{256}\begin{bmatrix} 1 & 4 & 6 & 4 & 1 \\ 4 & 16 & 24 & 16 & 4 \\ 6 & 24 & 36 & 24 & 6 \\
+    4 &
+    16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1 \end{bmatrix}$
+</p>
 
 **In your report**, apply the transformation on duck.jpeg, and include in your report.
 
@@ -382,7 +385,7 @@ between rgb channels even more so, thus we can easily process each channel concu
 
 [Figure 2c](#figure-2c) shows the result of the result of the convolutions.
 
-<h3 align="center">Temp</h3>
+<h3 align="center">Convolutions</h3>
 <a name="figure-2c"></a>
 <p align="center">
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/im_sobel.jpg?raw=true"
@@ -390,7 +393,7 @@ between rgb channels even more so, thus we can easily process each channel concu
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/im_smoothed.jpg?raw=true"
         width=350>
 </p>
-<p align="center"><b>Figure 2c:</b>Convolutions with Sobel and smoothing kernel</p>
+<p align="center"><b>Figure 2c: </b>Convolutions with Sobel and smoothing kernel</p>
 
 *Note:
 I spent 2 whole days implementing the (toeplitz) matrix multiplication version of 2d convolution (with zero-padding and
@@ -459,12 +462,64 @@ It's really just a normalization of logits, which can [be](https://arxiv.org/pdf
 
 **Question:**
 
-[Figure 3](#figure-3) shows a simple neural network. Perform a forward pass and backward pass on this
+[Figure 3a](#figure-3a) shows a simple neural network. Perform a forward pass and backward pass on this
 network with the given input values. Use [Equation 3](#eq3) as the cost function and let the target value
 be y = 1.
 
-<p align="center">$T(p)=p$</p>
+Find and report the final values for ∂C/∂w1, ∂C/∂w2, ∂C/∂w3, ∂C/∂w4, ∂C/∂b1, and ∂C/∂b2.
+
+Explain each step in the computation, such that it is clear how you compute the derivatives.
+
+<a name="eq3">Task 3d Neural Network</a>
+<p align="center">$C(y_n, \hat{y}_n)=\frac{1}{2}(y_n - \hat{y}_n)^2$</p>
+
+<h3 align="center">Temp</h3>
+<a name="figure-3a"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/simple_nn.png?raw=true" width=400>
+</p>
+<p align="center"><b>Figure 3a: </b>Simple neural network</p>
 
 **Answer:**
 
+In the forward pass (the output of) each node in the neural network is evaluated, as well as the value of the gradient
+of each node with respect to each of its inputs, excluding the inputs to the network itself. This can be seen in [Figure
+3b](#figure-3b).
 
+<h3 align="center">Task 3d Forward Pass</h3>
+<a name="figure-3b"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/forward_pass.jpg?raw=true" width=400>
+</p>
+<p align="center"><b>Figure 3b: </b>Evaluation of a forward pass, with node output values in orange, and node
+    derivatives w.r.t. their inputs in blue.</p>
+
+Then, using the chain rule, the derivative of the cost function w.r.t. the weights and biases can be computed as a
+product of the previously stored values for each path. This computation is shown in [Figure 3c](#figure-3c) with
+reference to the values in [Figure 3b](#figure-3b).
+
+<h3 align="center">Task 3d Backward Pass</h3>
+<a name="figure-3c"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/backward_pass.jpg?raw=true" width=400>
+</p>
+<p align="center"><b>Figure 3c: </b>Evaluation of a backward pass, giving us the gradient of the cost function w.r.t. all the weights and biases.</p>
+
+
+<h3 align="left">e)</h3>
+
+**Question:**
+
+Compute the updated weights w1, w3, and b1 \[note: *I am assuming this is a typo and we were meant to compute all the weight updates*\] by using gradient descent and the values you
+found in task d. Use α = 0.1
+
+**Answer:**
+
+The computation is shown in [Figure-3d](#figure-3d).
+
+<h3 align="center">Task 3e Gradient Descent Step</h3>
+<a name="figure-3d"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/imgs/gradient_descent.jpg?raw=true" width=400>
+</p>
+<p align="center"><b>Figure 3d: </b>A single gradient descent step.</p>

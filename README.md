@@ -543,19 +543,30 @@ Do you notice any difference when training your network with/without normalizati
 
 **Answer:**
 
-[Figure 4a](#figure-4a) shows the result of normalization, which is faster convergence (and in theory more stable, but not noticable in this case) for the same learning rate.
+[Figure 4a](#figure-4a) shows the result of normalization, which is faster convergence (and in theory more stable, but
+not noticable in this case) for the same learning rate.
 
 <h3 align="center">Task 4a Normalization</h3>
 <a name="figure-4a"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4a_train.png?raw=true" width=350>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4a_test.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4a_train.png?raw=true"
+        width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4a_test.png?raw=true"
+        width=350>
 </p>
-<p align="center"><b>Figure 4a: </b>Comparison of train and test losses for without and with normalization of the input data. Note that "test" refers to "validation" in the convention used by the task description, i.e. train-validate-test vs train-test-validate.</p>
+<p align="center"><b>Figure 4a: </b>Comparison of train and test losses for without and with normalization of the input
+    data. Note that "test" refers to "validation" in the convention used by the task description, i.e.
+    train-validate-test vs train-test-validate.</p>
 
-The reason for the faster (and more stable) learning is because scaling affects gradient based optimization in quite a few ways. Some of the main ones are optimization problem preconditioning, acivation function gradient properties (i.e. saturation), activation function output properties (i.e. dying ReLU). To some extent (but not solely), these are a result of weight initialization not being a hand-tuned process. There are also other more complicated effects that take place in larger neural nets, but in our specific case the most important part is the preconditioning and activation function related properties.
+The reason for the faster (and more stable) learning is because scaling affects gradient based optimization in quite a
+few ways. Some of the main ones are optimization problem preconditioning, acivation function gradient properties (i.e.
+saturation), activation function output properties (i.e. dying ReLU). To some extent (but not solely), these are a
+result of weight initialization not being a hand-tuned process. There are also other more complicated effects that take
+place in larger neural nets, but in our specific case the most important part is the preconditioning and activation
+function related properties.
 
-Another thing to note is that our images are already on the range [0, 1] not [0, 255], which means the effect is not as large as i could have been in other image color formats.
+Another thing to note is that our images are already on the range [0, 1] not [0, 255], which means the effect is not as
+large as i could have been in other image color formats.
 
 <h3 align="left">b)</h3>
 
@@ -572,21 +583,34 @@ The weights are visualized in [Figure 4b](#figure-4b).
 <h3 align="center">Task 4b Weight maps</h3>
 <a name="figure-4b"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_0.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_1.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_2.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_3.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_4.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_0.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_1.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_2.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_3.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_4.png?raw=true"
+        width=150>
     <br>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_5.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_6.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_7.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_8.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_9.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_5.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_6.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_7.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_8.png?raw=true"
+        width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_9.png?raw=true"
+        width=150>
 </p>
-<p align="center"><b>Figure 4b: </b>Weights for each output class row in the weight matrix visualized as 2D linear color maps.</p>
+<p align="center"><b>Figure 4b: </b>Weights for each output class row in the weight matrix visualized as 2D linear color
+    maps.</p>
 
-We can see that the neural network has learned a mapping from pixel regions to class, which correspond to the regions that are most likely to be bright or dark for a given number. Due to the variation between indivdual instances of each number, the regions get blurred, and the effect is larger for some numbers than others.
+We can see that the neural network has learned a mapping from pixel regions to class, which correspond to the regions
+that are most likely to be bright or dark for a given number. Due to the variation between indivdual instances of each
+number, the regions get blurred, and the effect is larger for some numbers than others.
 
 <h3 align="left">c)</h3>
 
@@ -597,7 +621,27 @@ loss on the validation set. In 1-2 sentences, explain why the network achieves w
 
 **Answer:**
 
+```
+Final Test loss with lr = 0.0192: 0.28947194200602305. Final Test accuracy with lr = 0.0192: 0.9186
+Final Test loss with lr = 1.0: 2.226700500160228. Final Test accuracy with lr = 1.0: 0.8977
+```
 
+<h3 align="center">Task 4c Learning Rates</h3>
+<a name="figure-4c"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4c_train.png?raw=true"
+        width=350>
+</p>
+<p align="center"><b>Figure 4c: </b>Comparison of training loss for learning rates of 0.0192 and 1.0.</p>
+
+
+
+The learning rate is too high for the optimization surface we are walking along, so the training is very unstable (and
+nearly diverges). We are essentially stepping over minima during single training steps.
+
+Not really much more to say about this other than that it is problem specific, and there are many techniques to change
+the optimization landscape to a more preferable form. Too low a learning rate can result in slow convergence or getting
+stuck in local minima, since then we are not able to utilize the stochastic nature of SGD to exit them.
 
 <h3 align="left">d)</h3>
 
@@ -608,3 +652,27 @@ this network with the same hyperparameters as previously. Plot the training and 
 together with the loss from task (a). Include the plot in your report. What do you observe?
 
 **Answer:**
+
+This question is worded a bit ambiguously, since number of "nodes" is not really precisely defined unless we specify
+that the layer is fully connected etc., and "ReLU as activation function for the first layer" can be interpreted in two
+ways, but presumably this is what is meant:
+
+```python
+model = nn.Sequential(nn.Flatten(), nn.Linear(28*28*1, 64), nn.ReLU(), nn.Linear(64, 10))
+```
+
+The result can be seen in [Figure 4d](#figure-4d).
+
+<h3 align="center">Task 4c Adding a Hidden Layer</h3>
+<a name="figure-4d"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4d_train.png?raw=true"
+        width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4d_train.png?raw=true"
+        width=350>
+</p>
+<p align="center"><b>Figure 4d: </b>Comparison of train and test losses between the task a) model and a model with an
+    added hidden layer and data normalization.</p>
+
+We can see that adding the additional nonlinearity (softmax is the other one) means we can learn a more complicated
+function approximation, which in this case leads to better performance since we do not observe any overfitting.

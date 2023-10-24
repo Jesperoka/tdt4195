@@ -13,16 +13,21 @@ from trainer import Trainer
 
 rng_seed = 0
 skip_training = False 
-task = 2 # a: 0, b: 1, c: 2, d: 3
+task = 3 # a: 0, b: 1, c: 2, d: 3
 
 # Hyperparameters
 num_epochs = 5
 batch_size = 64
 lr_1 = .0192
-lr_2 = 1.0 
+lr_2 = 1.0 if task == 2 else lr_1 
 
 def create_model():
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28 * 1, 10))
+    model = utils.to_cuda(model)
+    return model
+
+def create_model_2_layer():
+    model = nn.Sequential(nn.Flatten(), nn.Linear(28*28*1, 64), nn.ReLU(), nn.Linear(64, 10))
     model = utils.to_cuda(model)
     return model
 
@@ -34,7 +39,7 @@ image_transform_normalizaton = torchvision.transforms.Compose(
     [torchvision.transforms.ToTensor(),
      torchvision.transforms.Normalize(mean=0.5, std=0.5)])
 
-if task == 0:
+if task == 0 or task == 3:
     dataloader_train_1, dataloader_test_1 = dataloaders.load_dataset(batch_size, image_transform)
 else:
     dataloader_train_1, dataloader_test_1 = dataloaders.load_dataset(batch_size, image_transform_normalizaton)
@@ -42,7 +47,7 @@ else:
 dataloader_train_2, dataloader_test_2 = dataloaders.load_dataset(batch_size, image_transform_normalizaton)
 
 model_1 = create_model()
-model_2 = create_model()
+model_2 = create_model_2_layer() if task == 3 else create_model()
 
 optimizer_1 = torch.optim.SGD(model_1.parameters(), lr=lr_1)
 optimizer_2 = torch.optim.SGD(model_2.parameters(), lr=lr_2)
@@ -83,24 +88,27 @@ def report_final_avg_loss_and_accuracy(dataloaders, models, loss_function=torch.
     print(f"Final Test loss {added_texts[1]}: {final_loss_2}. Final Test accuracy {added_texts[1]}: {final_acc_2}")
 
 
-if task == 0:
-    utils.plot_loss(train_loss_dict_1, label="Train Loss Without Normalization")
-    utils.plot_loss(train_loss_dict_2, label="Train Loss With Normalization")
+if task == 0 or task == 3:
+    subtask = "a" if task == 0 else "d"
+    label_1 = "Without Normalization" if task == 0 else "No hidden layers, no normalization"
+    label_2 = "With Normalization" if task == 0 else "One hidden layer, with normalization"
+    utils.plot_loss(train_loss_dict_1, label="Train Loss "+label_1)
+    utils.plot_loss(train_loss_dict_2, label="Train Loss "+label_2)
     plt.ylim([0, 1])
     plt.legend()
     plt.xlabel("Global Training Step")
     plt.ylabel("Cross Entropy Loss")
-    plt.savefig("image_solutions/task4a_train.png")
+    plt.savefig("image_solutions/task4"+subtask+"_train.png")
     report_final_avg_loss_and_accuracy([dataloader_train_1, dataloader_train_2], [model_1, model_2], added_texts=["without normalization", "with normalization"])
     plt.show()
 
-    utils.plot_loss(test_loss_dict_1, label="Test Loss Without Normalization")
-    utils.plot_loss(test_loss_dict_2, label="Test Loss With Normalization")
+    utils.plot_loss(test_loss_dict_1, label="Train Loss "+label_1)
+    utils.plot_loss(test_loss_dict_2, label="Train Loss "+label_2)
     plt.ylim([0, 1])
     plt.legend()
     plt.xlabel("Global Training Step")
     plt.ylabel("Cross Entropy Loss")
-    plt.savefig("image_solutions/task4a_test.png")
+    plt.savefig("image_solutions/task4"+subtask+"_test.png")
     report_final_avg_loss_and_accuracy([dataloader_test_1, dataloader_test_2], [model_1, model_2], added_texts=["without normalization", "with normalization"])
     plt.show()
 
@@ -114,7 +122,7 @@ if task == 1:
 if task == 2:
     utils.plot_loss(train_loss_dict_1, label="Train Loss With lr = 0.0192")
     utils.plot_loss(train_loss_dict_2, label="Train Loss With lr = 1.0")
-    plt.ylim([0, 1])
+    plt.ylim([0, 10])
     plt.legend()
     plt.xlabel("Global Training Step")
     plt.ylabel("Cross Entropy Loss")

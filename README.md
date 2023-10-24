@@ -543,7 +543,19 @@ Do you notice any difference when training your network with/without normalizati
 
 **Answer:**
 
+[Figure 4a](#figure-4a) shows the result of normalization, which is faster convergence (and in theory more stable, but not noticable in this case) for the same learning rate.
 
+<h3 align="center">Task 4a Normalization</h3>
+<a name="figure-4a"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4a_train.png?raw=true" width=650>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4a_test.png?raw=true" width=650>
+</p>
+<p align="center"><b>Figure 4a: </b>Comparison of train and test losses for without and with normalization of the input data. Note that "test" refers to "validation" in the convention used by the task description, i.e. train-validate-test vs train-test-validate.</p>
+
+The reason for the faster (and more stable) learning is because scaling affects gradient based optimization in quite a few ways. Some of the main ones are optimization problem preconditioning, acivation function gradient properties (i.e. saturation), activation function output properties (i.e. dying ReLU). To some extent (but not solely), these are a result of weight initialization not being a hand-tuned process. There are also other more complicated effects that take place in larger neural nets, but in our specific case the most important part is the preconditioning and activation function related properties.
+
+Another thing to note is that our images are already on the range [0, 1] not [0, 255], which means the effect is not as large as i could have been in other image color formats.
 
 <h3 align="left">b)</h3>
 

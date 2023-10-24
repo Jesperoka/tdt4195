@@ -23,6 +23,9 @@ numpy_to_torch_dtype = {
 # Mapping from Torch dtypes to NumPy dtypes
 torch_to_np_numpy_dtype = {v: k for k, v in numpy_to_torch_dtype.items()}
 
+def set_np_torch_rng_seeds(seed=0):
+    torch.random.manual_seed(seed)
+    np.random.seed(seed)
 
 def compute_loss_and_accuracy(dataloader, model, loss_function):
     """

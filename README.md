@@ -369,10 +369,10 @@ and the smoothing kernel ($h_b$) in [Equation 2](#eq2). Show both images in your
 
 <a name="eq2"></a>
 <p align="center">
-    $h_a = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1
+    <math>h_a = \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1
     \end{bmatrix}, h_b=\frac{1}{256}\begin{bmatrix} 1 & 4 & 6 & 4 & 1 \\ 4 & 16 & 24 & 16 & 4 \\ 6 & 24 & 36 & 24 & 6 \\
     4 &
-    16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1 \end{bmatrix}$
+    16 & 24 & 16 & 4 \\ 1 & 4 & 6 & 4 & 1 \end{bmatrix}</math>
 </p>
 
 **In your report**, apply the transformation on duck.jpeg, and include in your report.

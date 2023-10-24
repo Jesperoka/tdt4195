@@ -70,7 +70,7 @@ else:
     print(model_2.state_dict().keys())
     model_2.load_state_dict(torch.load("saved_models/model.torch"))
 
-# TASK 4a PLOTS
+# TASK 4a and c PLOTS
 # utils.plot_loss(train_loss_dict_1, label="Train Loss Without Normalization")
 # utils.plot_loss(train_loss_dict_2, label="Train Loss With Normalization")
 # plt.ylim([0, 1])
@@ -94,6 +94,11 @@ else:
 # plt.show()
 
 # TASK 4b PLOTS
-weight = list(model_2.children())[1].weight.cpu().data
-for i in range(weight.shape[0]):
-    plt.imsave("image_solutions/task4b_class_" + str(i) + ".png", weight[i,:].reshape((28,28)))
+# weight = list(model_2.children())[1].weight.cpu().data
+# for i in range(weight.shape[0]):
+#     plt.imsave("image_solutions/task4b_class_" + str(i) + ".png", weight[i,:].reshape((28,28)))
+
+# TASK 4c PLOTS
+
+
+

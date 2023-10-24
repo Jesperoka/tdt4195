@@ -548,8 +548,8 @@ Do you notice any difference when training your network with/without normalizati
 <h3 align="center">Task 4a Normalization</h3>
 <a name="figure-4a"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4a_train.png?raw=true" width=350>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4a_test.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4a_train.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4a_test.png?raw=true" width=350>
 </p>
 <p align="center"><b>Figure 4a: </b>Comparison of train and test losses for without and with normalization of the input data. Note that "test" refers to "validation" in the convention used by the task description, i.e. train-validate-test vs train-test-validate.</p>
 
@@ -567,23 +567,26 @@ your report, include the image for each weight, and describe what you observe (1
 
 **Answer:**
 
-<h3 align="center">Task 4b Feature Maps</h3>
-<a name="figure-4a"></a>
+The weights are visualized in [Figure 4b](#figure-4b).
+
+<h3 align="center">Task 4b Weight maps</h3>
+<a name="figure-4b"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_0.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_1.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_2.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_3.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_4.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_0.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_1.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_2.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_3.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_4.png?raw=true" width=150>
     <br>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_5.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_6.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_7.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_8.png?raw=true" width=150>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/image_solutions/task4b_class_9.png?raw=true" width=150>
-    <br>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_5.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_6.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_7.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_8.png?raw=true" width=150>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4b_class_9.png?raw=true" width=150>
 </p>
-<p align="center"><b>Figure 4a: </b>Comparison of train and test losses for without and with normalization of the input data. Note that "test" refers to "validation" in the convention used by the task description, i.e. train-validate-test vs train-test-validate.</p>
+<p align="center"><b>Figure 4b: </b>Weights for each output class row in the weight matrix visualized as 2D linear color maps.</p>
+
+We can see that the neural network has learned a mapping from pixel regions to class, which correspond to the regions that are most likely to be bright or dark for a given number. Due to the variation between indivdual instances of each number, the regions get blurred, and the effect is larger for some numbers than others.
 
 <h3 align="left">c)</h3>
 

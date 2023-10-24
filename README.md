@@ -663,12 +663,12 @@ model = nn.Sequential(nn.Flatten(), nn.Linear(28*28*1, 64), nn.ReLU(), nn.Linear
 
 The result can be seen in [Figure 4d](#figure-4d).
 
-<h3 align="center">Task 4c Adding a Hidden Layer</h3>
+<h3 align="center">Task 4d Adding a Hidden Layer</h3>
 <a name="figure-4d"></a>
 <p align="center">
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4d_train.png?raw=true"
         width=350>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4d_train.png?raw=true"
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/image_solutions/task4d_test.png?raw=true"
         width=350>
 </p>
 <p align="center"><b>Figure 4d: </b>Comparison of train and test losses between the task a) model and a model with an

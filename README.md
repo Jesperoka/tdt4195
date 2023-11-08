@@ -53,7 +53,7 @@ We are given that
 
 ```math
 \begin{align}
-    &w_{\text{output}} = 506, h_{\text{output}} = 506, \\[100pt]
+    &w_{\text{output}} = 506, h_{\text{output}} = 506, \\[1pt]
     &w_{stride}=1, h_{stride}=1, \\
     &h_{\text{kernel}} = w_{\text{kernel}} \\
 \end{align}

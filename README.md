@@ -60,9 +60,11 @@ and there is no padding.
 We get
 
 ```math
-&506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1
-\implies &h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7
-\implies &h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 
+\begin{align}
+&506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1 \\
+\implies &h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7 \\
+\implies &h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 \\
+\end{align}
 ```
 
 <h3 align="left">c)</h3>

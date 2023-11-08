@@ -128,10 +128,10 @@ The weight and bias tensors of Conv2D layers have shapes
 ```math
 \begin{align}
     W_{\text{shape}} &= c_\text{output} \times c_\text{input} \times h_{\text{kernel}} \times w_{\text{kernel}} \\[3pt]
-    mathbf{b}_{\text{shape}} &= c_\text{output} \times 1 \\[3pt]
+    mathbf{b}_{\text{shape}} &= c_\text{output} \times 1
     \intertext{The weight and bias tensors of Linear layers have shapes} \\[3pt]
     W_{\text{shape}} &= h_\text{output} \times h_{\text{input}} \\[3pt]
-    \mathbf{b}_{\text{shape}} &= h_\text{output} \times 1 \\[3pt]
+    \mathbf{b}_{\text{shape}} &= h_\text{output} \times 1
     \intertext{MaxPool, ReLU and Softmax do not have any trainable parameters.}
 \end{align}
 ```

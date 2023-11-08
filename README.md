@@ -39,9 +39,13 @@ kernels? Give the answer as (Height) × (Width).
 
 The equations for the output shape of a 2D convolution layer are
 
-$$w_{\text{output}} = \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{padding start}} + w_{\text{padding end}} }{w_{\text{stride}}} + 1$$
-$$h_{\text{output}} = \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1$$
-$$c_{\text{output}} = \text{num\_filters}$$
+```math
+w_{\text{output}} = \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{padding start}} + w_{\text{padding end}} }{w_{\text{stride}}} + 1
+```
+```math
+h_{\text{output}} = \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1
+c_{\text{output}} = \text{num\_filters}
+```
 
 We are given that
 
@@ -121,9 +125,9 @@ $$\mathbf{b}_{\text{shape}} = h_\text{output} \times 1$$
 MaxPool, ReLU and Softmax do not have any trainable parameters.
 
 Thus, assuming RGB image inputs, for the Conv2D layers we have 
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}}_1 = (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432$</p>
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}}_2 = (64 \cdot 32 \cdot 3 \cdot 3) + 64 = 18496$</p>
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}}_3 = (128 \cdot 64 \cdot 3 \cdot 3) + 128 = 73856$</p>
+<p>${N_{\text{params}}}_1 = (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432$</p>
+<p>${N_{\text{params}}}_2 = (64 \cdot 32 \cdot 3 \cdot 3) + 64 = 18496$</p>
+<p>${N_{\text{params}}}_3 = (128 \cdot 64 \cdot 3 \cdot 3) + 128 = 73856$</p>
 
 and the spatial dimension of the image will have been halved $3$ times from the max pooling operations by the time it's flattened, meaning we have a $4 \times 4$ image.
 <br><br>This gives us

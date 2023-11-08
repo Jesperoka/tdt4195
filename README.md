@@ -44,20 +44,26 @@ w_{\text{output}} = \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{paddin
 ```
 ```math
 h_{\text{output}} = \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1
+```
+```math
 c_{\text{output}} = \text{num\_filters}
 ```
 
 We are given that
 
-$$w_{\text{output}} = 506, h_{\text{output}} = 506, w_{stride}=1, h_{stride}=1, h_{\text{kernel}} = w_{\text{kernel}}$$
+```math
+w_{\text{output}} = 506, h_{\text{output}} = 506, w_{stride}=1, h_{stride}=1, h_{\text{kernel}} = w_{\text{kernel}}
+```
 
 and there is no padding. 
 
 We get
 
-$$506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1$$
-$$\implies h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7$$
-$$\implies h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 $$
+```math
+&506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1
+\implies &h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7
+\implies &h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 
+```
 
 <h3 align="left">c)</h3>
 

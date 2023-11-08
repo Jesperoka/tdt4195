@@ -120,13 +120,16 @@ MaxPool, ReLU and Softmax do not have any trainable parameters.
 
 Thus, assuming RGB image inputs, for the Conv2D layers we have 
 
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}}_1 = (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432$</p>
+<p algin="left">
+
+&nbsp;&nbsp;&nbsp;&nbsp;${N_{\text{params}}}_1 = (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432$
 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;${N_{\text{params}}}_2 = (64 \cdot 32 \cdot 3 \cdot 3) + 64 = 18496$
 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;${N_{\text{params}}}_3 = (128 \cdot 64 \cdot 3 \cdot 3) + 128 = 73856$
+</p>
 
-<br>and the spatial dimension of the image will have been halved $3$ times from the max pooling operations by the time it's flattened, meaning we have a $4 \times 4$ image.
+and the spatial dimension of the image will have been halved $3$ times from the max pooling operations by the time it's flattened, meaning we have a $4 \times 4$ image.
 <br><br>This gives us
 
 &nbsp;&nbsp;&nbsp;&nbsp;${N_{\text{params}}}_4 = (64 \cdot (4 \cdot 4)) + 64 = 1088$ 

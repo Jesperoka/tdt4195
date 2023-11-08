@@ -80,7 +80,10 @@ spatial dimensions of the pooled feature maps in the first layer? (assume the in
 **Answer:**
 
 Pooling (subsampling) using a $2 \times 2$ kernel with stride $2$, assuming no padding or dilation (i.e. dilation=1), gives an  output of
-$$h_{\text{output}} \times w_{\text{ouput}} = 253 \times 253 $$
+
+```math
+h_{\text{output}} \times w_{\text{ouput}} = 253 \times 253
+```
 
 <h3 align="left">d)</h3>
 
@@ -122,17 +125,16 @@ network takes in an 32 × 32 image.
 
 The weight and bias tensors of Conv2D layers have shapes 
 
-$$W_{\text{shape}} = c_\text{output} \times c_\text{input} \times h_{\text{kernel}} \times w_{\text{kernel}}$$
-
-$$\mathbf{b}_{\text{shape}} = c_\text{output} \times 1$$
-
-The weight and bias tensors of Linear layers have shapes
-
-$$W_{\text{shape}} = h_\text{output} \times h_{\text{input}}$$
-
-$$\mathbf{b}_{\text{shape}} = h_\text{output} \times 1$$
-
-MaxPool, ReLU and Softmax do not have any trainable parameters.
+```math
+\begin{align}
+    W_{\text{shape}} &= c_\text{output} \times c_\text{input} \times h_{\text{kernel}} \times w_{\text{kernel}} \\[3pt]
+    mathbf{b}_{\text{shape}} &= c_\text{output} \times 1 \\[3pt]
+    \intertext{The weight and bias tensors of Linear layers have shapes} \\[3pt]
+    W_{\text{shape}} &= h_\text{output} \times h_{\text{input}} \\[3pt]
+    \mathbf{b}_{\text{shape}} &= h_\text{output} \times 1 \\[3pt]
+    \intertext{MaxPool, ReLU and Softmax do not have any trainable parameters.}
+\end{align}
+```
 
 Thus, assuming RGB image inputs, for the Conv2D layers we have 
 <p>${N_{\text{params}}}_1 = (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432$</p>

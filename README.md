@@ -40,9 +40,11 @@ kernels? Give the answer as (Height) × (Width).
 The equations for the output shape of a 2D convolution layer are
 
 ```math
-w_{\text{output}} &= \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{padding start}} + w_{\text{padding end}} }{w_{\text{stride}}} + 1 \\[3pt]
-h_{\text{output}} &= \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1 \\[3pt]
-c_{\text{output}} &= \text{num\_filters}
+\begin{align}
+    w_{\text{output}} &= \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{padding start}} + w_{\text{padding end}} }{w_{\text{stride}}} + 1 \\[3pt]
+    h_{\text{output}} &= \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1 \\[3pt]
+    c_{\text{output}} &= \text{num\_filters}
+\end{align}
 ```
 
 We are given that

@@ -52,7 +52,11 @@ c_{\text{output}} = \text{num\_filters}
 We are given that
 
 ```math
-w_{\text{output}} = 506, h_{\text{output}} = 506, w_{stride}=1, h_{stride}=1, h_{\text{kernel}} = w_{\text{kernel}}
+\begin{align}
+    &w_{\text{output}} = 506, h_{\text{output}} = 506, \\[100pt]
+    &w_{stride}=1, h_{stride}=1, \\
+    &h_{\text{kernel}} = w_{\text{kernel}} \\
+\end{align}
 ```
 
 and there is no padding. 
@@ -61,9 +65,9 @@ We get
 
 ```math
 \begin{align}
-&506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1 \\
-\implies &h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7 \\
-\implies &h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 \\
+    &506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1 \\
+    \implies &h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7 \\
+    \implies &h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 \\
 \end{align}
 ```
 

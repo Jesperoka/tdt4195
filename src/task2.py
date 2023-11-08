@@ -10,7 +10,6 @@ from trainer import Trainer
 torch.random.manual_seed(0)
 np.random.seed(0)
 
-
 # Load the dataset and print some stats
 batch_size = 64
 
@@ -30,9 +29,17 @@ def create_model():
     """
         Initializes the mode. Edit the code below if you would like to change the model.
     """
+    input_channels = example_images.shape[1]
     model = nn.Sequential(
+        nn.Conv2d(input_channels, 32, 5, stride=1, padding=2), nn.ReLU(),
+        nn.MaxPool2d(2, stride=2),
+        nn.Conv2d(32, 64, 3, stride=1, padding=1), nn.ReLU(),
+        nn.MaxPool2d(2, stride=2),
+        nn.Conv2d(64, 128, 3, stride=1, padding=1), nn.ReLU(),
+        nn.MaxPool2d(2, stride=2),
         nn.Flatten(),  # Flattens the image from shape (batch_size, C, Height, width) to (batch_size, C*height*width)
-        nn.Linear(32*32*1, 10)
+        nn.Linear(16, 64),
+        nn.Linear(64, 10)
         # No need to include softmax, as this is already combined in the loss function
     )
     # Transfer model to GPU memory if a GPU is available

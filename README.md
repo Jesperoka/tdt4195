@@ -149,11 +149,11 @@ Thus, assuming RGB image inputs, for the Conv2D layers we have
     {N_{\text{params}}}_3 &= (128 \cdot 64 \cdot 3 \cdot 3) + 128 = 73856 
 \end{align}
 ```
-and the spatial dimension of the image will have been halved $3$ times from the max pooling operations by the time it's flattened, meaning we have a $4 \times 4$ image.
+and the spatial dimension of the image will have been halved $3$ times from the max pooling operations by the time it's flattened, meaning we have a $4 \times 4 \times 128$ feature map.
 <br><br>This gives us
 ```math
 \begin{align}
-    {N_{\text{params}}}_4 &= (64 \cdot (4 \cdot 4)) + 64 = 1088 \\[3pt]
+    {N_{\text{params}}}_4 &= (64 \cdot (4 \cdot 4 \cdot 128)) + 64 = 131136 \\[3pt]
     {N_{\text{params}}}_5 &= (10 \cdot 64) + 10 = 650
 \end{align}
 ```
@@ -161,7 +161,7 @@ for a total of
 ```math
 \begin{align}
     {N_{\text{params}}} &= {N_{\text{params}}}_1 + {N_{\text{params}}}_2 + {N_{\text{params}}}_3 + {N_{\text{params}}}_4 + {N_{\text{params}}}_5 \\[3pt]
-    {N_{\text{params}}} &= 96522
+    {N_{\text{params}}} &= 226570 
 \end{align}
 ```
 
@@ -215,7 +215,7 @@ Shortly summarize your reasoning.
 
 <h2 align="center">Part 2: Filtering in the Frequency Domain</h2>
 
-<h2 align="left">Task 1: Theory</h2>
+<h2 align="left">Task 3: Theory</h2>
 
 <h3 align="left">a)</h3>
 
@@ -248,7 +248,6 @@ Shortly summarize your reasoning.
 
 **Answer:**
 
-In the forward pass (the output of) each node in the neural network is evaluated, as well as the value of the gradient
 
 <h3 align="left">e)</h3>
 
@@ -256,11 +255,12 @@ In the forward pass (the output of) each node in the neural network is evaluated
 
 **Answer:**
 
+<h2 align="left">Task 4: Programming</h2>
+
 <h3 align="left">a)</h3>
 
 **Question:**
 
-**Use normalization for every subsequent task.**
 
 **Answer:**
 

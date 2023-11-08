@@ -40,22 +40,18 @@ kernels? Give the answer as (Height) × (Width).
 The equations for the output shape of a 2D convolution layer are
 
 ```math
-w_{\text{output}} = \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{padding start}} + w_{\text{padding end}} }{w_{\text{stride}}} + 1
-```
-```math
-h_{\text{output}} = \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1
-```
-```math
-c_{\text{output}} = \text{num\_filters}
+w_{\text{output}} &= \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{padding start}} + w_{\text{padding end}} }{w_{\text{stride}}} + 1 \\[3pt]
+h_{\text{output}} &= \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1 \\[3pt]
+c_{\text{output}} &= \text{num\_filters}
 ```
 
 We are given that
 
 ```math
 \begin{align}
-    &w_{\text{output}} = 506, h_{\text{output}} = 506, \\[1pt]
-    &w_{stride}=1, h_{stride}=1, \\
-    &h_{\text{kernel}} = w_{\text{kernel}} \\
+    w_{\text{output}} &= h_{\text{output}} = 506 \\[3pt]
+    w_{stride} &= h_{stride} = 1, \\[3pt]
+    h_{\text{kernel}} &= w_{\text{kernel}}
 \end{align}
 ```
 
@@ -65,9 +61,9 @@ We get
 
 ```math
 \begin{align}
-    &506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1 \\
-    \implies &h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7 \\
-    \implies &h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 \\
+    &506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1 \\[3pt]
+    \implies &h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7 \\[3pt]
+    \implies &h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7 
 \end{align}
 ```
 

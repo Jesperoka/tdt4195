@@ -95,8 +95,10 @@ the input shape is the answer from the last task). Give the answer as (Height) Ã
 
 **Answer:**
 
-Passing a $252 \times 253$ spatial dimension input from the previous layer and applying a $3 \times 3$ kernel with stride $1$ and no padding results in reduction of $2$ in both height and width, giving
-$$h_{\text{output}} \times w_{\text{ouput}} = 251 \times 251 $$
+Passing a $252 \times 253$ spatial dimension input from the previous layer and applying a $3 \times 3$ kernel with stride $1$ and no padding results in reduction of $2$ in bothe height and width, giving
+```math
+h_{\text{output}} \times w_{\text{ouput}} = 251 \times 251 
+```
 
 <h3 align="left">e)</h3>
 
@@ -124,31 +126,44 @@ network takes in an 32 Ã— 32 image.
 **Answer:**
 
 The weight and bias tensors of Conv2D layers have shapes 
-
 ```math
 \begin{align}
     W_{\text{shape}} &= c_\text{output} \times c_\text{input} \times h_{\text{kernel}} \times w_{\text{kernel}} \\[3pt]
     mathbf{b}_{\text{shape}} &= c_\text{output} \times 1
-    \intertext{The weight and bias tensors of Linear layers have shapes} \\[3pt]
-    W_{\text{shape}} &= h_\text{output} \times h_{\text{input}} \\[3pt]
-    \mathbf{b}_{\text{shape}} &= h_\text{output} \times 1
-    \intertext{MaxPool, ReLU and Softmax do not have any trainable parameters.}
 \end{align}
 ```
+The weight and bias tensors of Linear layers have shapes
+```math
+\begin{align}
+    W_{\text{shape}} &= h_\text{output} \times h_{\text{input}} \\[3pt]
+    \mathbf{b}_{\text{shape}} &= h_\text{output} \times 1
+\end{align}
+```
+MaxPool, ReLU and Softmax do not have any trainable parameters.
 
 Thus, assuming RGB image inputs, for the Conv2D layers we have 
-<p>${N_{\text{params}}}_1 = (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432$</p>
-<p>${N_{\text{params}}}_2 = (64 \cdot 32 \cdot 3 \cdot 3) + 64 = 18496$</p>
-<p>${N_{\text{params}}}_3 = (128 \cdot 64 \cdot 3 \cdot 3) + 128 = 73856$</p>
-
+```math
+\being{align}
+    {N_{\text{params}}}_1 &= (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432 \\[3pt]
+    {N_{\text{params}}}_2 &= (64 \cdot 32 \cdot 3 \cdot 3) + 64 = 18496 \\[3pt]
+    {N_{\text{params}}}_3 &= (128 \cdot 64 \cdot 3 \cdot 3) + 128 = 73856 
+\end{align}
+```
 and the spatial dimension of the image will have been halved $3$ times from the max pooling operations by the time it's flattened, meaning we have a $4 \times 4$ image.
 <br><br>This gives us
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}}_4 = (64 \cdot (4 \cdot 4)) + 64 = 1088$</p>
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}}_5 = (10 \cdot 64) + 10 = 650$</p> 
-
+```math
+\being{align}
+    {N_{\text{params}}}_4 &= (64 \cdot (4 \cdot 4)) + 64 = 1088 \\[3pt]
+    {N_{\text{params}}}_5 &= (10 \cdot 64) + 10 = 650
+\end{align}
+```
 for a total of
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}} = {N_{\text{params}}}_1 + {N_{\text{params}}}_2 + {N_{\text{params}}}_3 + {N_{\text{params}}}_4 + {N_{\text{params}}}_5$</p>
-&nbsp;&nbsp;&nbsp;&nbsp;<p>${N_{\text{params}}} = 96522$</p>
+```math
+\being{align}
+    {N_{\text{params}}} = {N_{\text{params}}}_1 + {N_{\text{params}}}_2 + {N_{\text{params}}}_3 + {N_{\text{params}}}_4 + {N_{\text{params}}}_5 \\[3pt]
+    {N_{\text{params}}} = 96522
+\end{align}
+```
 
 <h2 align="left">Task 2: Programming</h2>
 

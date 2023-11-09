@@ -4,8 +4,8 @@ import skimage
 import utils
 
 
-def convolve_im(im: np.array,
-                fft_kernel: np.array,
+def convolve_im(im: np.ndarray,
+                fft_kernel: np.ndarray,
                 verbose=True):
     """ Convolves the image (im) with the frequency kernel (fft_kernel),
         and returns the resulting image.
@@ -20,23 +20,28 @@ def convolve_im(im: np.array,
     Returns:
         im: np.array of shape [H, W]
     """
-    # START YOUR CODE HERE ### (You can change anything inside this block)
-    conv_result = im
+
+    im_fft = np.fft.fft2(im)
+    im_fft_conv = np.multiply(im_fft, fft_kernel)
+
+    conv_result = np.real(np.fft.ifft2(im_fft_conv)) 
     if verbose:
         # Use plt.subplot to place two or more images beside eachother
         plt.figure(figsize=(20, 4))
-        # plt.subplot(num_rows, num_cols, position (1-indexed))
         plt.subplot(1, 5, 1)
         plt.imshow(im, cmap="gray")
+
         plt.subplot(1, 5, 2)
-        # Visualize FFT
+        plt.imshow(np.log(np.absolute(np.fft.fftshift(im_fft))), cmap="gray") # Visualize FFT
+
         plt.subplot(1, 5, 3)
-        # Visualize FFT kernel
+        plt.imshow(np.log(np.absolute(np.fft.fftshift(fft_kernel))), cmap="gray") # Visualize FFT kernel
+
         plt.subplot(1, 5, 4)
-        # Visualize filtered FFT image
-        plt.subplot(1, 5, 5)
-        # Visualize filtered spatial image
-        plt.imshow(conv_result, cmap="gray")
+        plt.imshow(np.log(np.absolute(np.fft.fftshift(im_fft_conv))), cmap="gray") # Visualize filtered FFT image
+
+        plt.subplot(1, 5, 5) 
+        plt.imshow(conv_result, cmap="gray") # Visualize filtered spatial image
 
     ### END YOUR CODE HERE ###
     return conv_result

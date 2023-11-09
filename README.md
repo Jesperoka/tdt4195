@@ -366,7 +366,7 @@ You will observe a "ringing" effect in the filtered image. What is the cause of 
 
 **Answer:**
 
-
+ringing: hard line in freq space -> oscillations in state space
 
 <h3 align="left">b)</h3>
 

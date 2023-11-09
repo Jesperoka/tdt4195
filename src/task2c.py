@@ -6,7 +6,6 @@ import numpy as np
 
 
 image = Image.open("images/zebra.jpg")
-# plt.imshow(image)
 print("Image shape:", image.size)
 
 
@@ -34,7 +33,6 @@ image_transform = torchvision.transforms.Compose([
 
 # Apply the image transform to the zebra image
 image = image_transform(image)[None]
-print("Image shape:", image.shape)
 # By running the image through the first layer, we get an activation.
 # We can retrieve the activation from the first layer by doing a forward pass throught this conv layer.
 activation = first_conv_layer(image)
@@ -66,6 +64,7 @@ def torch_image_to_numpy(image: torch.Tensor):
 
 
 indices = [5, 8, 19, 22, 34]
+# indices = [0, 1, 2, 3, 4, 5]
 num_filters = len(indices)
 plt.figure(figsize=(20, 4))
 n = 1

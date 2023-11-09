@@ -257,7 +257,17 @@ what kind of feature each filter extracts. Explain your reasoning.
 
 **Answer:**
 
+Filter 5: Vertical dark-light contrast edges with about 4-5 pixels of dark and light areas the the left and right of the edges.
+Filter 8: Down-right diagonal bright lines on darker background 1-2 pixels thick (about 45 degree angle).
+Filter 19: Relatively uniformly green areas.
+Filter 22: Up-right diagonal bright lines on darker background 1-2 pixels thick (about 30 degree angle).
+Filter 34: Relatively uniformly blue areas.
 
+The learned filters, visualized as RGB images show how the activation for a given pixel in the output is affected by its neighboring pixels in all 3 RGB channels. For instance, because of the way the zebra is positioned in the image, filter 5 results in more regions of low and high activations, wheras filter 22 only really gives strong activations either way on the face of the zebra and somewhat around its outline where the white areas on the zebra create a contrasting line with the background and the black areas on the zebra. Filter 8 corresponds to quite a few areas, but the stripes on the zebra make lines that are too thick for the filter in most cases.
+
+Clearly blue and green are also salient features for images that have sky, water and grassy areas. 
+
+Note that the grass being a more yellow color also plays into the activation of the green area detecting filter, giving the network a chance to differentiate between climates which might help in classifying a striped animal in an area with a yellow background versus one in an area with a very lush green background.
 
 <h2 align="center">Part 2: Filtering in the Frequency Domain</h2>
 
@@ -267,39 +277,76 @@ what kind of feature each filter extracts. Explain your reasoning.
 
 **Question:**
 
+Given the images in the spatial and frequency domain in [Figure 4](#figure-4), pair each image in the
+spatial domain (first row) with a single image in the frequency domain (second row). Explain your
+reasoning.
+
+<h3 align="center">Task 3a 2D Discrete Fourier Transform</h3>
+<a name="figure-4"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task3a_imgs.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 4: </b>A set of images visualized in the spatial domain (first row) and the frequency domain (second row).
+The frequency images visualizes the amplitude |F{g}|.
+</p>
 
 **Answer:**
 
-**Question:**
+The amplitude of the discrete time fourier transform is represented by color in the amplitude plots, so we can interperet a white dot at (u, v) on a black background a there being a very defined sinusoid frequency along the direction (u, v) of the input image. In this case all the images have oscillating colors along either x or y only. All images also have areas (in both directions) of constant color, corresponding to the truncated delta function (white dot) in the middle of the amplitude image.
 
-**Answer:**
+Based on this we can, by ordering the images from low to high frequency along the x and y directions respectively, determine the corresponding amplitude plots.
+
+We have the following low-to-high frequency orderings
+```math
+\begin{align}
+    X_{\text{direction}} &= (1d, 1f, 1e) \\[3pt]
+    Y_{\text{direction}} &= (1c, 1b, 1a)
+\end{align}
+```
+which gives ut the one-to-one correspondence
+```math
+\begin{align}
+    H_{\text{bijection}} &= \{(1d, 2b), (1f, 2a), (1e, 2d), (1c, 2f), (1b, 2c), (1a, 2e)\} 
+\end{align}
+```
 
 <h3 align="left">b)</h3>
 
 **Question:**
 
+What are high-pass and low-pass filters?
 
 **Answer:**
+
+High-pass filters are filters that pass through high frequency signal components, this means they remove low frequency signal components.
+Low-pass filters are filters that pass through low frequency signal components, this means they remove high frequency signal components.
+
+These are the general descriptions of their idealized function. In practice they approximate this behaviour by attenuating signals that are not supposed to be passed through, and make an effort to not attenuate signals that are supposed to be passed through. How effectively they do this is dependent on their area of application (electronics, image processing, optics, audio, estimation and continuous/discrete).
 
 <h3 align="left">c)</h3>
 
 **Question:**
 
+The amplitude |F{g}| of two commonly used convolution kernels can be seen in [Figure 5](#figure-5).
+For each kernel (a, and b), figure out what kind of kernel it is (high- or low-pass). 
+
+Shortly explain your reasoning.
+
+<h3 align="center">Task 3c Amplitude plots for </h3>
+<a name="figure-5"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task3c_imgs.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 5: </b>The amplitude |F{g}| of two convolution kernels that have been transformed by the Fourier transform.
+The DC component have been shifted to the center for all images. This means that low frequencies can be found
+around the center of each image, while high frequencies can be found far from the center of each image.</p>
+
 **Answer:**
 
-<h3 align="left">d)</h3>
+A low-pass filtering kernel in some sense averages the input, so we expect the kernel itself to have more uniform values, thus giving it mostly low frequencies in all spatialdirections. The high-pass filtering kernel does somewhat the opposite, having sharp differences in the kernel values, leading to higher frequencies in the spatial directions. 
 
-**Question:**
+Thus, 5a is the high-pass filter and 5b is the low-pass filter.
 
-
-**Answer:**
-
-
-<h3 align="left">e)</h3>
-
-**Question:**
-
-**Answer:**
 
 <h2 align="left">Task 4: Programming</h2>
 
@@ -307,8 +354,19 @@ what kind of feature each filter extracts. Explain your reasoning.
 
 **Question:**
 
+Implement a function that takes an grayscale image, and a kernel in the frequency domain, and applies the convolution theorem (seen in Equation 4). Try it out on a low-pass filter and a high-pass filter on the grayscale image "camera man" (im = skimage.data.camera()).
+
+Include in your report the filtered images and the before/after amplitude |F{f}| of the transform.
+Make sure to shift the zero-frequency component to the center before displaying the amplitude.
+
+Implement this in the function convolve_im in task4a.py/task4a.ipynb. The high-pass and
+low-pass filter is already defined in the starter code.
+
+You will observe a "ringing" effect in the filtered image. What is the cause of this?
 
 **Answer:**
+
+
 
 <h3 align="left">b)</h3>
 

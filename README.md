@@ -122,7 +122,6 @@ network takes in an 32 × 32 image.
 |   5   | Linear(in_features=64, out_features=10)     | 10 | Softmax |
 <p align="center"><b>Table 1</b>: Architecture of a simple convolutional neural network.</p>
 
-
 **Answer:**
 
 The weight and bias tensors of Conv2D layers have shapes 
@@ -180,16 +179,45 @@ Shortly summarize your reasoning.
 
 **Answer:**
 
+The final validation loss was $0.0348$, and the final validation accuracy was $0.9894$. [Figure 1](#figure-1) shows the training and validation losses during training.
+<br>*Note: test and validation are used interchangably in these tasks.*
+
+<h3 align="center">Task 2a Train and Test Losses</h3>
+<a name="figure-1"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2a_plot.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 1: </b>Five epochs of training is enough to learn the relatively simple MNIST dataset.</p>
+
+Because the training and validation losses are closely aligned, we conclude that there is no evidence of overfitting. Furthermore the validation loss was still decreasing at the end of training.
 
 <h3 align="left">b)</h3>
 
 **Question:**
 
+The optimizer in pytorch is the method we use to update our gradients. Till now, we have
+used standard stochastic gradient descent (SGD). Understanding what the different optimizers do
+is out of the scope of this course, but we want to make you aware that they exist. 
 
+Adam is one of the most popular optimizers currently. Change the SGD optimizer to Adam (use
+torch.optim.Adam instead of torch.optim.SGD), and train your model from scratch.
+
+Use a learning rate of 0.001.
+
+Plot the training/validation loss from both models (the model with Adam and the one with SGD)
+in the same graph and include this in your report. (Note, you should probably change the plt.ylim
+argument to [0, 0.1]).
 
 **Answer:**
 
+It wasn't quite clear weather SGD should be run with the same learning rate as Adam, or if we were meant to use the learning rate from before, so [Figure 2](#figure-2) includes both cases.
 
+<h3 align="center">Task 2b Comparison of Optimizers and Learning Rates</h3>
+<a name="figure-2"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2b_plot.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 2: </b>Train and test losses for the same model using SGD with learning rates of 0.02 and 0.001, and Adam with a learning rate of 0.001.</p>
 
 <h3 align="left">c)</h3>
 
@@ -283,9 +311,3 @@ Shortly summarize your reasoning.
 **Answer:**
 
 
-<h3 align="center">Temp</h3>
-<a name="figure-X"></a>
-<p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_4/src/images/duck.jpeg?raw=true" width=350>
-</p>
-<p align="center"><b>Figure Xa: </b>Temp.</p>

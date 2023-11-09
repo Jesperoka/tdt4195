@@ -1,5 +1,3 @@
-
-
 import matplotlib.pyplot as plt
 from PIL import Image
 import torchvision
@@ -8,7 +6,7 @@ import numpy as np
 
 
 image = Image.open("images/zebra.jpg")
-plt.imshow(image)
+# plt.imshow(image)
 print("Image shape:", image.size)
 
 
@@ -67,18 +65,24 @@ def torch_image_to_numpy(image: torch.Tensor):
     return image
 
 
-# START YOUR CODE HERE ### (You can change anything inside this block)
-# plt.subplot is a nice function to use for this task!
-# Tip: test out for indices = [01,2,3,4,5] to check that your result is correct!
 indices = [5, 8, 19, 22, 34]
 num_filters = len(indices)
-# %%
 plt.figure(figsize=(20, 4))
 n = 1
 for i in indices:
+    # Weights 
     plt.subplot(2, num_filters, n)
-    # Plot weight here
-    plt.subplot(2, num_filters, num_filters+n)
-    # Plot activation here
+    filter_weight = torch_image_to_numpy(weight[i])
+    plt.imshow(filter_weight)
+    plt.title(f"Filter {i}")
+    plt.axis("off")
+    
+    # Outputs 
+    plt.subplot(2, num_filters, num_filters + n)
+    activation_img = torch_image_to_numpy(activation[0, i])
+    plt.imshow(activation_img, cmap="cividis")
+    plt.title(f"Activation {i}")
+    plt.axis("off")
+    
     n += 1
-### END YOUR CODE HERE ###
+plt.show()

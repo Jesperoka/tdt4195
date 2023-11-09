@@ -223,21 +223,39 @@ It wasn't quite clear weather SGD should be run with the same learning rate as A
 
 **Question:**
 
+Interpreting CNNs is a challenging task. One way of doing this, is to visualize the learned
+weights in the first layer as a K × K × 3 image 2, where K is the kernel size.
 
+Understanding what the filter does can be difficult. Therefore, we can visualize the activation by
+passing an image through a given filter. The result of this will be a grayscale image.
+
+Run the image zebra.jpg through the first layer of the ResNet50 network. Visualize the filter, and
+the grayscale activation of a the filter, by plotting them side by side. 
+
+Use the pre-trained network
+ResNet50 and visualize the convolution filters with indices [5, 8, 19, 22, 34].
+
+Include the visualized filters and activations in your report.
 
 **Answer:**
 
+[Figure-3](#figure-3) 
 
+<h3 align="center">Task 2c Weights and Feature Maps of the First Layer of ResNet50</h3>
+<a name="figure-3"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2c_plot.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 3: </b>Visualization of the weights for filters 5, 8, 19, 22 and 34 of ResNet50 from PyTorch torchvision and the output feature map of the corresponding filter after passing zebra.jpg.</p>
 
 <h3 align="left">d)</h3>
 
 **Question:**
 
-
+Looking at the visualized filter, and its corresponding activation on the zebra image, describe
+what kind of feature each filter extracts. Explain your reasoning.
 
 **Answer:**
-
-
 
 
 

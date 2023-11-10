@@ -23,24 +23,29 @@ def convolve_im(im: np.ndarray,
 
     im_fft = np.fft.fft2(im)
     im_fft_conv = np.multiply(im_fft, fft_kernel)
-
     conv_result = np.real(np.fft.ifft2(im_fft_conv)) 
+
     if verbose:
         # Use plt.subplot to place two or more images beside eachother
         plt.figure(figsize=(20, 4))
         plt.subplot(1, 5, 1)
+        plt.title("Img")
         plt.imshow(im, cmap="gray")
 
         plt.subplot(1, 5, 2)
+        plt.title("FFT(Img)")
         plt.imshow(np.log(np.absolute(np.fft.fftshift(im_fft))), cmap="gray") # Visualize FFT
 
         plt.subplot(1, 5, 3)
+        plt.title("FFT(Ker)")
         plt.imshow(np.log(np.absolute(np.fft.fftshift(fft_kernel))), cmap="gray") # Visualize FFT kernel
 
         plt.subplot(1, 5, 4)
+        plt.title("FFT(Img) ⊙ FFT(ker)")
         plt.imshow(np.log(np.absolute(np.fft.fftshift(im_fft_conv))), cmap="gray") # Visualize filtered FFT image
 
         plt.subplot(1, 5, 5) 
+        plt.title("FFT^(-1) ( FFT(Img) ⊙ FFT(ker) )")
         plt.imshow(conv_result, cmap="gray") # Visualize filtered spatial image
 
     ### END YOUR CODE HERE ###

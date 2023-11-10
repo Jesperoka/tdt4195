@@ -1,11 +1,12 @@
+from math import ceil
 import matplotlib.pyplot as plt
 import numpy as np
 import skimage
 import utils
 
 
-def convolve_im(im: np.array,
-                kernel: np.array,
+def convolve_im(im: np.ndarray,
+                kernel: np.ndarray,
                 verbose=True):
     """ Convolves the image (im) with the spatial kernel (kernel),
         and returns the resulting image.
@@ -23,24 +24,40 @@ def convolve_im(im: np.array,
         im: np.array of shape [H, W]
     """
     # START YOUR CODE HERE ### (You can change anything inside this block)
+    n_img, m_img = im.shape
+    n_ker, m_ker = kernel.shape
+    row_idx_start = ceil((n_ker + 1)/2)
+    col_idx_start = ceil((m_ker + 1)/2)
+    row_idx_end = row_idx_start + n_img - 1
+    col_idx_end = col_idx_start + m_img - 1
 
-    conv_result = im
+    im_fft = np.fft.fft2(im, (n_img+n_ker, m_img+m_ker))
+    kernel_fft = np.fft.fft2(kernel, (n_img+n_ker, m_img+m_ker))
+    im_fft_conv = np.multiply(im_fft, kernel_fft)
+    conv_result = np.real(np.fft.ifft2(im_fft_conv)[row_idx_start:row_idx_end, col_idx_start:col_idx_end]) 
 
     if verbose:
         # Use plt.subplot to place two or more images beside eachother
         plt.figure(figsize=(20, 4))
-        # plt.subplot(num_rows, num_cols, position (1-indexed))
         plt.subplot(1, 5, 1)
+        plt.title("Img")
         plt.imshow(im, cmap="gray")
+
         plt.subplot(1, 5, 2)
-        # Visualize FFT
+        plt.title("FFT(Img)")
+        plt.imshow(np.log(np.absolute(np.fft.fftshift(im_fft))), cmap="gray") # Visualize FFT
+
         plt.subplot(1, 5, 3)
-        # Visualize FFT kernel
+        plt.title("FFT(Ker)")
+        plt.imshow(np.log(np.absolute(np.fft.fftshift(kernel_fft))), cmap="gray") # Visualize FFT kernel
+
         plt.subplot(1, 5, 4)
-        # Visualize filtered FFT image
-        plt.subplot(1, 5, 5)
-        # Visualize filtered spatial image
-        plt.imshow(conv_result, cmap="gray")
+        plt.title("FFT(Img) ⊙ FFT(ker)")
+        plt.imshow(np.log(np.absolute(np.fft.fftshift(im_fft_conv))), cmap="gray") # Visualize filtered FFT image
+
+        plt.subplot(1, 5, 5) 
+        plt.title("FFT^(-1) ( FFT(Img) ⊙ FFT(ker) )")
+        plt.imshow(conv_result, cmap="gray") # Visualize filtered spatial image
 
     ### END YOUR CODE HERE ###
     return conv_result

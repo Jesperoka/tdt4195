@@ -244,7 +244,7 @@ Include the visualized filters and activations in your report.
 <h3 align="center">Task 2c Weights and Feature Maps of the First Layer of ResNet50</h3>
 <a name="figure-3"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2c_plot.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2c_plot.png?raw=true" width=600>
 </p>
 <p align="center"><b>Figure 3: </b>Visualization of the weights for filters 5, 8, 19, 22 and 34 of ResNet50 from PyTorch torchvision and the output feature map of the corresponding filter after passing zebra.jpg.</p>
 
@@ -284,7 +284,7 @@ reasoning.
 <h3 align="center">Task 3a 2D Discrete Fourier Transform</h3>
 <a name="figure-4"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task3a_imgs.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task3a_imgs.png?raw=true" width=600>
 </p>
 <p align="center"><b>Figure 4: </b>A set of images visualized in the spatial domain (first row) and the frequency domain (second row).
 The frequency images visualizes the amplitude |F{g}|.
@@ -332,7 +332,7 @@ For each kernel (a, and b), figure out what kind of kernel it is (high- or low-p
 
 Shortly explain your reasoning.
 
-<h3 align="center">Task 3c Amplitude plots for </h3>
+<h3 align="center">Task 3c Amplitude Plots for Commonly Used Convolution Kernels</h3>
 <a name="figure-5"></a>
 <p align="center">
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task3c_imgs.png?raw=true" width=350>
@@ -343,7 +343,7 @@ around the center of each image, while high frequencies can be found far from th
 
 **Answer:**
 
-A low-pass filtering kernel in some sense averages the input, so we expect the kernel itself to have more uniform values, thus giving it mostly low frequencies in all spatialdirections. The high-pass filtering kernel does somewhat the opposite, having sharp differences in the kernel values, leading to higher frequencies in the spatial directions. 
+A low-pass filtering kernel, in some sense, averages the input, so we expect the kernel itself to have more uniform values, thus giving it mostly low frequencies in all spatialdirections. The high-pass filtering kernel does somewhat the opposite, having sharp differences in the kernel values, leading to higher frequencies in the spatial directions. 
 
 Thus, 5a is the high-pass filter and 5b is the low-pass filter.
 
@@ -366,23 +366,79 @@ You will observe a "ringing" effect in the filtered image. What is the cause of 
 
 **Answer:**
 
-ringing: hard line in freq space -> oscillations in state space
+[Figure 6](#figure-6) shows process of applying the convolution theorem for the two cases in the question.
+
+<h3 align="center">Task 4a Convolution Theorem Applied to Low- and High-pass filtering</h3>
+<a name="figure-6"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4a_imgs_1.png?raw=true" width=600>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4a_imgs_2.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 6: </b><br>Top: Low-pass filter.<br>Bottom: High-pass filter.<br>Note that the amplitude plots are log-amplitude plots for better visualization as is common.</p>
+
+If you google the ringing effect "Gibbs phenomenon" you will first of all get the answer that the effect comes from a signal being band-limited. In particular the effect comes from the truncation of a fourier series used to represent a time/spatial domain signal, leading to an overshoot and exponentially decaying sinusoids (ringing effect). Since we are dealing with finite discrete signals, we are also dealing with truncated fourier transforms, and in our particular case we have frequency domain kernels that are idealized and discontinuous, which necessitates oscillatory behaviour in the spatial domain of the kernel, with which we are convolving our image. 
+
+*Apparently this all also has to do with convergence of the fourier series to the function it represents not being uniform or pointwise.*
 
 <h3 align="left">b)</h3>
 
 **Question:**
 
+Implement a function that takes an grayscale image, and a kernel in the spatial domain,
+and applies the convolution theorem. Try it out on the gaussian kernel given in assignment 1, and
+a horizontal sobel filter (Gx).
+
+Include in your report the filtered images and the before/after amplitude |F{f}| of the transform.
+Make sure to shift the zero-frequency component to the center before displaying the amplitude.
+Implement this in the function convolve_im in task4b.py/task4b.ipynb. The gaussian and sobel
+filter are already defined in the starter code.
+
 **Answer:**
+
+[Figure 7](#figure-7) shows process of applying the convolution theorem for the two cases in the question.
+
+<h3 align="center">Task 4b Convolution Theorem Applied to Gaussian- and Sobel-filtering</h3>
+<a name="figure-7"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4b_imgs_1.png?raw=true" width=600>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4b_imgs_2.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 7: </b><br>Top: Gaussiam filter.<br>Bottom: Horiontal Sobel filter.<br>Note that the amplitude plots are log-amplitude plots for better visualization as is common.</p>
 
 <h3 align="left">c)</h3>
 
 **Question:**
 
+Use what you’ve learned from the lectures and the recommended resources to remove the
+noise in the image seen in Figure 5a. Note that the noise is a periodic signal. Also, the result you
+should expect can be seen in Figure 5b
+Include the filtered result in your report.
+Implement this in the file task4c.py/task4c.ipynb.
+
+
+<h3 align="center">Task 4c Image of a Moon with Periodic Noise</h3>
+<a name="figure-8"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4c_imgs_0.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 8: </b>(a) An image of a moon with periodic noise. (b) The image after applying filtering in the frequency domain</p>
+
 **Answer:**
+
+[Figure 9](#figure-9) shows process of removing the undesireable frequency peaks. Note that with more time and a less coarse approach we could also remove more of the high frequency noise still left in the image.
+
+<h3 align="center">Task 4c Filtering of Moon Image with Periodic Noise</h3>
+<a name="figure-9"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4c_imgs.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 9: </b>Filtering of moon image by manually removing frequency peaks.</p>
 
 <h3 align="left">d)</h3>
 
 **Question:**
+
+
 
 **Answer:**
 

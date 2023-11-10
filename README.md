@@ -430,7 +430,7 @@ Implement this in the file task4c.py/task4c.ipynb.
 <h3 align="center">Task 4c Filtering of Moon Image with Periodic Noise</h3>
 <a name="figure-9"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4c_imgs.png?raw=true" width=600>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4c_imgs.png?raw=true" width=800>
 </p>
 <p align="center"><b>Figure 9: </b>Filtering of moon image by manually removing frequency peaks.</p>
 
@@ -462,4 +462,3 @@ Include the generated image in your report.
 </p>
 <p align="center"><b>Figure 10: </b>Orientation finding algorithm by way of line fitting to Fourier magnitude spectrum.</p>
 
-<h3 align="left">d)</h3>

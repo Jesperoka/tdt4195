@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README (html exportable).md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    processEscapes: true
+  }
+});
+</script>
+<!-- Set style of document -->
+<style>
+body {
+    max-width: 800px;
+    font-family: Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    margin: 2cm;
+    background-color: #0d1117;
+    color: white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  margin-bottom: 1.5em;
+  color: white;
+}
+h1 {font-size: 20pt;}
+h2 {font-size: 18pt;}
+h3 {font-size: 16pt;}
+h4 {font-size: 14pt;}
+h5 {font-size: 12pt;}
+h6 {font-size: 10pt;}
+
+p {
+  font-family: "Times New Roman", serif;
+  margin-bottom: 1.5em;
+  color: white;
+}
+</style>
+<h1 align="center">Assignment 5</h1>
+<!-- *Note: Allow some time for the GIFs to load if viewing HTML or [GitHub Markdown versions](https://github.com/Jesperoka/tdt4195/tree/assignment_5) of report.<br> -->
+<!-- PDF version does not support GIFs, so the other options are recommended.* -->
+<br>
+<h2 align="center">Part 1: Convolutional Neural Networks</h2>
+<h2 align="left">Task 1: Theory</h2>
+<h3 align="left">a)</h3>
+<p><strong>Question:</strong></p>
+<p>Given a single convolutional layer with a stride of 1, kernel size of 7 × 7, and 6 filters. If I
+want the output shape (Height × Width) of the convolutional layer to be equal to the input image,
+how much padding should I use on each side?</p>
+<p><strong>Answer:</strong></p>
+<p>The padding $p_i$ required on each side of dimension $i$, where $i \le k$, of a $k$-dimensional unit-stride convolutional kernel $K_{a_0 \times a_1 \times ... \times a_k}$ if we want the output dimension to be equal to the input dimension, is $p_i = \lfloor \frac{a_i}{2} \rfloor$.</p>
+<p>Thus for a unit stride convolutional kernel $K_{7 \times 7}$ we have $p_i = \lfloor \frac{7}{2} \rfloor = 3$ for $i \in {0,1}$ corresponding to height and width dimensions.</p>
+<h3 align="left">b)</h3>
+<p>Consider a CNN whose inputs are RGB color images of size 512×512. The network has two convolutional
+layers. Using this information, answer the following:</p>
+<p><strong>Question:</strong></p>
+<p>You are told that the spatial dimensions of the feature maps in the first layer are 506 × 506,
+and that there are 12 feature maps in the first layer. Assuming that no padding is used, the stride
+is 1, and the kernel used are square, and of an odd size, what are the spatial dimensions of these
+kernels? Give the answer as (Height) × (Width).</p>
+<p><strong>Answer:</strong></p>
+<p>The equations for the output shape of a 2D convolution layer are</p>
+<p>\begin{align}
+w_{\text{output}} &amp;= \frac{w_{\text{input}} - w_{\text{kernel}} + w_{\text{padding start}} + w_{\text{padding end}} }{w_{\text{stride}}} + 1 \
+h_{\text{output}} &amp;= \frac{h_{\text{input}} - h_{\text{kernel}} + h_{\text{padding start}} + h_{\text{padding end}} }{h_{\text{stride}}} + 1 \
+c_{\text{output}} &amp;= \text{num_filters}
+\end{align}</p>
+<p>We are given that</p>
+<p>\begin{align}
+w_{\text{output}} &amp;= h_{\text{output}} = 506 \
+w_{stride} &amp;= h_{stride} = 1, \
+h_{\text{kernel}} &amp;= w_{\text{kernel}}
+\end{align}</p>
+<p>and there is no padding.</p>
+<p>We get</p>
+<p>\begin{align}
+&amp;506 = \frac{512 - h_{\text{kernel}} + 0 + 0 }{1} + 1 \
+\implies &amp;h_{\text{kernel}} = w_{\text{kernel}} = 512 - (506 - 1) = 7 \
+\implies &amp;h_{\text{kernel}} \times w_{\text{kernel}} = 7 \times 7
+\end{align}</p>
+<h3 align="left">c)</h3>
+<p><strong>Question:</strong></p>
+<p>If subsampling is done using neighborhoods of size 2 × 2, with a stride of 2, what are the
+spatial dimensions of the pooled feature maps in the first layer? (assume the input has a shape of
+506 × 506). Give the answer as (Height) × (Width).</p>
+<p><strong>Answer:</strong></p>
+<p>Pooling (subsampling) using a $2 \times 2$ kernel with stride $2$, assuming no padding or dilation (i.e. dilation=1), gives an  output of</p>
+<p>h_{\text{output}} \times w_{\text{ouput}} = 253 \times 253</p>
+<h3 align="left">d)</h3>
+<p><strong>Question:</strong></p>
+<p>The spatial dimensions of the convolution kernels in the second layer are 3 × 3. Assuming
+no padding and a stride of 1, what are the sizes of the feature maps in the second layer? (assume
+the input shape is the answer from the last task). Give the answer as (Height) × (Width).</p>
+<p><strong>Answer:</strong></p>
+<p>Passing a $252 \times 253$ spatial dimension input from the previous layer and applying a $3 \times 3$ kernel with stride $1$ and no padding results in reduction of $2$ in bothe height and width, giving</p>
+<p>h_{\text{output}} \times w_{\text{ouput}} = 251 \times 251</p>
+<h3 align="left">e)</h3>
+<p><strong>Question:</strong></p>
+<p><a href="#table-1">Table 1</a> shows a simple CNN. How many parameters are there in the network? In this
+network, the number of parameters is the number of weights + the number of biases. Assume the
+network takes in an 32 × 32 image.</p>
+<p><a name="table-1"></a></p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Layer Type</th>
+<th>Number of Hidden Units/Filters</th>
+<th>Activation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Conv2D(kernel_size=5, stride=1, padding=2)</td>
+<td>32</td>
+<td>ReLU</td>
+</tr>
+<tr>
+<td>1</td>
+<td>MaxPool(kernel_size=2, stride=2)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Conv2D(kernel_size=3, stride=1, padding=1)</td>
+<td>64</td>
+<td>ReLU</td>
+</tr>
+<tr>
+<td>2</td>
+<td>MaxPool(kernel_size=2, stride=2)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Conv2D(kernel_size=3, stride=1, padding=1)</td>
+<td>128</td>
+<td>ReLU</td>
+</tr>
+<tr>
+<td>3</td>
+<td>MaxPool(kernel_size=2, stride=2)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Flatten()</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Linear(in_features=?, out_features=64)</td>
+<td>64</td>
+<td>ReLU</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Linear(in_features=64, out_features=10)</td>
+<td>10</td>
+<td>Softmax</td>
+</tr>
+</tbody>
+</table>
+<p align="center"><b>Table 1</b>: Architecture of a simple convolutional neural network.</p>
+<p><strong>Answer:</strong></p>
+<p>The weight and bias tensors of Conv2D layers have shapes</p>
+<p>\begin{align}
+W_{\text{shape}} &amp;= c_\text{output} \times c_\text{input} \times h_{\text{kernel}} \times w_{\text{kernel}} \
+\mathbf{b}<em>{\text{shape}} &amp;= c</em>\text{output} \times 1
+\end{align}</p>
+<p>The weight and bias tensors of Linear layers have shapes</p>
+<p>\begin{align}
+W_{\text{shape}} &amp;= h_\text{output} \times h_{\text{input}} \
+\mathbf{b}<em>{\text{shape}} &amp;= h</em>\text{output} \times 1
+\end{align}</p>
+<p>MaxPool, ReLU and Softmax do not have any trainable parameters.</p>
+<p>Thus, assuming RGB image inputs, for the Conv2D layers we have</p>
+<p>\begin{align}
+{N_{\text{params}}}<em>1 &amp;= (32 \cdot 3 \cdot 5 \cdot 5) + 32 = 2432 \
+{N</em>{\text{params}}}<em>2 &amp;= (64 \cdot 32 \cdot 3 \cdot 3) + 64 = 18496 \
+{N</em>{\text{params}}}_3 &amp;= (128 \cdot 64 \cdot 3 \cdot 3) + 128 = 73856
+\end{align}</p>
+<p>and the spatial dimension of the image will have been halved $3$ times from the max pooling operations by the time it's flattened, meaning we have a $4 \times 4 \times 128$ feature map.
+<br><br>This gives us</p>
+<p>\begin{align}
+{N_{\text{params}}}<em>4 &amp;= (64 \cdot (4 \cdot 4 \cdot 128)) + 64 = 131136 \
+{N</em>{\text{params}}}_5 &amp;= (10 \cdot 64) + 10 = 650
+\end{align}</p>
+<p>for a total of</p>
+<p>\begin{align}
+{N_{\text{params}}} &amp;= {N_{\text{params}}}<em>1 + {N</em>{\text{params}}}<em>2 + {N</em>{\text{params}}}<em>3 + {N</em>{\text{params}}}<em>4 + {N</em>{\text{params}}}<em>5 \
+{N</em>{\text{params}}} &amp;= 226570
+\end{align}</p>
+<h2 align="left">Task 2: Programming</h2>
+<h3 align="left">a)</h3>
+<p><strong>Question:</strong></p>
+<p>Implement the network in Table 1. Implement this in the jupyter notebook (or python file)
+task2.py/ipynb. Report the final accuracy on the validation set for the trained network. Include
+a plot of the training and validation loss during training.</p>
+<p>By looking at the final train/validation loss/accuracy, do you see any evidence of overfitting?
+Shortly summarize your reasoning.</p>
+<p><strong>Answer:</strong></p>
+<p>The final validation loss was $0.0348$, and the final validation accuracy was $0.9894$. <a href="#figure-1">Figure 1</a> shows the training and validation losses during training.
+<br><em>Note: test and validation are used interchangably in these tasks.</em></p>
+<h3 align="center">Task 2a Train and Test Losses</h3>
+<a name="figure-1"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2a_plot.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 1: </b>Five epochs of training is enough to learn the relatively simple MNIST dataset.</p>
+<p>Because the training and validation losses are closely aligned, we conclude that there is no evidence of overfitting. Furthermore the validation loss was still decreasing at the end of training.</p>
+<h3 align="left">b)</h3>
+<p><strong>Question:</strong></p>
+<p>The optimizer in pytorch is the method we use to update our gradients. Till now, we have
+used standard stochastic gradient descent (SGD). Understanding what the different optimizers do
+is out of the scope of this course, but we want to make you aware that they exist.</p>
+<p>Adam is one of the most popular optimizers currently. Change the SGD optimizer to Adam (use
+torch.optim.Adam instead of torch.optim.SGD), and train your model from scratch.</p>
+<p>Use a learning rate of 0.001.</p>
+<p>Plot the training/validation loss from both models (the model with Adam and the one with SGD)
+in the same graph and include this in your report. (Note, you should probably change the plt.ylim
+argument to [0, 0.1]).</p>
+<p><strong>Answer:</strong></p>
+<p>It wasn't quite clear weather SGD should be run with the same learning rate as Adam, or if we were meant to use the learning rate from before, so <a href="#figure-2">Figure 2</a> includes both cases.</p>
+<h3 align="center">Task 2b Comparison of Optimizers and Learning Rates</h3>
+<a name="figure-2"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2b_plot.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 2: </b>Train and test losses for the same model using SGD with learning rates of 0.02 and 0.001, and Adam with a learning rate of 0.001.</p>
+<h3 align="left">c)</h3>
+<p><strong>Question:</strong></p>
+<p>Interpreting CNNs is a challenging task. One way of doing this, is to visualize the learned
+weights in the first layer as a K × K × 3 image 2, where K is the kernel size.</p>
+<p>Understanding what the filter does can be difficult. Therefore, we can visualize the activation by
+passing an image through a given filter. The result of this will be a grayscale image.</p>
+<p>Run the image zebra.jpg through the first layer of the ResNet50 network. Visualize the filter, and
+the grayscale activation of a the filter, by plotting them side by side.</p>
+<p>Use the pre-trained network
+ResNet50 and visualize the convolution filters with indices [5, 8, 19, 22, 34].</p>
+<p>Include the visualized filters and activations in your report.</p>
+<p><strong>Answer:</strong></p>
+<p><a href="#figure-3">Figure-3</a></p>
+<h3 align="center">Task 2c Weights and Feature Maps of the First Layer of ResNet50</h3>
+<a name="figure-3"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task2c_plot.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 3: </b>Visualization of the weights for filters 5, 8, 19, 22 and 34 of ResNet50 from PyTorch torchvision and the output feature map of the corresponding filter after passing zebra.jpg.</p>
+<h3 align="left">d)</h3>
+<p><strong>Question:</strong></p>
+<p>Looking at the visualized filter, and its corresponding activation on the zebra image, describe
+what kind of feature each filter extracts. Explain your reasoning.</p>
+<p><strong>Answer:</strong></p>
+<p>Filter 5: Vertical dark-light contrast edges with about 4-5 pixels of dark and light areas the the left and right of the edges.
+Filter 8: Down-right diagonal bright lines on darker background 1-2 pixels thick (about 45 degree angle).
+Filter 19: Relatively uniformly green areas.
+Filter 22: Up-right diagonal bright lines on darker background 1-2 pixels thick (about 30 degree angle).
+Filter 34: Relatively uniformly blue areas.</p>
+<p>The learned filters, visualized as RGB images show how the activation for a given pixel in the output is affected by its neighboring pixels in all 3 RGB channels. For instance, because of the way the zebra is positioned in the image, filter 5 results in more regions of low and high activations, wheras filter 22 only really gives strong activations either way on the face of the zebra and somewhat around its outline where the white areas on the zebra create a contrasting line with the background and the black areas on the zebra. Filter 8 corresponds to quite a few areas, but the stripes on the zebra make lines that are too thick for the filter in most cases.</p>
+<p>Clearly blue and green are also salient features for images that have sky, water and grassy areas.</p>
+<p>Note that the grass being a more yellow color also plays into the activation of the green area detecting filter, giving the network a chance to differentiate between climates which might help in classifying a striped animal in an area with a yellow background versus one in an area with a very lush green background.</p>
+<h2 align="center">Part 2: Filtering in the Frequency Domain</h2>
+<h2 align="left">Task 3: Theory</h2>
+<h3 align="left">a)</h3>
+<p><strong>Question:</strong></p>
+<p>Given the images in the spatial and frequency domain in <a href="#figure-4">Figure 4</a>, pair each image in the
+spatial domain (first row) with a single image in the frequency domain (second row). Explain your
+reasoning.</p>
+<h3 align="center">Task 3a 2D Discrete Fourier Transform</h3>
+<a name="figure-4"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task3a_imgs.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 4: </b>A set of images visualized in the spatial domain (first row) and the frequency domain (second row).
+The frequency images visualizes the amplitude |F{g}|.
+</p>
+<p><strong>Answer:</strong></p>
+<p>The amplitude of the discrete time fourier transform is represented by color in the amplitude plots, so we can interperet a white dot at (u, v) on a black background a there being a very defined sinusoid frequency along the direction (u, v) of the input image. In this case all the images have oscillating colors along either x or y only. All images also have areas (in both directions) of constant color, corresponding to the truncated delta function (white dot) in the middle of the amplitude image.</p>
+<p>Based on this we can, by ordering the images from low to high frequency along the x and y directions respectively, determine the corresponding amplitude plots.</p>
+<p>We have the following low-to-high frequency orderings</p>
+<p>\begin{align}
+X_{\text{direction}} &amp;= (1d, 1f, 1e) \
+Y_{\text{direction}} &amp;= (1c, 1b, 1a)
+\end{align}</p>
+<p>which gives ut the one-to-one correspondence</p>
+<p>\begin{align}
+H_{\text{bijection}} &amp;= {(1d, 2b), (1f, 2a), (1e, 2d), (1c, 2f), (1b, 2c), (1a, 2e)}
+\end{align}</p>
+<h3 align="left">b)</h3>
+<p><strong>Question:</strong></p>
+<p>What are high-pass and low-pass filters?</p>
+<p><strong>Answer:</strong></p>
+<p>High-pass filters are filters that pass through high frequency signal components, this means they remove low frequency signal components.
+Low-pass filters are filters that pass through low frequency signal components, this means they remove high frequency signal components.</p>
+<p>These are the general descriptions of their idealized function. In practice they approximate this behaviour by attenuating signals that are not supposed to be passed through, and make an effort to not attenuate signals that are supposed to be passed through. How effectively they do this is dependent on their area of application (electronics, image processing, optics, audio, estimation and continuous/discrete).</p>
+<h3 align="left">c)</h3>
+<p><strong>Question:</strong></p>
+<p>The amplitude |F{g}| of two commonly used convolution kernels can be seen in <a href="#figure-5">Figure 5</a>.
+For each kernel (a, and b), figure out what kind of kernel it is (high- or low-pass).</p>
+<p>Shortly explain your reasoning.</p>
+<h3 align="center">Task 3c Amplitude Plots for Commonly Used Convolution Kernels</h3>
+<a name="figure-5"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task3c_imgs.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 5: </b>The amplitude |F{g}| of two convolution kernels that have been transformed by the Fourier transform.
+The DC component have been shifted to the center for all images. This means that low frequencies can be found
+around the center of each image, while high frequencies can be found far from the center of each image.</p>
+<p><strong>Answer:</strong></p>
+<p>A low-pass filtering kernel, in some sense, averages the input, so we expect the kernel itself to have more uniform values, thus giving it mostly low frequencies in all spatialdirections. The high-pass filtering kernel does somewhat the opposite, having sharp differences in the kernel values, leading to higher frequencies in the spatial directions.</p>
+<p>Thus, 5a is the high-pass filter and 5b is the low-pass filter.</p>
+<h2 align="left">Task 4: Programming</h2>
+<h3 align="left">a)</h3>
+<p><strong>Question:</strong></p>
+<p>Implement a function that takes an grayscale image, and a kernel in the frequency domain, and applies the convolution theorem (seen in Equation 4). Try it out on a low-pass filter and a high-pass filter on the grayscale image &quot;camera man&quot; (im = skimage.data.camera()).</p>
+<p>Include in your report the filtered images and the before/after amplitude |F{f}| of the transform.
+Make sure to shift the zero-frequency component to the center before displaying the amplitude.</p>
+<p>Implement this in the function convolve_im in task4a.py/task4a.ipynb. The high-pass and
+low-pass filter is already defined in the starter code.</p>
+<p>You will observe a &quot;ringing&quot; effect in the filtered image. What is the cause of this?</p>
+<p><strong>Answer:</strong></p>
+<p><a href="#figure-6">Figure 6</a> shows process of applying the convolution theorem for the two cases in the question.</p>
+<h3 align="center">Task 4a Convolution Theorem Applied to Low- and High-pass filtering</h3>
+<a name="figure-6"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4a_imgs_1.png?raw=true" width=600>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4a_imgs_2.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 6: </b><br>Top: Low-pass filter.<br>Bottom: High-pass filter.<br>Note that the amplitude plots are log-amplitude plots for better visualization as is common.</p>
+<p>If you google the ringing effect &quot;Gibbs phenomenon&quot; you will first of all get the answer that the effect comes from a signal being band-limited. In particular the effect comes from the truncation of a fourier series used to represent a time/spatial domain signal, leading to an overshoot and exponentially decaying sinusoids (ringing effect). Since we are dealing with finite discrete signals, we are also dealing with truncated fourier transforms, and in our particular case we have frequency domain kernels that are idealized and discontinuous, which necessitates oscillatory behaviour in the spatial domain of the kernel, with which we are convolving our image.</p>
+<p><em>Apparently this all also has to do with convergence of the fourier series to the function it represents not being uniform or pointwise.</em></p>
+<h3 align="left">b)</h3>
+<p><strong>Question:</strong></p>
+<p>Implement a function that takes an grayscale image, and a kernel in the spatial domain,
+and applies the convolution theorem. Try it out on the gaussian kernel given in assignment 1, and
+a horizontal sobel filter (Gx).</p>
+<p>Include in your report the filtered images and the before/after amplitude |F{f}| of the transform.
+Make sure to shift the zero-frequency component to the center before displaying the amplitude.
+Implement this in the function convolve_im in task4b.py/task4b.ipynb. The gaussian and sobel
+filter are already defined in the starter code.</p>
+<p><strong>Answer:</strong></p>
+<p><a href="#figure-7">Figure 7</a> shows process of applying the convolution theorem for the two cases in the question.</p>
+<h3 align="center">Task 4b Convolution Theorem Applied to Gaussian- and Sobel-filtering</h3>
+<a name="figure-7"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4b_imgs_1.png?raw=true" width=600>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4b_imgs_2.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 7: </b><br>Top: Gaussiam filter.<br>Bottom: Horiontal Sobel filter.<br>Note that the amplitude plots are log-amplitude plots for better visualization as is common.</p>
+<h3 align="left">c)</h3>
+<p><strong>Question:</strong></p>
+<p>Use what you’ve learned from the lectures and the recommended resources to remove the
+noise in the image seen in Figure 5a. Note that the noise is a periodic signal. Also, the result you
+should expect can be seen in Figure 5b
+Include the filtered result in your report.
+Implement this in the file task4c.py/task4c.ipynb.</p>
+<h3 align="center">Task 4c Image of a Moon with Periodic Noise</h3>
+<a name="figure-8"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4c_imgs_0.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 8: </b>(a) An image of a moon with periodic noise. (b) The image after applying filtering in the frequency domain</p>
+<p><strong>Answer:</strong></p>
+<p><a href="#figure-9">Figure 9</a> shows process of removing the undesireable frequency peaks. Note that with more time and a less coarse approach we could also remove more of the high frequency noise still left in the image.</p>
+<h3 align="center">Task 4c Filtering of Moon Image with Periodic Noise</h3>
+<a name="figure-9"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/task4c_imgs.png?raw=true" width=800>
+</p>
+<p align="center"><b>Figure 9: </b>Filtering of moon image by manually removing frequency peaks.</p>
+<h3 align="left">d)</h3>
+<p><strong>Question:</strong></p>
+<p>Now we will create a function to automatically find the rotation of scanned documents, such
+that we can align the text along the horizontal axis.</p>
+<p>You will use the frequency domain to extract a binary image which draws a rough line describing
+the rotation of each document. From this, we can use a Hough transform to find a straight line
+intersecting most of the points in the binary image. When we have this line, we can easily find the
+rotation of the line and the document.</p>
+<p>Your task is to generate the binary image by using the frequency spectrum. See Figure 6 which
+shows you what to expect. We’ve implemented most of the code for you in this task; you only need
+to alter the function create_binary_image in task4d.py/task4.ipynb.
+Include the generated image in your report.</p>
+<p><strong>Answer:</strong></p>
+<p><a href="#figure-10">Figure 10</a> shows the result of the algorithm.</p>
+<h3 align="center">Task 4d Finding Orientation with Thresholded Fourier Magnitude Spectrum</h3>
+<a name="figure-9"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task4d.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 10: </b>Orientation finding algorithm by way of line fitting to Fourier magnitude spectrum.</p>
+<!-- Tell MathJax to typeset equations present in the document -->
+<script type="text/javascript">
+MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+</script>
+
+</body>
+</html>

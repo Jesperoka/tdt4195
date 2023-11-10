@@ -27,9 +27,15 @@ def create_binary_image(im):
     """
 
     # START YOUR CODE HERE ### (You can change anything inside this block)
-    binary_im = np.zeros_like(im, dtype=np.bool)
-    ### END YOUR CODE HERE ###
-    return binary_im
+    fft = np.fft.fft2(im)
+    fftshift = np.fft.fftshift(fft)
+    magnitude_spectrum = 20 * np.log(np.abs(fftshift))
+    # plt.imshow(magnitude_spectrum)
+    # plt.show()
+    threshold = (magnitude_spectrum.min() + magnitude_spectrum.max() ) / 2.0 # this seems to do alright
+    binary_im = magnitude_spectrum > threshold
+
+    return binary_im.astype(np.bool_)
 
 
 if __name__ == "__main__":
@@ -41,7 +47,7 @@ if __name__ == "__main__":
     for i, impath in enumerate(impaths):
         im = utils.read_im(str(impath))
         im_binary = create_binary_image(im)
-        assert im_binary.dtype == np.bool,            f"Expected the image to be of dtype np.bool, got {im_binary.dtype}"
+        assert im_binary.dtype == np.bool_,            f"Expected the image to be of dtype np.bool_, got {im_binary.dtype}"
         angles, distances = utils.find_angle(im_binary)
         angle = 0
         if len(angles) > 0:

@@ -13,17 +13,17 @@ if __name__ == "__main__":
     im = utils.read_im(impath)
 
     # Fourier transform 
-    f = np.fft.fft2(im)
-    magnitude_spectrum_before = 20*np.log(np.abs(np.fft.fftshift(f)))
+    im_fft = np.fft.fft2(im)
+    magnitude_spectrum_before = 20*np.log(np.abs(np.fft.fftshift(im_fft)))
 
     # Create masks to manually remove peaks
-    top = f[0:3, 3:-(3+1)] 
-    bottom = f[-2:, 3:-(3+1)] 
+    top = im_fft[0:3, 3:-(3+1)] 
+    bottom = im_fft[-2:, 3:-(3+1)] 
 
-    top_2 = f[0:3, 446:-(3+1)] 
-    bottom_2 = f[-2:, 446:-(3+1)] 
-    top_3 = f[0:3, 3:13] 
-    bottom_3 = f[-2:, 3:13] 
+    top_2 = im_fft[0:3, 446:-(3+1)] 
+    bottom_2 = im_fft[-2:, 446:-(3+1)] 
+    top_3 = im_fft[0:3, 3:13] 
+    bottom_3 = im_fft[-2:, 3:13] 
 
     threshold = 9.0 
     # threshold_2 = 4.0 
@@ -45,10 +45,10 @@ if __name__ == "__main__":
     log_amplitude_bottom_after = np.log(np.absolute(bottom[0:3,:])).T
 
     # Magnitude spectrum after modifications
-    magnitude_spectrum_after = 20*np.log(np.abs(np.fft.fftshift(f)))
+    magnitude_spectrum_after = 20*np.log(np.abs(np.fft.fftshift(im_fft)))
 
     # Inverse FFT for filtered image
-    im_filtered = utils.normalize(np.fft.ifft2(f).real)
+    im_filtered = utils.normalize(np.fft.ifft2(im_fft).real)
 
     # gaussian_kernel = np.array([
     #        [1, 4, 6, 4, 1],

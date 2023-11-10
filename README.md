@@ -438,8 +438,28 @@ Implement this in the file task4c.py/task4c.ipynb.
 
 **Question:**
 
+Now we will create a function to automatically find the rotation of scanned documents, such
+that we can align the text along the horizontal axis.
 
+You will use the frequency domain to extract a binary image which draws a rough line describing
+the rotation of each document. From this, we can use a Hough transform to find a straight line
+intersecting most of the points in the binary image. When we have this line, we can easily find the
+rotation of the line and the document.
+
+Your task is to generate the binary image by using the frequency spectrum. See Figure 6 which
+shows you what to expect. We’ve implemented most of the code for you in this task; you only need
+to alter the function create_binary_image in task4d.py/task4.ipynb.
+Include the generated image in your report.
 
 **Answer:**
 
+[Figure 10](#figure-10) shows the result of the algorithm. 
 
+<h3 align="center">Task 4d Finding Orientation with Thresholded Fourier Magnitude Spectrum</h3>
+<a name="figure-9"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/src/image_processed/task4d.png?raw=true" width=600>
+</p>
+<p align="center"><b>Figure 10: </b>Orientation finding algorithm by way of line fitting to Fourier magnitude spectrum.</p>
+
+<h3 align="left">d)</h3>

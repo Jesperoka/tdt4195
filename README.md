@@ -141,7 +141,7 @@ The result of the dilation is shown in [Figure 2](#figure-2).
 <h3 align="center">Dilated Binary Image</h3>
 <a name="figure-2"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/imgs/figure_1ab.png?raw=true" width=450>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/imgs/task1e_dilation.png?raw=true" width=350>
 </p>
 <p align="center"><b>Figure 2: </b>Result of the dilation.</p>
 
@@ -158,5 +158,26 @@ for thresholding, and returns a single threshold value.
 Segment the images thumbprint.png and rice-shaded.png, and include the results in your report.
 
 **Answer:**
+
+Results shown in [Figure 3](#figure-3).
+
+<h3 align="center">Otsu's Method Results</h3>
+<a name="figure-3"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/rice-shaded.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/thumbprint.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 3: </b>Result of the dilation.</p>
+
+
+
+
+
+
+
+
+
+
+
 
 

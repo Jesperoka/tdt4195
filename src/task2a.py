@@ -1,8 +1,6 @@
 import numpy as np
-import skimage
 import utils
 import pathlib
-
 
 def otsu_thresholding(im: np.ndarray) -> int:
     """
@@ -15,12 +13,31 @@ def otsu_thresholding(im: np.ndarray) -> int:
             (int) the computed thresholding value
     """
     assert im.dtype == np.uint8
-    # START YOUR CODE HERE ### (You can change anything inside this block)
-    # You can also define other helper functions
-    # Compute normalized histogram
-    threshold = 128
-    return threshold
-    ### END YOUR CODE HERE ###
+    num_intensity_levels = 256 # from input intensity range [0, 255] assumption
+
+    # 1. Compute normalized histogram of greyscale image
+    histogram, _ = np.histogram(im, bins=num_intensity_levels, density=True)
+    
+    # 2. Compute cumulative sums
+    cumulative_sums = np.cumsum(histogram) # never not funny 
+
+    # 3. Compute cumulative means 
+    cumulative_means = np.cumsum(np.arange(0, num_intensity_levels) * histogram)
+
+    # 4. Compute global mean
+    global_mean = cumulative_means[-1]
+
+    # 5. Compute between-class variance
+    def sigma_B(k): 
+        P_k, m_k, m_G = cumulative_sums[k], cumulative_means[k], global_mean
+        return (m_G*P_k - m_k)**2 / (P_k*(1 - P_k))
+    between_class_variances = np.array([sigma_B(k) for k in range(0, num_intensity_levels)])
+
+    # 6. Obtain the Otsu threshold (average if multiple)
+    max_k = np.where(between_class_variances == np.max(between_class_variances)) 
+    threshold = np.average(max_k)
+
+    return int(round(threshold))
 
 
 if __name__ == "__main__":

@@ -33,7 +33,7 @@ and the *closing* $A^B$ of $A$ by $B$ is
 where $f$ is the erosion of $A$ by $B$ and $g$ is the dilation of $A$ by $B$, defined as
 ```math
 \begin{align}
-     f &= A \oplus \check{B}
+     f &= A \oplus \check{B} \\[3pt]
      g &= A \ominus \check{B} 
 \end{align}
 ```
@@ -42,7 +42,7 @@ respectively, where $\check{B}$ is the symmetrical set of $B$ w.r.t. the origin,
 Here I've defined the opening and closing operations as function compositions of erosion and dilation, but Georges Matheron originally defined them more directly as
 ```math
 \begin{align}
-     A_B &= (A \ominus \check{B}) \oplus B
+     A_B &= (A \ominus \check{B}) \oplus B \\[3pt]
      A^B &= (A \oplus \check{B}) \ominus B
 \end{align}
 ```

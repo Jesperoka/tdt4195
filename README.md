@@ -18,7 +18,7 @@ opening and closing are applied multiple times on the same image?
 
 *Opening* and *closing*, as first described by Georges Matheron (building on and formalizing his own, Jean Serra's, and André Haas' earlier work), are the two functional compositions of *erosion* and *dilation*, applied to one set by *another set*, denoted by G.M. as a *structuring element* ([The Birth of Mathematical Morphology](https://smil.cmm.minesparis.psl.eu/publis/C-72.pdf), (*Random Sets and Integral Geometry*, Matheron G., 1974, pp. 16-17)). 
 
-Specifically, in image processing, with an image described by the set $A$ and a structuring element (aka. filter/kernel) $B$, the *opening* $A_B$ of $A$ by $B$ is
+Specifically, in image processing, with an image described by the set $A$ and a structuring element (aka. filter/kernel) $B\text{,}$ the *opening* $A_B$ of $A$ by $B$ is
 ```math
 \begin{align}
      f \circ g
@@ -87,7 +87,7 @@ Why do we use hysteresis thresholding instead of a single treshold?
 
 **Answer:**
 
-The point is to make it less likely that the algorithm outputs edges for gradients that appear only as a result of noise. 
+The point is to make it less likely that the algorithm outputs edges for gradients that appear only as a result of noise, and to avoid breaking up edges due to gradient magnitudes fluctuating along an edge.
 
 Quoting Canny's article:
 ```
@@ -125,10 +125,38 @@ http://dx.doi.org/10.1109/TPAMI.1986.4767851
 Determine the dilation A $\oplus$ B of the binary image in [Figure 1a](#figure-1a). Use the structuring
 element in [Figure 1b](#figure-1b).
 
-**Answer:**
-
 <h3 align="center">Binary Image and Structuring Element</h3>
 <a name="figure-1a"></a><a name="figure-1b"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/imgs/figure_1ab.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/imgs/figure_1ab.png?raw=true" width=450>
 </p>
+<p align="center"><b>Figure 1ab: </b>A binary image and a structuring element. The foreground is colored white and given the
+symbol 1. The background has the symbol 0 and is colored black. The reference pixel in the structuring
+element (b) is indicated by a black circle.<p>
+
+**Answer:**
+
+The result of the dilation is shown in [Figure 2](#figure-2).
+
+<h3 align="center">Dilated Binary Image</h3>
+<a name="figure-2"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/imgs/figure_1ab.png?raw=true" width=450>
+</p>
+<p align="center"><b>Figure 2: </b>Result of the dilation.</p>
+
+
+<h2 align="left">Task 2: Programming</h2>
+
+<h3 align="left">a)</h3>
+
+**Question:**
+
+Implement a function in task2a.py/task2a.ipynb that implements Otsu's algorithm
+for thresholding, and returns a single threshold value.
+
+Segment the images thumbprint.png and rice-shaded.png, and include the results in your report.
+
+**Answer:**
+
+

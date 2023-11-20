@@ -33,17 +33,17 @@ and the *closing* $A^B$ of $A$ by $B$ is
 where $f$ is the erosion of $A$ by $B$ and $g$ is the dilation of $A$ by $B$, defined as
 ```math
 \begin{align}
-     f &= A \oplus \v{B}
-     g &= A \ominus \v{B} 
+     f &= A \oplus \check{B}
+     g &= A \ominus \check{B} 
 \end{align}
 ```
-respectively, where $\v{B}$ is the symmetrical set of $B$ w.r.t. the origin, and where $\oplus$ and $\ominus$ are the [*Minkowski sum* and *Minkowski difference*](https://en.wikipedia.org/wiki/Minkowski_addition) operators.
+respectively, where $\check{B}$ is the symmetrical set of $B$ w.r.t. the origin, and where $\oplus$ and $\ominus$ are the [*Minkowski sum* and *Minkowski difference*](https://en.wikipedia.org/wiki/Minkowski_addition) operators.
 
 Here I've defined the opening and closing operations as function compositions of erosion and dilation, but Georges Matheron originally defined them more directly as
 ```math
 \begin{align}
-     A_B &= (A \ominus \v{B}) \oplus B
-     A^B &= (A \oplus \v{B}) \ominus B
+     A_B &= (A \ominus \check{B}) \oplus B
+     A^B &= (A \oplus \check{B}) \ominus B
 \end{align}
 ```
 and notes that the mappings are [*idempotent*](https://en.wikipedia.org/wiki/Idempotence) (*Random Sets and Integral Geometry*, Matheron G., 1974, p. 18). Thus, repeated applications of either mapping has no further effect than the initial application.
@@ -130,5 +130,5 @@ element in [Figure 1b](#figure-1b).
 <h3 align="center">Binary Image and Structuring Element</h3>
 <a name="figure-1a"></a><a name="figure-1b"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_5/imgs/figure_1ab.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/imgs/figure_1ab.png?raw=true" width=350>
 </p>

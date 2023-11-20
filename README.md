@@ -164,20 +164,53 @@ Results shown in [Figure 3](#figure-3).
 <h3 align="center">Otsu's Method Results</h3>
 <a name="figure-3"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/rice-shaded.png?raw=true" width=350>
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/thumbprint.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/rice-shaded-segmented.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/thumbprint-segmented.png?raw=true" width=350>
 </p>
-<p align="center"><b>Figure 3: </b>Result of the dilation.</p>
+<p align="center"><b>Figure 3: </b>Result of the dilation. <br>Left: rice-shaded.png (segmented) | Right: thumbprint.png (segmented).</p>
+
+<h3 align="left">b)</h3>
+
+**Question:**
+
+Region growing is a region-based segmentation algorithm that uses a set of seed points and a homogeneity
+criteria $H(R_i)$ to perform segmentation. For each seed point, a region is grown by inspecting neighboring
+pixels and evaluating whether to include them in the region $R_i$ using $H(R_i)$. The neighboring pixels
+that are currently being evaluated are typically called candidate pixels. The growing of a region stops
+when there are no more candidate pixels to inspect. The simplest homogeneity criteria is a threshold,
+where the threshold defines the maximum absolute difference in intensity between the seed point and
+the current candidate pixel.
+
+Implement a function in task2b.py/task2b.ipynb that segments a grayscale image using the region growing method outlined above. 
+Use a Moore neighborhood (8-connectedness) to expand your set of candidate pixels around each seed point.
+
+Apply it on the image defective-weld.png and show the result in your report. 
+Use the 4 seed points given in the starter code and use a pixel intensity threshold of 50.
+
+**Answer:**
+
+Results shown in [Figure 4](#figure-4).
+
+<h3 align="center">Region Growing Result</h3>
+<a name="figure-4"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/defective-weld-segmented.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 4: </b>Result of the region growing algorithm.</p>
 
 
+<h2 align="left">Task 3: Morphology</h2>
 
+<h3 align="left">a)</h3>
 
+**Question:**
 
+Use what you know about erosion, dilation, opening, and closing to remove the noisy
+elements from the image in Figure 3. 
 
+Implement this in the file task3a.py/task3a.ipynb. Your
+result should look something like the one in Figure 3b.
+Include the resulting image in your report and shortly explain how you removed the noise.
 
-
-
-
-
-
+**Answer:**
 

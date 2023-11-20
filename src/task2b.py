@@ -17,14 +17,53 @@ def region_growing(im: np.ndarray, seed_points: list, T: int) -> np.ndarray:
         return:
             (np.ndarray) of shape (H, W). dtype=bool
     """
-    # START YOUR CODE HERE ### (You can change anything inside this block)
-    # You can also define other helper functions
+    # Get the values at the seed pixels
+    seed_points = [tuple(s) for s in seed_points] # prefer tuples when fixed size
+    regions = {seed_point: [seed_point] for seed_point in seed_points}
     segmented = np.zeros_like(im).astype(bool)
-    im = im.astype(float)
-    for row, col in seed_points:
-        segmented[row, col] = True
+
+    def in_image(i, j, N=im.shape[0], M=im.shape[1]):
+        return 0 <= i and i <= N-1 and 0 <= j and j <= M-1
+
+    def moore_neighborhood(i, j):
+        top_left, top_middle, top_right = (i-1, j-1), (i-1, j), (i-1, j+1)
+        middle_left, middle_right = (i, j-1), (i, j+1)
+        bottom_left, bottom_middle, bottom_right = (i+1, j-1), (i+1, j), (i+1, j+1)
+        return [top_left, top_middle, top_right, middle_left, middle_right, bottom_left, bottom_middle, bottom_right]
+
+    def grow(i: int, j: int, seed_point: tuple[int, int]) -> bool:
+        # Candidate points in neighborhood unless already segmented 
+        candidates = moore_neighborhood(i, j)
+        candidates = [(r, c) for r, c in candidates if in_image(r, c) and not segmented[r, c]]
+
+        # Check all candidates and add them to the region if compatible 
+        grow = False
+        for candidate in candidates: 
+            if np.abs(int(im[candidate]) - int(im[seed_point])) <= T: # must cast to signed int to avoid underflow
+                regions[seed_point].append(candidate)
+                segmented[candidate] = True
+                grow = True
+
+        return grow 
+
+    # Grow each seed 
+    for seed_point in seed_points:
+        segmented[seed_point] = True
+        frontier_idx = 0
+        keep_growing = True
+
+        # Keep growing a seeded region as long as we keep adding candidates
+        while keep_growing:
+            frontier = regions[seed_point][frontier_idx:]
+            frontier_idx += len(frontier) # don't double check points
+            keep_growing = False
+
+            # Check all candidate points of frontier
+            for i, j in frontier:
+                if grow(i, j, seed_point): 
+                    keep_growing = True
+
     return segmented
-    ### END YOUR CODE HERE ###
 
 
 if __name__ == "__main__":
@@ -37,7 +76,7 @@ if __name__ == "__main__":
         [233, 436],  # Seed point 3
         [232, 417],  # Seed point 4
     ]
-    intensity_threshold = 50
+    intensity_threshold = 50 
     segmented_image = region_growing(im, seed_points, intensity_threshold)
 
     assert im.shape == segmented_image.shape, "Expected image shape ({}) to be same as thresholded image shape ({})".format(

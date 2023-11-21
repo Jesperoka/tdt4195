@@ -288,8 +288,8 @@ I am testing on the result using default parameters from the previous task. This
 Mathematical operations can be used for extracting boundary information from images. The operation
 for extracting the inner boundary extraction can be seen below, where $\ominus$ is erosion.
 ```math
-\begin{align]
-    A_\text{boundary} = A - (A \ominus B)
+\begin{align}
+    A_{\text{boundary}} = A - (A \ominus B)
 \end{align}
 ```
 Implement a function that extracts the boundary from a binary image, as defined in the equation above, 

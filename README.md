@@ -290,7 +290,7 @@ for extracting the inner boundary extraction can be seen below, where $\ominus$ 
 
 ```math
 \begin{align]
-    A_{\text{boundary}} = A - (A \ominus B)       
+    A_{\text{boundary}} = A - (A \ominus B) \\     
 \end{align}
 ```
 
@@ -304,11 +304,11 @@ Show the boundary on the image blood-vessels.png and include the result in your 
 The result can be seen in [Figure 8](#figure-8)
 
 <h3 align="center">Boundary Extraction</h3>
-<a name="figure-7"></a>
+<a name="figure-8"></a>
 <p align="center">
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/blood-vessels-boundary.png?raw=true" width=350>
 </p>
-<p align="center"><b>Figure 7: </b>Extracted boundary of blood-vessels.png</p>
+<p align="center"><b>Figure 8: </b>Extracted boundary of blood-vessels.png</p>
 
 <h3 align="left">d)</h3>
 
@@ -320,13 +320,13 @@ indicated by a set of starting points.
 
 ```math
 \begin{align}
-    &\text{Input: Image } I, \text{ number of iterations } K, \text{ starting points } S, \text{ and structuring element } B. \\
-    &\text{Form an array, } X_0, \text{ of 0’s (the same size as the Image } I\text{)} \\
-    &\text{for } \text{row, column in } S \text{ do} \\
-    &\quad X_0[\text{row, column}] \leftarrow 1 \\
-    &\text{for } k \leftarrow 1 \text{ to } K \text{ do} \\
-    &\quad X_k \leftarrow (X_{k-1} \oplus B) \cap I^c \\
-    &\text{return } X_k \cup I
+    &1:&\text{Input: Image } I, \text{ number of iterations } K, \text{ starting points } S, \text{ and structuring element } B. \\
+    &2:&\text{Form an array, } X_0, \text{ of 0’s (the same size as the Image } I\text{)} \\
+    &3:&\text{for } \text{row, column in } S \text{ do} \\
+    &4:&\quad X_0[\text{row, column}] \leftarrow 1 \\
+    &5:&\text{for } k \leftarrow 1 \text{ to } K \text{ do} \\
+    &6:&\quad X_k \leftarrow (X_{k-1} \oplus B) \cap I^c \\
+    &7:&\text{return } X_k \cup I
 \end{align}
 ```
 

@@ -13,4 +13,6 @@
 [Assignment 4](https://github.com/Jesperoka/tdt4195/tree/assignment_4)
 
 [Assignment 5](https://github.com/Jesperoka/tdt4195/tree/assignment_5)
+
+[Assignment 6](https://github.com/Jesperoka/tdt4195/tree/assignment_6)
 </div>

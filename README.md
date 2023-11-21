@@ -341,13 +341,13 @@ The position of the holes (spade symbols) are given in the starter code. Use $50
 The before and after of running the hole filling algorithm on an image of playing cards is shown in [Figure 9](#figure-9).
 
 <h3 align="center">Hole Filling Algorithm Applied to Playing Cards</h3>
-<a name="figure-8"></a>
+<a name="figure-9"></a>
 <p align="center">
-    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/images/cards.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/images/cards.png?raw=true" width=350><br>
     <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/cards-filled.png?raw=true" width=350>
 </p>
-<p align="center"><b>Figure 9: </b>Before and after of hole filling alorgithm with starting points given.<br>Left: before <br>Right: after</p>
+<p align="center"><b>Figure 9: </b>Before and after of hole filling alorgithm with starting points given.<br>Top: before | Bottom: after</p>
 
 <br><br><br><br><br>
 
-*oooooog* **der** *var det eksamensperiode.*
+*\~oooooog* **der**, *var det eksamensperiode\~*

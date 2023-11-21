@@ -1,9 +1,8 @@
 import utils
-import skimage
-import skimage.morphology
 import numpy as np
-import matplotlib.pyplot as plt
+
 from skimage import io
+from skimage.morphology import binary_dilation
 
 
 def fill_holes(im: np.ndarray, starting_points: list, num_iterations: int) -> np.ndarray:
@@ -20,16 +19,18 @@ def fill_holes(im: np.ndarray, starting_points: list, num_iterations: int) -> np
         return:
             (np.ndarray) of shape (H, W). dtype=np.bool
     """
-    # START YOUR CODE HERE ### (You can change anything inside this block)
-    # You can also define other helper functions
-    structuring_element = np.array([
-        [1, 1, 1],
-        [1, 1, 1],
-        [1, 1, 1]
-    ], dtype=bool)
-    result = im.copy()
-    return result
-    ### END YOUR CODE HERE ###
+    B = np.ones((3,3), dtype=np.bool_)
+    I_c = np.logical_not(im)
+
+    X_0 = np.zeros_like(im, dtype=im.dtype)
+    for row, column in starting_points:
+        X_0[row, column] = 1
+
+    X_k = X_0 
+    for _ in range(1, num_iterations+1):
+        X_k = np.logical_and(binary_dilation(X_k, B), I_c)
+
+    return np.logical_or(X_k, im) 
 
 
 if __name__ == "__main__":

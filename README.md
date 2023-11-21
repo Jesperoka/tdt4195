@@ -329,4 +329,25 @@ indicated by a set of starting points.
 \end{align}
 ```
 
+Implement a function that takes in a binary image and a set of starting points indicating position of holes, and applies the hole filling algorithm outlined in the algorithm above. 
+
+Implement this in the file task3d.py/task3d.ipynb.
+
+Apply the function on the image cards.png and include the resulting image in your report. 
+The position of the holes (spade symbols) are given in the starter code. Use $50$ iterations ($K = 50$), and a $3 \times 3$ structuring element ($B$) of all ones.
+
 **Answer:**
+
+The before and after of running the hole filling algorithm on an image of playing cards is shown in [Figure 9](#figure-9).
+
+<h3 align="center">Hole Filling Algorithm Applied to Playing Cards</h3>
+<a name="figure-8"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/images/cards.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/cards-filled.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 9: </b>Before and after of hole filling alorgithm with starting points given.<br>Left: before <br>Right: after</p>
+
+<br><br><br><br><br>
+
+*oooooog* **der** *var det eksamensperiode.*

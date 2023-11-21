@@ -1,8 +1,7 @@
 import utils
-import skimage
-import skimage.morphology
 import numpy as np
 
+from skimage.morphology import binary_erosion
 
 def extract_boundary(im: np.ndarray) -> np.ndarray:
     """
@@ -13,16 +12,13 @@ def extract_boundary(im: np.ndarray) -> np.ndarray:
         return:
             (np.ndarray) of shape (H, W). dtype=np.bool
     """
-    # START YOUR CODE HERE ### (You can change anything inside this block)
-    # You can also define other helper functions
     structuring_element = np.array([
         [1, 1, 1],
         [1, 1, 1],
         [1, 1, 1]
     ], dtype=bool)
-    boundary = im
+    boundary = im & ~binary_erosion(im, structuring_element)
     return boundary
-    ### END YOUR CODE HERE ###
 
 
 if __name__ == "__main__":

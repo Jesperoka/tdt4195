@@ -1,30 +1,31 @@
 import utils
-import skimage
-import skimage.morphology
 import numpy as np
 import pathlib
 
+from skimage.morphology import binary_erosion
 
 def distance_transform(im: np.ndarray) -> np.ndarray:
     """
-        A function that computes the distance to the closest boundary pixel.
+    A function that computes the distance to the closest boundary pixel.
 
-        args:
-            im: np.ndarray of shape (H, W) with boolean values (dtype=np.bool)
-        return:
-            (np.ndarray) of shape (H, W). dtype=np.int32
+    args:
+        im: np.ndarray of shape (H, W) with boolean values (dtype=np.bool)
+    return:
+        (np.ndarray) of shape (H, W). dtype=np.int32
     """
-    # START YOUR CODE HERE ### (You can change anything inside this block)
-    # You can also define other helper functions
     assert im.dtype == bool
-    structuring_element = np.array([
-        [1, 1, 1],
-        [1, 1, 1],
-        [1, 1, 1]
-    ], dtype=bool)
-    result = im.astype(np.int32)
-    return result
-    ### END YOUR CODE HERE ###
+
+    im_copy = im.copy()
+    structuring_element = np.ones((3, 3), dtype=bool)
+    result = np.zeros_like(im, dtype=np.int32) # int64 dtype allows higher value range
+
+    for distance in range(max(im.shape)): 
+        result[im_copy] = distance
+        im_copy = binary_erosion(im_copy, structuring_element)
+
+    assert result.dtype == np.int32
+    return result # truncating conversion to task required dtype
+
 
 
 if __name__ == "__main__":

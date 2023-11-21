@@ -206,11 +206,70 @@ Results shown in [Figure 4](#figure-4).
 **Question:**
 
 Use what you know about erosion, dilation, opening, and closing to remove the noisy
-elements from the image in Figure 3. 
+elements from the image in [Figure 5](#figure-5). 
 
-Implement this in the file task3a.py/task3a.ipynb. Your
-result should look something like the one in Figure 3b.
+<h3 align="center">Noisy Binary Image</h3>
+<a name="figure-5"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/images/noisy.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 5: </b>noisy.png</p>
+
+Implement this in the file task3a.py/task3a.ipynb. 
 Include the resulting image in your report and shortly explain how you removed the noise.
 
 **Answer:**
+
+To create a noise removal function using the four basic morphological operations one can apply closing to remove negative noise (holes) in the desired features, and opening to remove positive noise (grains) in the desired background.
+
+By applying opening and closing successively with different structuring elements, one can promote different changes to the features in the images and remove unwanted features.
+
+In order to get a reasonably general function that allows for easy tuning to the image in question, the function iteratively grows (by dilation) the structuring element, and I've defined 3 parameters.
+```python
+def remove_noise(im: np.ndarray,
+                 num_morphologies: int = 6,
+                 structure_dilator: NDArray[np.bool_] = np.ones((9, 9), dtype=np.bool_),
+                 closing_first: bool = False) -> np.ndarray:
+```
+where some reasonable defaults are shown above. 
+
+The parameters are as follows 
+```python
+num_morphologies    # How many iterations of opening, closing and dilation of the structuring element to perform.
+structure_dilator   # Structuring element for the structuring element, this is the kernel for dilating the structuring element.
+closing_first       # Whether to perform closing and then opening, or the opposite, at every iteration.
+```
+where `num_morphologies` ultimately determines the range of sizes for the structuring element, and is arguably the most important parameter.
+If shape information about the desired features is known, one can define the `structure_dilator`, which is the basic shape of the growing structuring element applied to the image.
+
+In [Figure 6](#figure-6) we can see how the function performs with the defaults and with somewhat tuned parameters, especially the use of a `structure_dilator` shape that almost matches the shape of the desired feature in the image (i.e. a triangle).
+
+<h3 align="center">Morphological Noise Removal with Defaults and Tuned Parameters</h3>
+<a name="figure-6"></a>
+<p align="center">
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/noisy-filtered.png?raw=true" width=350>
+    <img src="https://github.com/Jesperoka/tdt4195/blob/assignment_6/src/image_processed/tuned-noisy-filtered.png?raw=true" width=350>
+</p>
+<p align="center"><b>Figure 6: </b>Comparison of using default parameters vs using a shape informed structuring element.</p>
+
+<h3 align="left">b)</h3>
+
+**Question:**
+
+The distance transform is an operation typically applied on a binary image and creates a grayscale image
+where each foreground pixel shows the distance to the closest boundary pixel. 
+
+One inefficient way of calculating the distance transform is to use erosion. Intuitively, by using erosion
+the distance transform for a pixel is simply the number of erosion operations it took to remove it from
+the foreground of the original image.
+
+Implement the distance transform using the erosion method explained above, in the
+file task3b.py/task3b.ipynb. You can use a 3×3 structuring element of all ones to get chessboard
+distance (*Manhattan distance*).
+
+Test the function on the noise-free binary image you got from the task (a) and show the result in
+your report.
+
+**Answer:**
+
 

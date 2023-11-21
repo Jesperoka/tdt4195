@@ -1,7 +1,5 @@
-import torch
 import os
 import skimage
-import skimage.io
 import numpy as np
 import matplotlib.pyplot as plt
 import warnings
@@ -16,8 +14,10 @@ def read_image(imname: str, image_folder=pathlib.Path("images")) -> np.ndarray:
         Reads image (imname) from folder image_folder
     """
     impath = image_folder.joinpath(imname)
-    print("Reading image:", impath)
-    return skimage.io.imread(impath)
+    print(" Reading image:", impath)
+    im = skimage.io.imread(impath) 
+    print("Done reading image.")
+    return im
 
 
 def to_uint8(im: np.ndarray) -> np.ndarray:
@@ -55,7 +55,7 @@ def save_im(imname: str, im: np.ndarray):
     skimage.io.imsave(impath, im)
 
 
-def uint8_to_float(im: np.array):
+def uint8_to_float(im: np.ndarray):
     """
         Converts an image from range 0-255 to 0-1
         Args:

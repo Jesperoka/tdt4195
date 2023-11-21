@@ -1,10 +1,14 @@
-import utils
-import skimage
-import skimage.morphology
 import numpy as np
+from numpy.typing import NDArray
+from skimage.morphology import binary_closing, binary_dilation, binary_opening
+
+import utils
 
 
-def remove_noise(im: np.ndarray) -> np.ndarray:
+def remove_noise(im: np.ndarray,
+                 num_morphologies: int = 6,
+                 structure_dilator: NDArray[np.bool_] = np.ones((9, 9), dtype=np.bool_),
+                 closing_first: bool = False) -> np.ndarray:
     """
         A function that removes noise in the input image.
         args:
@@ -12,11 +16,25 @@ def remove_noise(im: np.ndarray) -> np.ndarray:
         return:
             (np.ndarray) of shape (H, W). dtype=bool
     """
-    # START YOUR CODE HERE ### (You can change anything inside this block)
-    # You can also define other helper functions
-    return im
-    ### END YOUR CODE HERE ###
+    first_morphology, second_morphology = (binary_closing, binary_opening) if closing_first else (binary_opening,
+                                                                                                  binary_closing)
 
+    structuring_element = np.zeros((2*num_morphologies + 1, 2*num_morphologies + 1))
+    n, m = structuring_element.shape
+    structuring_element[n // 2, m // 2] = 1
+
+    print("Performing morphological operations:")
+    for i in range(num_morphologies):
+        structuring_element = binary_dilation(structuring_element, structure_dilator)
+        im = second_morphology(first_morphology(im, structuring_element), structuring_element)
+        print(i + 1, "/", num_morphologies)
+
+    return im
+
+
+shape_informed_structure_dilator = np.array([[1, 1, 1], 
+                                             [1, 1, 0], 
+                                             [1, 0, 0]])
 
 if __name__ == "__main__":
     # DO NOT CHANGE
@@ -24,6 +42,7 @@ if __name__ == "__main__":
 
     binary_image = (im != 0)
     noise_free_image = remove_noise(binary_image)
+    # noise_free_image = remove_noise(binary_image, num_morphologies=8, structure_dilator=shape_informed_structure_dilator)
 
     assert im.shape == noise_free_image.shape, "Expected image shape ({}) to be same as resulting image shape ({})".format(
         im.shape, noise_free_image.shape)

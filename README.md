@@ -289,7 +289,7 @@ Mathematical operations can be used for extracting boundary information from ima
 for extracting the inner boundary extraction can be seen below, where $\ominus$ is erosion.
 ```math
 \begin{align]
-    A_{\\text{boundary}} &= A - (A \ominus B)
+    A_\text{boundary} = A - (A \ominus B)
 \end{align}
 ```
 Implement a function that extracts the boundary from a binary image, as defined in the equation above, 
@@ -319,13 +319,13 @@ indicated by a set of starting points.
 ```math
 \begin{align}
     &\text{\textbf{Algorithm: }}&&\text{An algorithm to fill holes in a binary image.} \\[8pt]
-    &1:&&\textbf{Input:} \text{Image } I, \text{ number of iterations } K, \text{ starting points } S, \text{ and structuring element } B. \\
+    &1:&&\textbf{Input: } \text{Image } I, \text{ number of iterations } K, \text{ starting points } S, \text{ and structuring element } B. \\
     &2:&&\text{Form an array, } X_0, \text{ of 0’s (the same size as the Image } I\text{)} \\
-    &3:&&\textbf{for } \text{row, column in } S \textbf{do} \\
+    &3:&&\textbf{for } \text{row, column in } S \textbf{ do } \\
     &4:&&\quad X_0[\text{row, column}] \leftarrow 1 \\
-    &5:&&\textbf{for } k \leftarrow 1 \textbf{to} K \textbf{do} \\
+    &5:&&\textbf{for } k \leftarrow 1 \text{ to } K \textbf{ do } \\
     &6:&&\quad X_k \leftarrow (X_{k-1} \oplus B) \cap I^c \\
-    &7:&&\textbf{return} X_k \cup I
+    &7:&&\textbf{return } X_k \cup I
 \end{align}
 ```
 

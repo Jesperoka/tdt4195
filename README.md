@@ -287,13 +287,11 @@ I am testing on the result using default parameters from the previous task. This
 
 Mathematical operations can be used for extracting boundary information from images. The operation
 for extracting the inner boundary extraction can be seen below, where $\ominus$ is erosion.
-
 ```math
 \begin{align]
-    A_{\text{boundary}} = A - (A \ominus B) \\     
+    A_{\text{boundary}} &= A - (A \ominus B)
 \end{align}
 ```
-
 Implement a function that extracts the boundary from a binary image, as defined in the equation above, 
 in the file task3c.py/task3c.ipynb. You can use a 3 × 3 structuring element of all ones.
 
@@ -320,13 +318,14 @@ indicated by a set of starting points.
 
 ```math
 \begin{align}
-    &1:&\text{Input: Image } I, \text{ number of iterations } K, \text{ starting points } S, \text{ and structuring element } B. \\
-    &2:&\text{Form an array, } X_0, \text{ of 0’s (the same size as the Image } I\text{)} \\
-    &3:&\text{for } \text{row, column in } S \text{ do} \\
-    &4:&\quad X_0[\text{row, column}] \leftarrow 1 \\
-    &5:&\text{for } k \leftarrow 1 \text{ to } K \text{ do} \\
-    &6:&\quad X_k \leftarrow (X_{k-1} \oplus B) \cap I^c \\
-    &7:&\text{return } X_k \cup I
+    &\text{\textbf{Algorithm: }}&&An algorithm to fill holes in a binary image. \\[5pt]
+    &1:&&\text{Input: Image } I, \text{ number of iterations } K, \text{ starting points } S, \text{ and structuring element } B. \\
+    &2:&&\text{Form an array, } X_0, \text{ of 0’s (the same size as the Image } I\text{)} \\
+    &3:&&\text{for } \text{row, column in } S \text{ do} \\
+    &4:&&\quad X_0[\text{row, column}] \leftarrow 1 \\
+    &5:&&\text{for } k \leftarrow 1 \text{ to } K \text{ do} \\
+    &6:&&\quad X_k \leftarrow (X_{k-1} \oplus B) \cap I^c \\
+    &7:&&\text{return } X_k \cup I
 \end{align}
 ```
 
